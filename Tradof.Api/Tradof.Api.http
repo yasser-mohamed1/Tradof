@@ -1,6 +1,11 @@
-@Tradof.Api_HostAddress = http://localhost:5136
+@Tradof.Api_HostAddress = https://localhost:7159/api
 
-GET {{Tradof.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
+POST {{Tradof.Api_HostAddress}}/Account/addadmin
+Content-Type: application/json
+{
+  "fullName": "Ali Mohamed",
+  "phoneNumber": "01094211654",
+  "email": "ali@example.com",
+  "password": "iop[5",
+  "confirmPassword": "iop[5"
+}
