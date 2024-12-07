@@ -1,5 +1,6 @@
 # Project Architecture
 
+```
 /src
   ├── Tradof.Domain  
   │   ├── Tradof.Data  
@@ -22,3 +23,4 @@
   │   └── Tradof.ResponseHandler  
   └── Tradof.Web  
       └── Tradof.Api
+```
