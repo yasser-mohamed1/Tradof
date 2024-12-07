@@ -1,0 +1,90 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35201.131
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tradof.Web", "Tradof.Web", "{8250AD98-4989-49E6-A1F7-4B3FF190B519}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradof.Api", "Tradof.Api\Tradof.Api.csproj", "{8ECE4DE3-FBFF-4429-B9BC-CA1247D19682}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tradof.Domain", "Tradof.Domain", "{47E0FA98-C32E-4CE6-8384-A64F3048D01E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradof.Data", "Tradof.Data\Tradof.Data.csproj", "{BB0FF4B8-6BE7-4CA4-A00F-78F1B564B09B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tradof.Infrastructure", "Tradof.Infrastructure", "{E4FB3175-3CB2-4B8E-A4F7-507FEE531C28}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradof.EntityFramework", "Tradof.EntityFramework\Tradof.EntityFramework.csproj", "{917DB0EE-14ED-435D-A0D3-55F201E83D60}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradof.Repository", "Tradof.Repository\Tradof.Repository.csproj", "{4655F465-D9F5-4AE8-B88D-575FD2438AB4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tradof.Services", "Tradof.Services", "{105C6636-238F-4B20-A489-71696484FEC6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tradof.Module.Admin", "Tradof.Module.Admin", "{C0118438-6255-4C1A-B8C3-89AA8085FA5F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tradof.Settings", "Tradof.Settings", "{29F0583E-E241-43ED-BDF6-E553975C4D1E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradof.Comman", "Tradof.Comman\Tradof.Comman.csproj", "{1636C145-56B5-4011-846C-9704E4598329}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradof.ResponseHandler", "Tradof.ResponseHandler\Tradof.ResponseHandler.csproj", "{31CE4F67-7D5B-4AF5-9FCE-292FA716ADCA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Admin.Api", "Tradof.Admin.Api\Tradof.Admin.Api.csproj", "{40E6F1DC-AAED-490F-AC5E-65034ACE2426}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Admin.Services", "Tradof.Admin.Services\Tradof.Admin.Services.csproj", "{1C3BDEDB-F01C-47E2-B146-7E5DD89AAFC8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8ECE4DE3-FBFF-4429-B9BC-CA1247D19682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8ECE4DE3-FBFF-4429-B9BC-CA1247D19682}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8ECE4DE3-FBFF-4429-B9BC-CA1247D19682}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8ECE4DE3-FBFF-4429-B9BC-CA1247D19682}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB0FF4B8-6BE7-4CA4-A00F-78F1B564B09B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB0FF4B8-6BE7-4CA4-A00F-78F1B564B09B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB0FF4B8-6BE7-4CA4-A00F-78F1B564B09B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB0FF4B8-6BE7-4CA4-A00F-78F1B564B09B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{917DB0EE-14ED-435D-A0D3-55F201E83D60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{917DB0EE-14ED-435D-A0D3-55F201E83D60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{917DB0EE-14ED-435D-A0D3-55F201E83D60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{917DB0EE-14ED-435D-A0D3-55F201E83D60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4655F465-D9F5-4AE8-B88D-575FD2438AB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4655F465-D9F5-4AE8-B88D-575FD2438AB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4655F465-D9F5-4AE8-B88D-575FD2438AB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4655F465-D9F5-4AE8-B88D-575FD2438AB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1636C145-56B5-4011-846C-9704E4598329}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1636C145-56B5-4011-846C-9704E4598329}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1636C145-56B5-4011-846C-9704E4598329}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1636C145-56B5-4011-846C-9704E4598329}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31CE4F67-7D5B-4AF5-9FCE-292FA716ADCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31CE4F67-7D5B-4AF5-9FCE-292FA716ADCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31CE4F67-7D5B-4AF5-9FCE-292FA716ADCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31CE4F67-7D5B-4AF5-9FCE-292FA716ADCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40E6F1DC-AAED-490F-AC5E-65034ACE2426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40E6F1DC-AAED-490F-AC5E-65034ACE2426}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40E6F1DC-AAED-490F-AC5E-65034ACE2426}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40E6F1DC-AAED-490F-AC5E-65034ACE2426}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C3BDEDB-F01C-47E2-B146-7E5DD89AAFC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C3BDEDB-F01C-47E2-B146-7E5DD89AAFC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C3BDEDB-F01C-47E2-B146-7E5DD89AAFC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C3BDEDB-F01C-47E2-B146-7E5DD89AAFC8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8ECE4DE3-FBFF-4429-B9BC-CA1247D19682} = {8250AD98-4989-49E6-A1F7-4B3FF190B519}
+		{BB0FF4B8-6BE7-4CA4-A00F-78F1B564B09B} = {47E0FA98-C32E-4CE6-8384-A64F3048D01E}
+		{917DB0EE-14ED-435D-A0D3-55F201E83D60} = {E4FB3175-3CB2-4B8E-A4F7-507FEE531C28}
+		{4655F465-D9F5-4AE8-B88D-575FD2438AB4} = {E4FB3175-3CB2-4B8E-A4F7-507FEE531C28}
+		{C0118438-6255-4C1A-B8C3-89AA8085FA5F} = {105C6636-238F-4B20-A489-71696484FEC6}
+		{1636C145-56B5-4011-846C-9704E4598329} = {29F0583E-E241-43ED-BDF6-E553975C4D1E}
+		{31CE4F67-7D5B-4AF5-9FCE-292FA716ADCA} = {29F0583E-E241-43ED-BDF6-E553975C4D1E}
+		{40E6F1DC-AAED-490F-AC5E-65034ACE2426} = {C0118438-6255-4C1A-B8C3-89AA8085FA5F}
+		{1C3BDEDB-F01C-47E2-B146-7E5DD89AAFC8} = {C0118438-6255-4C1A-B8C3-89AA8085FA5F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69E087E9-B128-4D9E-8471-F21884B99612}
+	EndGlobalSection
+EndGlobal
