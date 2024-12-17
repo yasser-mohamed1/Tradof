@@ -2,8 +2,10 @@
 {
     public enum UserType
     {
+        SuperAdmin,
         Admin,
-        Client,
+        ComanyAdmin,
+        CompanyEmployee,
         Freelancer
     }
 }
