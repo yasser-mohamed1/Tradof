@@ -8,8 +8,8 @@ namespace Tradof.Comman.Enums
 {
 	public enum NotificationType
 	{
-		Email,
-		SMS,
-		InApp
+		TechnicalSupport,
+		Proposals,
+		Finish_or_Deadline
 	}
 }
