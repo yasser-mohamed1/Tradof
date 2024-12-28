@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Tradof.Data.Entities
 {
-	public class PackageFeatures
-	{
+	public class PackageFeatures: AuditEntity<long>
+    {
 		public string package_id { get; set; }
 		public string feature { get; set; }
 		[ForeignKey("package_id")]

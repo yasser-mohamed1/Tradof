@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Tradof.Data.Entities
 {
-	public class CompanySubscription
-	{
+	public class CompanySubscription : AuditEntity<T>
+    {
 		public string company_id { get; set; }
 		public string package_id { get; set; }
 		public DateTime start_date { get; set; }

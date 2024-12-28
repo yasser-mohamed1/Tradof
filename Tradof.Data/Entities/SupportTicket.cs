@@ -5,9 +5,9 @@ using Tradof.Comman.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class SupportTicket
+	public class SupportTicket:AuditEntity<long>
 	{
-		public string ticket_id { get; set; } = Guid.NewGuid().ToString();
+		
 		public string issue_details { get; set; }
 		public SupportTicketType ticket_type { get; set; }
 		public string user_id { get; set; }

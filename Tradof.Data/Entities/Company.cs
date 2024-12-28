@@ -9,16 +9,15 @@ using Tradof.Comman.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class Company
+	public class Company: AuditEntity<T>
 	{
-		public string company_id { get; set; }
-		public string company_address { get; set; }
-        public string job_title {  get; set; }
-		public string? specialization {  get; set; }
-		public string country { get; set; }
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
-		public CompanyUserType company_user_type { get; set; }
+		
+		public string CompanyAddress { get; set; }
+        public string JobTitle {  get; set; }
+		public string? Specialization {  get; set; }
+		public string Country { get; set; }
+	
+		public CompanyUserType UserType { get; set; }
 
 		[ForeignKey("comapny_id")]
 		public ApplicationUser User { get; set; }

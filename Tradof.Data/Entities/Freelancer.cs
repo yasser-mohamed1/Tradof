@@ -3,14 +3,13 @@ using Tradof.Comman.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class Freelancer
-	{
+	public class Freelancer: AuditEntity
+    {
 		public string freelancer_id { get; set; } = Guid.NewGuid().ToString();
 		public string specialization { get; set; }
 		public Gender gender { get; set; }
 		public int work_experience { get; set; }
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
+		
 
 		[ForeignKey("freelancer_id")]
 		public ApplicationUser User { get; set; }

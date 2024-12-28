@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace Tradof.Data.Entities
 {
-	public class Package
+	public class Package :AuditEntity<T>
 	{
-		public string package_id { get; set; } = Guid.NewGuid().ToString();
+	
 		public string package_name {  get; set; }
 		public int durtation_months { get; set; }
 		public double price { get; set; }
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
+	
 	}
 }

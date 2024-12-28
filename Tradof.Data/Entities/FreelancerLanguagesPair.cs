@@ -8,13 +8,12 @@ using Tradof.Comman.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class FreelancerLanguagesPair
-	{
+	public class FreelancerLanguagesPair : AuditEntity<long>
+    {
 		public string freelancer_id { get; set; }
 		public string language_from { get; set; }
 		public string language_to { get; set; }
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
+
 
 		[ForeignKey("freelancer_id")]
 		public Freelancer Freelancer { get; set; }

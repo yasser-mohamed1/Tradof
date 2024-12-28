@@ -3,9 +3,9 @@ using Tradof.Comman.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class Project
+	public class Project:AuditEntity<long>
 	{
-		public string project_id { get; set; } = Guid.NewGuid().ToString();
+		
 		public string project_name { get; set; }
 		public string description { get; set; }
 		public double budget { get; set; }
@@ -15,9 +15,7 @@ namespace Tradof.Data.Entities
 		public string? internal_node { get; set; }
 		public DateTime deadline { get; set; }
 		public ProjectStatus project_status { get; set; }
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
-
+	
 		public string company_id { get; set; }
 
 		[ForeignKey("company_id")]

@@ -7,17 +7,15 @@ using System.Threading.Tasks;
 
 namespace Tradof.Data.Entities
 {
-	public class Rating
+	public class Rating:AuditEntity<long>
 	{
-		public string rating_id { get; set; }
 		public string rating { get; set; }
 		public string? review { get; set; }
 		public string project_id { get; set; }
 		public string rated_by_id { get; set; }
 		public string rated_to_id { get; set; }
 
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
+	
 
 		[ForeignKey("project_id")]
 		public Project Project { get; set; }

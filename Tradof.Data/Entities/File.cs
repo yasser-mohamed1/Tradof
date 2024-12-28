@@ -8,15 +8,14 @@ using Tradof.Comman.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class File
-	{
-		public string file_id { get; set; }
+	public class File: AuditEntity<long>
+    {
+	
 		public string file_name { get; set; }
 		public string file_path { get; set; }
 		public FileType file_type { get; set; }
 		public int file_size { get; set; }	
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
+	
 		public string project_id { get; set; }
 
 		[ForeignKey("project_id")]

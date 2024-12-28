@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace Tradof.Data.Entities
 {
-	public class PaymentProcess
-	{
+	public class PaymentProcess: AuditEntity<long>
+    {
 		public string payment_id { get; set; }
 		public string freelancer_id { get; set; }
 		public string company_id { get; set; }
 		public DateTime payment_date { get; set; }
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
+		
 
 		[ForeignKey("payment_id")]
 		public Payment Payment { get; set; }

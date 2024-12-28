@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Tradof.Data.Entities
 {
-	public class Feedback
+	public class Feedback: AuditEntity<long>
 	{
-		public string feedback_id { get; set; } = Guid.NewGuid().ToString();
+	
 		public double rating { get; set; }
 		public string? reson_rating { get; set; }
 		public string? idea {  get; set; }	

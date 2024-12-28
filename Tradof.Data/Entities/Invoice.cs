@@ -3,9 +3,9 @@ using Tradof.Comman.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class Invoice
-	{
-		public string invoice_id { get; set; }
+	public class Invoice: AuditEntity<long>
+    {
+		
 		public int inoveice_number { get; set; }
 		public double total_amount { get; set; }
 		public InvoiceStatus invoice_status { get; set; }
