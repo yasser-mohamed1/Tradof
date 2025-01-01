@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tradof.Common.Base;
 
 namespace Tradof.Data.Entities
 {
-	public class UserAdresses:AuditEntity<long>
+	public class UserAdresses : AuditEntity<long>
 	{
-		public string user_id { get; set; }
-		public string address { get; set; }
-	
+		public string Address { get; set; }
 
-		[ForeignKey("user_id")]
-		public ApplicationUser user { get; set; }
+		[ForeignKey("Id")]
+		public ApplicationUser User { get; set; }
 	}
 }

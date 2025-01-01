@@ -1,22 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Tradof.Comman.Enums;
+using Tradof.Common.Base;
+using Tradof.Common.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class Invoice: AuditEntity<long>
+    public class Invoice : AuditEntity<long>
     {
-		
-		public int inoveice_number { get; set; }
-		public double total_amount { get; set; }
-		public InvoiceStatus invoice_status { get; set; }
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
-		public string project_id { get; set; }
-		public string payment_id { get; set; }
+        public int InvoiceNumber { get; set; }
+        public double TotalAmount { get; set; }
+        public InvoiceStatus InvoiceStatus { get; set; }
+        public string ProjectId { get; set; }
+        public string ProjectPaymentId { get; set; }
 
-		[ForeignKey("project_id")]
-		public Project Project { get; set; }
-		[ForeignKey("payment_id")]
-		public Payment Payment { get; set; }
-	}
+        [ForeignKey("ProjectId")]
+        public Project Project { get; set; }
+        [ForeignKey("ProjectPaymentId")]
+        public ProjectPayment ProjectPayment { get; set; }
+    }
 }

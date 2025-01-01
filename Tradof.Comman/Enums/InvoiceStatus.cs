@@ -1,4 +1,4 @@
-﻿namespace Tradof.Comman.Enums
+﻿namespace Tradof.Common.Enums
 {
 	public enum InvoiceStatus
 	{

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Tradof.Comman.Idenitity;
 using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
+using Tradof.Data.Entities;
 namespace Tradof.Admin.Services.Mapper
 {
     public class MappingProfile : Profile
@@ -13,11 +13,6 @@ namespace Tradof.Admin.Services.Mapper
 
             CreateMap<ApplicationUser, GetUserDto>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.UserName)).ReverseMap();
-
-            //CreateMap<Customer, CustomerGetAllModel>().ReverseMap();
-            //CreateMap<Customer, CustomerSearchModel>().ReverseMap();
-            //CreateMap<CustomerCreateModel, Customer>().ReverseMap();
-
         }
     }
 }

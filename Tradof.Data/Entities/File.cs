@@ -1,25 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tradof.Comman.Enums;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tradof.Common.Base;
+using Tradof.Common.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class File: AuditEntity<long>
+    public class File : AuditEntity<long>
     {
-	
-		public string file_name { get; set; }
-		public string file_path { get; set; }
-		public FileType file_type { get; set; }
-		public int file_size { get; set; }	
-	
-		public string project_id { get; set; }
+        public string FileName { get; set; }
+        public string FilePath { get; set; }
+        public FileType FileType { get; set; }
+        public int FileSize { get; set; }
+        public string ProjectId { get; set; }
 
-		[ForeignKey("project_id")]
-		public Project Project { get; set; }
-
-	}
+        [ForeignKey("ProjectId")]
+        public Project Project { get; set; }
+    }
 }

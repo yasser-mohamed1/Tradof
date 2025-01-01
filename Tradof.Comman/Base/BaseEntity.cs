@@ -1,4 +1,4 @@
-﻿namespace Tradof.Comman.Base
+﻿namespace Tradof.Common.Base
 {
     public class BaseEntity<T>
     {

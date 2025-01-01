@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tradof.Common.Base;
 
 namespace Tradof.Data.Entities
 {
-	public class PropsalAttachments : AuditEntity<long>
+	public class ProposalAttachments : AuditEntity<long>
     {
-		public string proposal_id { get; set; }
+		public string ProposalId { get; set; }
 		public string Attachment { get; set; }
-	
-
-		[ForeignKey("proposal_id")]
+		[ForeignKey("ProposalId")]
 		public Proposal Proposal { get; set; }
 	}
 }

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Tradof.Comman\Tradof.Comman.csproj" />
+    <ProjectReference Include="..\Tradof.Comman\Tradof.Common.csproj" />
     <ProjectReference Include="..\Tradof.Data\Tradof.Data.csproj" />
     <ProjectReference Include="..\Tradof.Repository\Tradof.Repository.csproj" />
     <ProjectReference Include="..\Tradof.ResponseHandler\Tradof.ResponseHandler.csproj" />

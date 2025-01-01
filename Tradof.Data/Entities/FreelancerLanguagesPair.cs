@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tradof.Comman.Enums;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tradof.Common.Base;
 
 namespace Tradof.Data.Entities
 {
-	public class FreelancerLanguagesPair : AuditEntity<long>
+    public class FreelancerLanguagesPair : AuditEntity<long>
     {
-		public string freelancer_id { get; set; }
-		public string language_from { get; set; }
-		public string language_to { get; set; }
+        public long FreelancerId { get; set; }
+        public long LanguageFromId { get; set; }
+        public long LanguageToId { get; set; }
 
+        [ForeignKey("FreelancerId")]
+        public Freelancer Freelancer { get; set; }
 
-		[ForeignKey("freelancer_id")]
-		public Freelancer Freelancer { get; set; }
-	}
+        [ForeignKey("LanguageFromId")]
+        public Language LanguageFrom { get; set; }
+
+        [ForeignKey("LanguageToId")]
+        public Language LanguageTo { get; set; }
+    }
 }

@@ -1,21 +1,24 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Tradof.Comman.Enums;
+using Tradof.Common.Base;
+using Tradof.Common.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class Freelancer: AuditEntity
+    public class Freelancer : AuditEntity
     {
-		public string freelancer_id { get; set; } = Guid.NewGuid().ToString();
-		public string specialization { get; set; }
-		public Gender gender { get; set; }
-		public int work_experience { get; set; }
-		
+        public string FreelancerId { get; set; }
+        public int WorkExperience { get; set; }
+        public Gender Gender { get; set; }
+        public long SpecializationId { get; set; }
 
-		[ForeignKey("freelancer_id")]
-		public ApplicationUser User { get; set; }
-		public virtual ICollection<FreelancerLanguagesPair> FreelancerLanguagesPairs { get; set; } = new List<FreelancerLanguagesPair>();
-		public virtual ICollection<FreelancerSocialMedia> FreelancerSocialMedias { get; set; } = new List<FreelancerSocialMedia>();
-		public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
-		public virtual ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();
-	}
+        [ForeignKey("SpecializationId")]
+        public Specialization Specialization { get; set; }
+
+        [ForeignKey("FreelancerId")]
+        public ApplicationUser User { get; set; }
+        public virtual ICollection<FreelancerLanguagesPair> FreelancerLanguagesPairs { get; set; } = new List<FreelancerLanguagesPair>();
+        public virtual ICollection<FreelancerSocialMedia> FreelancerSocialMedias { get; set; } = new List<FreelancerSocialMedia>();
+        public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
+        public virtual ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();
+    }
 }

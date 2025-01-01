@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tradof.Common.Base;
 
 namespace Tradof.Data.Entities
 {
-	public class PackageFeatures: AuditEntity<long>
+    public class PackageFeature : AuditEntity<long>
     {
-		public string package_id { get; set; }
-		public string feature { get; set; }
-		[ForeignKey("package_id")]
-		public Package Package { get; set; }
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
-	}
+        public string PackageId { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        [ForeignKey("PackageId")]
+        public Package Package { get; set; }
+    }
 }

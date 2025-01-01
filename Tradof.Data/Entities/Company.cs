@@ -1,30 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tradof.Comman.Enums;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tradof.Common.Base;
+using Tradof.Common.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class Company: AuditEntity<T>
-	{
-		
-		public string CompanyAddress { get; set; }
-        public string JobTitle {  get; set; }
-		public string? Specialization {  get; set; }
-		public string Country { get; set; }
-	
-		public CompanyUserType UserType { get; set; }
+    public class Company : AuditEntity<long>
+    {
+        public string CompanyAddress { get; set; }
+        public string JobTitle { get; set; }
+        public CompanyUserType UserType { get; set; }
+        public long CountryId { get; set; }
+        public long SpecializationId { get; set; }
 
-		[ForeignKey("comapny_id")]
-		public ApplicationUser User { get; set; }
-		
-		public virtual ICollection<CompanySubscription> Subscribtions { get; set; } = new List<CompanySubscription>();
-		public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
+        [ForeignKey("CountryId")]
+        public Country Country { get; set; }
 
+        [ForeignKey("SpecializationId")]
+        public Specialization Specialization { get; set; }
 
-	}
+        [ForeignKey("Id")]
+        public ApplicationUser User { get; set; }
+
+        public virtual ICollection<CompanySubscription> Subscriptions { get; set; } = new List<CompanySubscription>();
+        public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
+    }
 }

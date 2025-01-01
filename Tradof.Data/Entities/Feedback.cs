@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tradof.Common.Base;
 
 namespace Tradof.Data.Entities
 {
-	public class Feedback: AuditEntity<long>
-	{
-	
-		public double rating { get; set; }
-		public string? reson_rating { get; set; }
-		public string? idea {  get; set; }	
-		public string user_id { get; set; }
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
+    public class Feedback : AuditEntity<long>
+    {
+        public double Rating { get; set; }
+        public string? ReasonRating { get; set; }
+        public string? Idea { get; set; }
+        public string UserId { get; set; }
 
-		[ForeignKey("user_id")]
-		public virtual ApplicationUser User { get; set; }
-	}
+        [ForeignKey("UserId")]
+        public virtual ApplicationUser User { get; set; }
+    }
 }

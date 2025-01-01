@@ -1,34 +1,39 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Tradof.Comman.Enums;
+using Tradof.Common.Base;
+using Tradof.Common.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class Project:AuditEntity<long>
-	{
-		
-		public string project_name { get; set; }
-		public string description { get; set; }
-		public double budget { get; set; }
-		public string specialization { get; set; }
-		public string language_from { get; set; }
-		public string language_to { get; set; }
-		public string? internal_node { get; set; }
-		public DateTime deadline { get; set; }
-		public ProjectStatus project_status { get; set; }
-	
-		public string company_id { get; set; }
+    public class Project : AuditEntity<long>
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public ProjectStatus Status { get; set; }
+        public string FreelancerId { get; set; }
+        public string CompanyId { get; set; }
+        public long SpecializationId { get; set; }
+        public long LanguageFromId { get; set; }
+        public long LanguageToId { get; set; }
 
-		[ForeignKey("company_id")]
-		public Company Company { get; set; }
-	    public string freelancer_id { get; set; }
+        [ForeignKey("FreelancerId")]
+        public Freelancer Freelancer { get; set; }
 
-		[ForeignKey("freelancer_id")]
-		public Freelancer Freelancer { get; set; }
+        [ForeignKey("SpecializationId")]
+        public Specialization Specialization { get; set; }
 
-		public virtual ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();
-		public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
-		public virtual ICollection<File> Files { get; set; } = new List<File>();
+        [ForeignKey("LanguageFromId")]
+        public Language LanguageFrom { get; set; }
 
+        [ForeignKey("LanguageToId")]
+        public Language LanguageTo { get; set; }
 
-	}
+        [ForeignKey("CompanyId")]
+        public Company Company { get; set; }
+
+        public virtual ICollection<File> Files { get; set; } = new List<File>();
+        public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
+        public virtual ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();
+    }
 }

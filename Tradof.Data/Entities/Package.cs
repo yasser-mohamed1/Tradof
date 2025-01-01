@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Tradof.Common.Base;
 
 namespace Tradof.Data.Entities
 {
-	public class Package :AuditEntity<T>
-	{
-	
-		public string package_name {  get; set; }
-		public int durtation_months { get; set; }
-		public double price { get; set; }
-	
-	}
+    public class Package : AuditEntity<long>
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public double Price { get; set; }
+        public int DurationInMonths { get; set; }
+
+        public virtual ICollection<CompanySubscription> Subscriptions { get; set; } = new List<CompanySubscription>();
+    }
 }

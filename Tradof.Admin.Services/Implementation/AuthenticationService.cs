@@ -6,14 +6,14 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Tradof.Comman.Enums;
-using Tradof.Comman.Idenitity;
+using Tradof.Common.Enums;
 using Tradof.Data.Interfaces;
 using Tradof.Repository.Repository;
 using Tradof.ResponseHandler.Consts;
 using Tradof.ResponseHandler.Models;
 using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
 using Tradof.Admin.Services.Interfaces;
+using Tradof.Data.Entities;
 
 namespace Tradof.Admin.Services.Implementation
 {

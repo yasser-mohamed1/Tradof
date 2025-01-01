@@ -16,6 +16,6 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <ProjectReference Include="..\Tradof.Comman\Tradof.Comman.csproj" />
+	  <ProjectReference Include="..\Tradof.Comman\Tradof.Common.csproj" />
 	</ItemGroup>
 </Project>

@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tradof.Common.Base;
 
 namespace Tradof.Data.Entities
 {
-	public class TechnicalSupport: AuditEntity<long>
-	{
-		
-		public string AgentName {  get; set; }
-	
+    public class TechnicalSupport : AuditEntity<long>
+    {
+        public int AgentName { get; set; }
 
-		public virtual ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
+        [ForeignKey("Id")]
+        public ApplicationUser User { get; set; }
 
-	}
+        public virtual ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
+    }
 }

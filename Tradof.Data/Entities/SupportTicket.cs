@@ -1,25 +1,20 @@
-﻿
-
-using System.ComponentModel.DataAnnotations.Schema;
-using Tradof.Comman.Enums;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tradof.Common.Base;
+using Tradof.Common.Enums;
 
 namespace Tradof.Data.Entities
 {
-	public class SupportTicket:AuditEntity<long>
+	public class SupportTicket : AuditEntity<long>
 	{
-		
-		public string issue_details { get; set; }
-		public SupportTicketType ticket_type { get; set; }
-		public string user_id { get; set; }
-		public string supporter_id {  get; set; }
-		public DateTime created_at { get; set; }
-		public DateTime updated_at { get; set; }
+		public string IssueDetails { get; set; }
+		public string UserId { get; set; }
+		public string SupporterId {  get; set; }
+		public SupportTicketType TicketType { get; set; }
 
-		[ForeignKey("user_id")]
+		[ForeignKey("UserId")]
 		public virtual ApplicationUser User {  get; set; }
 
-		[ForeignKey("supporter_id")]
+		[ForeignKey("SupporterId")]
 		public virtual TechnicalSupport TechnicalSupport { get; set; }
-
 	}
 }

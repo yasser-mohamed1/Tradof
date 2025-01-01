@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tradof.Module.Admin", "Trad
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tradof.Settings", "Tradof.Settings", "{29F0583E-E241-43ED-BDF6-E553975C4D1E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradof.Comman", "Tradof.Comman\Tradof.Comman.csproj", "{1636C145-56B5-4011-846C-9704E4598329}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradof.Common", "Tradof.Comman\Tradof.Common.csproj", "{1636C145-56B5-4011-846C-9704E4598329}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradof.ResponseHandler", "Tradof.ResponseHandler\Tradof.ResponseHandler.csproj", "{31CE4F67-7D5B-4AF5-9FCE-292FA716ADCA}"
 EndProject

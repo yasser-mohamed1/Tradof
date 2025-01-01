@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using Tradof.Comman.Idenitity;
+using Tradof.Data.Entities;
 
 namespace Tradof.Admin.Services.Helpers
 {

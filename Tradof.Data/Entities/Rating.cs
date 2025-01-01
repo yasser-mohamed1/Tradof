@@ -1,29 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tradof.Common.Base;
 
 namespace Tradof.Data.Entities
 {
-	public class Rating:AuditEntity<long>
+	public class Rating : AuditEntity<long>
 	{
-		public string rating { get; set; }
-		public string? review { get; set; }
-		public string project_id { get; set; }
-		public string rated_by_id { get; set; }
-		public string rated_to_id { get; set; }
+		public string RatingValue { get; set; }
+		public string? Review { get; set; }
+		public string ProjectId { get; set; }
+		public string RatedById { get; set; }
+		public string RatedToId { get; set; }
 
-	
-
-		[ForeignKey("project_id")]
+		[ForeignKey("ProjectId")]
 		public Project Project { get; set; }
 
-		[ForeignKey("rated_by_id")]
+		[ForeignKey("RatedById")]
 		public ApplicationUser RaterBy { get; set; }
 
-		[ForeignKey("rated_to_id")]
+		[ForeignKey("RatedToId")]
 		public ApplicationUser RaterTo { get; set; }
 	}
 }
