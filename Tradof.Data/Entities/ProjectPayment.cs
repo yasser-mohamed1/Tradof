@@ -11,10 +11,10 @@ namespace Tradof.Data.Entities
 		public PaymentStatus PaymentStatus { get; set; }
 		public PaymentMethod PaymentMethod { get; set; }
 		public DateTime PaymenyDate { get; set; }
-		public string ProjectId { get; set; }
+		public long ProjectId { get; set; }
 
 		[ForeignKey("ProjectId")]
 		public Project Project { get; set; }
-		public virtual PaymentProcess PaymentProcess { get; set; } = new PaymentProcess();
+		public virtual PaymentProcess PaymentProcess { get; set; }
 	}
 }

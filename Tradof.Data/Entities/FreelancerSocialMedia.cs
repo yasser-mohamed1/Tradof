@@ -6,7 +6,7 @@ namespace Tradof.Data.Entities
 {
     public class FreelancerSocialMedia : AuditEntity<long>
     {
-        public string FreelancerId { get; set; }
+        public long FreelancerId { get; set; }
         public PlatformType PlatformType { get; set; }
         public string Link { get; set; }
 

@@ -5,7 +5,7 @@ namespace Tradof.Data.Entities
 {
     public class NotificationReceiver : AuditEntity<long>
     {
-        public string NotificationId { get; set; }
+        public long NotificationId { get; set; }
         public string UserId { get; set; }
         public bool IsRead { get; set; }
 

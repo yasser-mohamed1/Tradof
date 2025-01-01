@@ -6,8 +6,9 @@ namespace Tradof.Data.Entities
 	public class UserAdresses : AuditEntity<long>
 	{
 		public string Address { get; set; }
+        public string UserId { get; set; }
 
-		[ForeignKey("Id")]
+        [ForeignKey("UserId")]
 		public ApplicationUser User { get; set; }
 	}
 }

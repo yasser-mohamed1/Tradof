@@ -7,7 +7,7 @@ namespace Tradof.Data.Entities
 	{
 		public string RatingValue { get; set; }
 		public string? Review { get; set; }
-		public string ProjectId { get; set; }
+		public long ProjectId { get; set; }
 		public string RatedById { get; set; }
 		public string RatedToId { get; set; }
 

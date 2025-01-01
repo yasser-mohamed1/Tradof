@@ -6,8 +6,9 @@ namespace Tradof.Data.Entities
     public class TechnicalSupport : AuditEntity<long>
     {
         public int AgentName { get; set; }
+        public string UserId { get; set; }
 
-        [ForeignKey("Id")]
+        [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
 
         public virtual ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();

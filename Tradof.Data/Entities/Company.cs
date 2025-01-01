@@ -11,6 +11,7 @@ namespace Tradof.Data.Entities
         public CompanyUserType UserType { get; set; }
         public long CountryId { get; set; }
         public long SpecializationId { get; set; }
+        public string UserId { get; set; }
 
         [ForeignKey("CountryId")]
         public Country Country { get; set; }
@@ -18,7 +19,7 @@ namespace Tradof.Data.Entities
         [ForeignKey("SpecializationId")]
         public Specialization Specialization { get; set; }
 
-        [ForeignKey("Id")]
+        [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
 
         public virtual ICollection<CompanySubscription> Subscriptions { get; set; } = new List<CompanySubscription>();

@@ -5,8 +5,8 @@ namespace Tradof.Data.Entities
 {
     public class CompanySubscription : AuditEntity<long>
     {
-        public string CompanyId { get; set; }
-        public string PackageId { get; set; }
+        public long CompanyId { get; set; }
+        public long PackageId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string? Coupon { get; set; }

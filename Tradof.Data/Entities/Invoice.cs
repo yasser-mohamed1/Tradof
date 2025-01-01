@@ -9,8 +9,8 @@ namespace Tradof.Data.Entities
         public int InvoiceNumber { get; set; }
         public double TotalAmount { get; set; }
         public InvoiceStatus InvoiceStatus { get; set; }
-        public string ProjectId { get; set; }
-        public string ProjectPaymentId { get; set; }
+        public long ProjectId { get; set; }
+        public long ProjectPaymentId { get; set; }
 
         [ForeignKey("ProjectId")]
         public Project Project { get; set; }

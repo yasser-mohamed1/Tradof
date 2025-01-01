@@ -6,9 +6,8 @@ namespace Tradof.Data.Entities
 {
     public class Proposal : AuditEntity<long>
     {
-        public string ProposalId { get; set; } = Guid.NewGuid().ToString();
-        public string ProjectId { get; set; }
-        public string FreelancerId { get; set; }
+        public long ProjectId { get; set; }
+        public long FreelancerId { get; set; }
         public ProposalStatus ProposalStatus { get; set; }
         public string ProposalDescription { get; set; }
 

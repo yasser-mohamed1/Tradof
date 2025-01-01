@@ -8,7 +8,7 @@ namespace Tradof.Data.Entities
 	{
 		public string IssueDetails { get; set; }
 		public string UserId { get; set; }
-		public string SupporterId {  get; set; }
+		public long SupporterId {  get; set; }
 		public SupportTicketType TicketType { get; set; }
 
 		[ForeignKey("UserId")]

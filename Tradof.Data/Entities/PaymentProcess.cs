@@ -5,9 +5,9 @@ namespace Tradof.Data.Entities
 {
 	public class PaymentProcess : AuditEntity<long>
     {
-		public string PaymentId { get; set; }
-		public string FreelancerId { get; set; }
-		public string CompanyId { get; set; }
+		public long PaymentId { get; set; }
+		public long FreelancerId { get; set; }
+		public long CompanyId { get; set; }
 
 		[ForeignKey("PaymentId")]
 		public ProjectPayment Payment { get; set; }
