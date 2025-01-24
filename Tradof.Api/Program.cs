@@ -8,6 +8,7 @@ using Tradof.EntityFramework.DataBase_Context;
 using Tradof.Repository;
 using Tradof.Admin.Services;
 using Tradof.Data.Entities;
+using Tradof.Package.Services;
 
 namespace Tradof.Api
 {
@@ -105,7 +106,8 @@ namespace Tradof.Api
 
             #region Dependency Injection
             builder.Services.AddInfrastructureServices()
-                            .AddReposetoriesServices();
+                            .AddReposetoriesServices()
+                            .AddPackageServices();
             #endregion
 
             var app = builder.Build();

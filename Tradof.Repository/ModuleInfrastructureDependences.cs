@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tradof.Data.Interfaces;
 using Tradof.Repository.Repository;
 
 namespace Tradof.Repository

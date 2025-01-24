@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Tradof.Data\Tradof.Data.csproj" />
+    <ProjectReference Include="..\Tradof.Repository\Tradof.Repository.csproj" />
+  </ItemGroup>
+
 </Project>
