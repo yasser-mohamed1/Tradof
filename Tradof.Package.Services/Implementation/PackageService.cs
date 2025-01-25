@@ -5,14 +5,15 @@ using Tradof.Package.Services.DTOs;
 using Tradof.Package.Services.Extensions;
 using Tradof.Package.Services.Interfaces;
 using Tradof.Package.Services.Validation;
+using PackageEntity = Tradof.Data.Entities.Package;
 
 namespace Tradof.Package.Services.Implementation
 {
     public class PackageService : IPackageService
     {
-        private readonly IGeneralRepository<Tradof.Data.Entities.Package> _repository;
+        private readonly IGeneralRepository<PackageEntity> _repository;
 
-        public PackageService(IGeneralRepository<Tradof.Data.Entities.Package> repository)
+        public PackageService(IGeneralRepository<PackageEntity> repository)
         {
             _repository = repository;
         }
