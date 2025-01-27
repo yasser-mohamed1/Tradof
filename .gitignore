@@ -86,3 +86,4 @@ Desktop.ini
 
 # If you are using Docker or containers
 *.pid
+.env

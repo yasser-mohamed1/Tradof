@@ -12,7 +12,7 @@ using Tradof.EntityFramework.DataBase_Context;
 namespace Tradof.EntityFramework.Migrations
 {
     [DbContext(typeof(TradofDbContext))]
-    [Migration("20250101161129_Init")]
+    [Migration("20250127080752_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -254,6 +254,9 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("GroupName")
+                        .HasColumnType("int");
+
                     b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -463,7 +466,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("CountryId")
+                    b.Property<long>("CountryId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("CreatedBy")
@@ -1276,13 +1279,16 @@ namespace Tradof.EntityFramework.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
+                    b.Property<string>("EmailConfirmationToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("GroupName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsEmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -1419,9 +1425,11 @@ namespace Tradof.EntityFramework.Migrations
 
             modelBuilder.Entity("Tradof.Data.Entities.Freelancer", b =>
                 {
-                    b.HasOne("Tradof.Data.Entities.Country", null)
+                    b.HasOne("Tradof.Data.Entities.Country", "Country")
                         .WithMany("Freelancers")
-                        .HasForeignKey("CountryId");
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Tradof.Data.Entities.Specialization", "Specialization")
                         .WithMany("Freelancers")
@@ -1434,6 +1442,8 @@ namespace Tradof.EntityFramework.Migrations
                         .HasForeignKey("Tradof.Data.Entities.Freelancer", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Country");
 
                     b.Navigation("Specialization");
 

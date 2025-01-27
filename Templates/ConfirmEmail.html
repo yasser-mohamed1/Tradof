@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Your Email</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            color: #333333;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .email-header {
+            background-color: #4682B4;
+            padding: 20px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .email-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .email-content {
+            padding: 20px;
+            line-height: 1.8;
+        }
+        .email-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 14px 30px;
+            color: #ffffff;
+            background-color: #5DADE2; /* Enhanced button color */
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .email-button:hover {
+            background-color: #4682B4; /* Darker blue on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+        .email-footer {
+            background-color: #f1f1f1;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #777777;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>Confirm Your Email</h1>
+        </div>
+        <div class="email-content">
+            <p>Hello {{FirstName}},</p>
+            <p>Thank you for signing up! Please confirm your email address to activate your account.</p>
+            <a href="{{ConfirmationLink}}" class="email-button">Confirm Email</a>
+            <p>If the button above doesn’t work, copy and paste the following link into your browser:</p>
+            <p><a href="{{ConfirmationLink}}">{{ConfirmationLink}}</a></p>
+        </div>
+        <div class="email-footer">
+            <p>If you didn’t create this account, you can safely ignore this email.</p>
+            <p>&copy; {{CurrentYear}} Your Company Name. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

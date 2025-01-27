@@ -9,6 +9,7 @@ using Tradof.Repository;
 using Tradof.Admin.Services;
 using Tradof.Data.Entities;
 using Tradof.Package.Services;
+using Tradof.Auth.Services;
 
 namespace Tradof.Api
 {
@@ -24,7 +25,19 @@ namespace Tradof.Api
 
             builder.Services.AddEndpointsApiExplorer();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             builder.Services.AddSwaggerGen();
+
+            DotNetEnv.Env.Load();
 
             #region Connection String
             builder.Services.AddDbContext<TradofDbContext>(options =>
@@ -33,16 +46,9 @@ namespace Tradof.Api
             #endregion
 
             #region Identity
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-            {
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequiredUniqueChars = 0;
-                options.Password.RequiredLength = 5;
-            }).AddDefaultTokenProviders()
-              .AddEntityFrameworkStores<TradofDbContext>();
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                    .AddEntityFrameworkStores<TradofDbContext>()
+                    .AddDefaultTokenProviders();
             #endregion
 
             #region Authentication
@@ -107,7 +113,8 @@ namespace Tradof.Api
             #region Dependency Injection
             builder.Services.AddInfrastructureServices()
                             .AddReposetoriesServices()
-                            .AddPackageServices();
+                            .AddPackageServices()
+                            .AddAuthServices();
             #endregion
 
             var app = builder.Build();
@@ -117,6 +124,8 @@ namespace Tradof.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("AllowAllOrigins");
 
             app.UseHttpsRedirection();
 

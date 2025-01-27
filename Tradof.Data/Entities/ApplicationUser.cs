@@ -8,8 +8,11 @@ namespace Tradof.Data.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string ProfileImageUrl { get; set; }
-        public string GroupName { get; set; }
         public UserType UserType { get; set; }
+
+        public bool IsEmailConfirmed { get; set; }
+        public string EmailConfirmationToken { get; set; }
+
 
         public virtual ICollection<NotificationReceiver> NotificationReceivers { get; set; } = new List<NotificationReceiver>();
         public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();

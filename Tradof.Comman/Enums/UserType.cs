@@ -4,7 +4,7 @@
     {
         SuperAdmin,
         Admin,
-        ComanyAdmin,
+        CompanyAdmin,
         CompanyEmployee,
         Freelancer
     }

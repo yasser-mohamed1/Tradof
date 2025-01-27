@@ -9,6 +9,7 @@ namespace Tradof.Data.Entities
         public string UserId { get; set; }
         public int WorkExperience { get; set; }
         public Gender Gender { get; set; }
+        public long CountryId { get; set; }
         public long SpecializationId { get; set; }
 
         [ForeignKey("SpecializationId")]
@@ -16,6 +17,10 @@ namespace Tradof.Data.Entities
 
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
+
+        [ForeignKey("CountryId")]
+        public Country Country { get; set; }
+
         public virtual ICollection<FreelancerLanguagesPair> FreelancerLanguagesPairs { get; set; } = new List<FreelancerLanguagesPair>();
         public virtual ICollection<FreelancerSocialMedia> FreelancerSocialMedias { get; set; } = new List<FreelancerSocialMedia>();
         public virtual ICollection<Project> Projects { get; set; } = new List<Project>();

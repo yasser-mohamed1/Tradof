@@ -34,8 +34,9 @@ namespace Tradof.EntityFramework.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProfileImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GroupName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserType = table.Column<int>(type: "int", nullable: true),
+                    IsEmailConfirmed = table.Column<bool>(type: "bit", nullable: true),
+                    EmailConfirmationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -367,6 +368,7 @@ namespace Tradof.EntityFramework.Migrations
                     CompanyAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     JobTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserType = table.Column<int>(type: "int", nullable: false),
+                    GroupName = table.Column<int>(type: "int", nullable: false),
                     CountryId = table.Column<long>(type: "bigint", nullable: false),
                     SpecializationId = table.Column<long>(type: "bigint", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -407,8 +409,8 @@ namespace Tradof.EntityFramework.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     WorkExperience = table.Column<int>(type: "int", nullable: false),
                     Gender = table.Column<int>(type: "int", nullable: false),
+                    CountryId = table.Column<long>(type: "bigint", nullable: false),
                     SpecializationId = table.Column<long>(type: "bigint", nullable: false),
-                    CountryId = table.Column<long>(type: "bigint", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -427,7 +429,8 @@ namespace Tradof.EntityFramework.Migrations
                         name: "FK_Freelancers_Countries_CountryId",
                         column: x => x.CountryId,
                         principalTable: "Countries",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Freelancers_Specializations_SpecializationId",
                         column: x => x.SpecializationId,
