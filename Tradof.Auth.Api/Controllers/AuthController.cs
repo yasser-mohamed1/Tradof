@@ -125,7 +125,31 @@ namespace Tradof.Auth.Api.Controllers
             try
             {
                 await _authService.VerifyOtpAsync(dto);
-                return Ok("OTP verified successfully.");
+                var resetToken = await _authService.GeneratePasswordResetTokenAsync(dto.Email);
+                return Ok(new { ResetToken = resetToken });
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                await _authService.ChangePasswordWithTokenAsync(dto);
+                return Ok("Password changed successfully.");
             }
             catch (ValidationException ex)
             {

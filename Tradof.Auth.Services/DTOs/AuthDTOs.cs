@@ -118,4 +118,25 @@ namespace Tradof.Auth.Services.DTOs
         [MinLength(6, ErrorMessage = "OTP must be at least 6 characters.")]
         string Otp
     );
+
+    public record ChangePasswordDto
+    {
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
+        public string Email { get; set; }
+
+        [Required]
+        public string Token { get; set; }
+
+        [Required]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$",
+            ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.")]
+        public string NewPassword { get; set; }
+
+        [Required]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$",
+            ErrorMessage = "Confirm Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.")]
+        [Compare("NewPassword", ErrorMessage = "Passwords do not match.")]
+        public string ConfirmPassword { get; set; }
+    }
 }

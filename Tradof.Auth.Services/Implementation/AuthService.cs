@@ -222,5 +222,26 @@ namespace Tradof.Auth.Services.Implementation
 
             return result == PasswordVerificationResult.Success;
         }
+
+        public async Task ChangePasswordWithTokenAsync(ChangePasswordDto dto)
+        {
+            var user = await _userManager.FindByEmailAsync(dto.Email);
+            if (user == null) throw new ValidationException("User not found.");
+
+            var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
+            if (!result.Succeeded)
+            {
+                throw new ValidationException(string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+        }
+
+        public async Task<string> GeneratePasswordResetTokenAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) throw new ValidationException("User not found.");
+
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
     }
 }
