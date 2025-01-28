@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Tradof.Common.Base;
 
 namespace Tradof.Data.Entities
@@ -16,6 +16,6 @@ namespace Tradof.Data.Entities
         public virtual Freelancer Freelancer { get; set; }
 
         [ForeignKey("ProjectId")]
-        public virtual Project Project { get; set; }
+        public Project Project { get; set; }
     }
 }

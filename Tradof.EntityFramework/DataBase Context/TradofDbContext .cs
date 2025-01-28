@@ -4,9 +4,30 @@ using Tradof.Data.Entities;
 
 namespace Tradof.EntityFramework.DataBase_Context
 {
-    public class TradofDbContext : IdentityDbContext
+    public class TradofDbContext(DbContextOptions<TradofDbContext> options) : IdentityDbContext(options)
     {
-        public TradofDbContext(DbContextOptions<TradofDbContext> options) : base(options) { }
+        public DbSet<ApplicationUser> Users { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<CompanySubscription> CompanySubscriptions { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Tradof.Data.Entities.File> Files { get; set; }
+        public DbSet<Freelancer> Freelancers { get; set; }
+        public DbSet<FreelancerLanguagesPair> FreelancerLanguagesPairs { get; set; }
+        public DbSet<FreelancerSocialMedia> FreelancerSocialMedias { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<NotificationReceiver> NotificationReceivers { get; set; }
+        public DbSet<Package> Packages { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<Proposal> Proposals { get; set; }
+        public DbSet<ProposalAttachments> PropsalAttachments { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
+        public DbSet<SupportTicket> SupportTickets { get; set; }
+        public DbSet<TechnicalSupport> TechnicalSupports { get; set; }
+        public DbSet<UserAdresses> UserAdresses { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<Specialization> Specializations { get; set; }
+        public DbSet<Language> Languages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -197,27 +218,5 @@ namespace Tradof.EntityFramework.DataBase_Context
             base.OnModelCreating(modelBuilder);
         }
 
-        public virtual DbSet<ApplicationUser> Users { get; set; }
-        public virtual DbSet<Company> Companies { get; set; }
-        public virtual DbSet<CompanySubscription> CompanySubscriptions { get; set; }
-        public virtual DbSet<Feedback> Feedbacks { get; set; }
-        public virtual DbSet<Tradof.Data.Entities.File> Files { get; set; }
-        public virtual DbSet<Freelancer> Freelancers { get; set; }
-        public virtual DbSet<FreelancerLanguagesPair> FreelancerLanguagesPairs { get; set; }
-        public virtual DbSet<FreelancerSocialMedia> FreelancerSocialMedias { get; set; }
-        public virtual DbSet<Invoice> Invoices { get; set; }
-        public virtual DbSet<Notification> Notifications { get; set; }
-        public virtual DbSet<NotificationReceiver> NotificationReceivers { get; set; }
-        public virtual DbSet<Package> Packages { get; set; }
-        public virtual DbSet<Project> Projects { get; set; }
-        public virtual DbSet<Proposal> Proposals { get; set; }
-        public virtual DbSet<ProposalAttachments> PropsalAttachments { get; set; }
-        public virtual DbSet<Rating> Ratings { get; set; }
-        public virtual DbSet<SupportTicket> SupportTickets { get; set; }
-        public virtual DbSet<TechnicalSupport> TechnicalSupports { get; set; }
-        public virtual DbSet<UserAdresses> UserAdresses { get; set; }
-        public virtual DbSet<Country> Countries { get; set; }
-        public virtual DbSet<Specialization> Specializations { get; set; }
-        public virtual DbSet<Language> Languages { get; set; }
     }
 }
