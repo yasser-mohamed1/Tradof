@@ -44,7 +44,6 @@ namespace Tradof.Auth.Services.Extensions
             return new Freelancer
             {
                 WorkExperience = dto.WorkExperience,
-                Gender = (Gender)Enum.Parse(typeof(Gender), dto.Gender, true),
                 CountryId = dto.CountryId,
                 SpecializationId = dto.SpecializationId,
                 UserId = newUser.Id,

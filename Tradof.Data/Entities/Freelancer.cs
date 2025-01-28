@@ -8,7 +8,6 @@ namespace Tradof.Data.Entities
     {
         public string UserId { get; set; }
         public int WorkExperience { get; set; }
-        public Gender Gender { get; set; }
         public long CountryId { get; set; }
         public long SpecializationId { get; set; }
 

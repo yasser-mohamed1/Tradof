@@ -67,10 +67,6 @@ namespace Tradof.Auth.Services.DTOs
         [Range(0, ValidationConstants.MaxWorkExperience, ErrorMessage = "Work experience must be between 0 and 50 years.")]
         int WorkExperience,
 
-        [Required(ErrorMessage = "Gender is required.")]
-        [RegularExpression("^(Male|Female)$", ErrorMessage = "Gender must be either Male or Female.")]
-        string Gender,
-
         [Required(ErrorMessage = "Specialization ID is required.")]
         [Range(1, long.MaxValue, ErrorMessage = "Invalid Specialization ID.")]
         long SpecializationId,

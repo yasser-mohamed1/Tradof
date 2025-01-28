@@ -63,16 +63,8 @@ namespace Tradof.Auth.Services.Implementation
                     var newFreelancer = dto.ToFreelancerEntity(newUser);
                     await _freelancerRepository.AddAsync(newFreelancer);
 
-                    var freelancerLanguagePairs = dto.LanguagePairs.Select(lp => new FreelancerLanguagesPair
-                    {
-                        FreelancerId = newFreelancer.Id,
-                        LanguageFromId = lp.LanguageFromId,
-                        LanguageToId = lp.LanguageToId,
-                        CreationDate = DateTime.UtcNow,
-                        ModificationDate = DateTime.UtcNow,
-                        CreatedBy = "System",
-                        ModifiedBy = "System"
-                    });
+                    var freelancerLanguagePairs = dto.LanguagePairs.Select(lp => lp.ToFreelancerLanguagesPairEntity(newFreelancer));
+
                     await _freelancerLanguagesPairRepository.AddRangeAsync(freelancerLanguagePairs);
 
                     await SendConfirmationEmailAsync(newUser);
