@@ -1,7 +1,7 @@
-﻿using System.Net;
+﻿using DotNetEnv;
+using System.Net;
 using System.Net.Mail;
 using Tradof.Auth.Services.Interfaces;
-using DotNetEnv;
 
 namespace Tradof.Auth.Services.Implementation
 {

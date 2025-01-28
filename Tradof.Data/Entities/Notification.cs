@@ -10,6 +10,6 @@ namespace Tradof.Data.Entities
         public NotificationType NotificationType { get; set; }
         public DateTime ViewedAt { get; set; }
 
-        public virtual ICollection<NotificationReceiver> NotificationReceivers { get; set; } = new List<NotificationReceiver>();
+        public ICollection<NotificationReceiver> NotificationReceivers { get; set; } = new List<NotificationReceiver>();
     }
 }

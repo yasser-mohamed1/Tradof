@@ -7,7 +7,7 @@ namespace Tradof.Admin.Services.Mapper
     {
         public MappingProfile()
         {
-         
+
             CreateMap<RegisterAdminDto, ApplicationUser>()
                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
 

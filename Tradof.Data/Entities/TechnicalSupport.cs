@@ -11,6 +11,6 @@ namespace Tradof.Data.Entities
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
 
-        public virtual ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
+        public ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
     }
 }

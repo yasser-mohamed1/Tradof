@@ -7,14 +7,8 @@ namespace Tradof.Package.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PackageController : ControllerBase
+    public class PackageController(IPackageService _packageService) : ControllerBase
     {
-        private readonly IPackageService _packageService;
-
-        public PackageController(IPackageService packageService)
-        {
-            _packageService = packageService;
-        }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()

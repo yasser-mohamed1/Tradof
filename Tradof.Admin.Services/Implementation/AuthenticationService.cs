@@ -6,38 +6,21 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Tradof.Common.Enums;
-using Tradof.Data.Interfaces;
-using Tradof.Repository.Repository;
-using Tradof.ResponseHandler.Consts;
-using Tradof.ResponseHandler.Models;
 using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
 using Tradof.Admin.Services.Interfaces;
+using Tradof.Common.Enums;
 using Tradof.Data.Entities;
+using Tradof.Data.Interfaces;
+using Tradof.Repository.Repositories;
+using Tradof.ResponseHandler.Consts;
+using Tradof.ResponseHandler.Models;
 
 namespace Tradof.Admin.Services.Implementation
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AuthenticationService(UserManager<ApplicationUser> _userManager,
+        UnitOfWork unitOfWork, IMapper _mapper, IConfiguration _configuration, RoleManager<IdentityRole> _roleManager) : IAuthenticationService
     {
-        #region fields
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
-        #endregion
-
-        #region ctor
-        public AuthenticationService(UserManager<ApplicationUser> userManager,
-            UnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
-        {
-            _userManager = userManager;
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-            _mapper = mapper;
-            _configuration = configuration;
-            _roleManager = roleManager;
-        }
-        #endregion
+        private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
 
         #region AddAdmin
         public async Task<APIOperationResponse<object>> AddAdminAsync(RegisterAdminDto addAdminDto)
@@ -249,7 +232,7 @@ namespace Tradof.Admin.Services.Implementation
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user != null)
             {
-                
+
                 var isVaild = await _userManager.CheckPasswordAsync(user, request.Password);
                 if (isVaild)
                 {
@@ -262,35 +245,35 @@ namespace Tradof.Admin.Services.Implementation
 
         }
         private async Task<string> GenerateJwtTokenAsync(ApplicationUser user)
-            {
-                //Token claims
-                var claims = new List<Claim>()
+        {
+            //Token claims
+            var claims = new List<Claim>()
                     {
                         new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                         new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName! ),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     };
-                // Get user roles
-                var roles = await _userManager.GetRolesAsync(user);
-                foreach (var role in roles)
-                {
-                    claims.Add(new Claim("roles", role));
-                }
-
-                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-                var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-              
-                JwtSecurityToken token = new (
-                    issuer: _configuration["JWT:ValidIssuer"],
-                    audience: _configuration["JWT:ValidAudience"],
-                    claims: claims,
-                    expires: DateTime.Now.AddDays(10),
-                    signingCredentials: signingCredentials
-                    );
-
-                return new JwtSecurityTokenHandler().WriteToken(token);
+            // Get user roles
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim("roles", role));
             }
-            #endregion
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+            var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+
+            JwtSecurityToken token = new(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                claims: claims,
+                expires: DateTime.Now.AddDays(10),
+                signingCredentials: signingCredentials
+                );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        #endregion
     }
 }

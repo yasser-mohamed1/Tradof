@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tradof.Common.Enums
+﻿namespace Tradof.Common.Enums
 {
-	public enum GroupName
-	{
-		Adminstrator,
-		SeniorProject,
-		SeniorProjectManager,
-		FinanceManager,
-		ClientFinanceManager,
-		ProjectManager,
-		ClientManager,
-		VendorManager,
-		VendorFinanceManager
-	}
+    public enum GroupName
+    {
+        Adminstrator,
+        SeniorProject,
+        SeniorProjectManager,
+        FinanceManager,
+        ClientFinanceManager,
+        ProjectManager,
+        ClientManager,
+        VendorManager,
+        VendorFinanceManager
+    }
 }

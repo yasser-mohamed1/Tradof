@@ -1,28 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Tradof.ResponseHandler.Models;
 using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
 using Tradof.Admin.Services.Helpers;
 using Tradof.Admin.Services.Interfaces;
+using Tradof.ResponseHandler.Models;
 
 namespace Tradof.Admin.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountController : ApiControllerBase
+    public class AccountController(IAuthenticationService _authenticationService, IHelperService _helperService) : ApiControllerBase
     {
-        #region fields
-        private readonly IAuthenticationService _authenticationService;
-        private readonly IHelperService _helperService;
-        #endregion
-
-        #region ctor
-        public AccountController(IAuthenticationService authenticationService, IHelperService helperService)
-        {
-            _authenticationService = authenticationService;
-            _helperService = helperService;
-        }
-        #endregion
-
         #region AddAdmin
         [Route("AddAdmin")]
         [HttpPost]

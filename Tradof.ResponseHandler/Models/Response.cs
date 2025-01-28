@@ -1,8 +1,6 @@
-﻿using Tradof.ResponseHandler.Consts;
-using Newtonsoft.Json;
-using System.Formats.Asn1;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Tradof.ResponseHandler.Models;
+using Tradof.ResponseHandler.Consts;
 
 namespace Tradof.ResponseHandler.Models
 {
@@ -30,12 +28,12 @@ namespace Tradof.ResponseHandler.Models
         {
             return new APIOperationResponse<T>
             {
-               Code= error,
+                Code = error,
 
 
                 Message = description,
-                StatusCode =(int) errorCode,
-               
+                StatusCode = (int)errorCode,
+
             };
         }
 
@@ -54,8 +52,8 @@ namespace Tradof.ResponseHandler.Models
         private static bool IsSuccessResponse(ResponseType responseType)
         {
             return responseType == ResponseType.Success ||
-                   responseType == ResponseType.Created ||
-                   responseType == ResponseType.NoContent;
+                responseType == ResponseType.Created ||
+                responseType == ResponseType.NoContent;
         }
 
         public static APIOperationResponse<T> Success(T data, string? message = null)
@@ -98,7 +96,7 @@ namespace Tradof.ResponseHandler.Models
             return CreateResponse(ResponseType.InternalServerError, message, errors, default);
         }
     }
-  
+
 
     public class ConfigConverter<I, T> : JsonConverter
     {

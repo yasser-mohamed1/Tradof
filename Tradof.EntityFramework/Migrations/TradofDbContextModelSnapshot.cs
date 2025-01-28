@@ -284,7 +284,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.CompanySubscription", b =>
@@ -333,7 +333,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("PackageId");
 
-                    b.ToTable("CompanySubscriptions");
+                    b.ToTable("CompanySubscriptions", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Country", b =>
@@ -364,7 +364,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Countries");
+                    b.ToTable("Countries", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Feedback", b =>
@@ -406,7 +406,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Feedbacks");
+                    b.ToTable("Feedbacks", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.File", b =>
@@ -452,7 +452,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Files");
+                    b.ToTable("Files", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Freelancer", b =>
@@ -502,7 +502,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Freelancers");
+                    b.ToTable("Freelancers", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.FreelancerLanguagesPair", b =>
@@ -544,7 +544,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("LanguageToId");
 
-                    b.ToTable("FreelancerLanguagesPairs");
+                    b.ToTable("FreelancerLanguagesPairs", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.FreelancerSocialMedia", b =>
@@ -583,7 +583,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("FreelancerId");
 
-                    b.ToTable("FreelancerSocialMedias");
+                    b.ToTable("FreelancerSocialMedias", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Invoice", b =>
@@ -629,7 +629,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("ProjectPaymentId");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Language", b =>
@@ -660,7 +660,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Languages");
+                    b.ToTable("Languages", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Notification", b =>
@@ -701,7 +701,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.NotificationReceiver", b =>
@@ -742,7 +742,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("NotificationReceivers");
+                    b.ToTable("NotificationReceivers", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Package", b =>
@@ -783,7 +783,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Packages");
+                    b.ToTable("Packages", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.PaymentProcess", b =>
@@ -825,7 +825,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("PaymentId");
 
-                    b.ToTable("PaymentProcess");
+                    b.ToTable("PaymentProcess", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Project", b =>
@@ -899,7 +899,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("SpecializationId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.ProjectPayment", b =>
@@ -952,7 +952,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectPayment");
+                    b.ToTable("ProjectPayment", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Proposal", b =>
@@ -996,7 +996,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Proposals");
+                    b.ToTable("Proposals", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.ProposalAttachments", b =>
@@ -1032,7 +1032,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("ProposalId");
 
-                    b.ToTable("PropsalAttachments");
+                    b.ToTable("PropsalAttachments", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Rating", b =>
@@ -1083,7 +1083,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("RatedToId");
 
-                    b.ToTable("Ratings");
+                    b.ToTable("Ratings", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Specialization", b =>
@@ -1114,7 +1114,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Specializations");
+                    b.ToTable("Specializations", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.SupportTicket", b =>
@@ -1159,7 +1159,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SupportTickets");
+                    b.ToTable("SupportTickets", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.TechnicalSupport", b =>
@@ -1195,7 +1195,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TechnicalSupports");
+                    b.ToTable("TechnicalSupports", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.UserAdresses", b =>
@@ -1232,7 +1232,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserAdresses");
+                    b.ToTable("UserAdresses", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.WorksOn", b =>
@@ -1269,7 +1269,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("WorksOn");
+                    b.ToTable("WorksOn", (string)null);
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.ApplicationUser", b =>

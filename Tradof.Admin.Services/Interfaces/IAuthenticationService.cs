@@ -1,5 +1,5 @@
-﻿using Tradof.ResponseHandler.Models;
-using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
+﻿using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
+using Tradof.ResponseHandler.Models;
 
 namespace Tradof.Admin.Services.Interfaces
 {

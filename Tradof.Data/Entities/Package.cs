@@ -9,6 +9,6 @@ namespace Tradof.Data.Entities
         public double Price { get; set; }
         public int DurationInMonths { get; set; }
 
-        public virtual ICollection<CompanySubscription> Subscriptions { get; set; } = new List<CompanySubscription>();
+        public ICollection<CompanySubscription> Subscriptions { get; set; } = new List<CompanySubscription>();
     }
 }

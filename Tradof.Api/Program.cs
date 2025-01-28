@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using Tradof.EntityFramework.DataBase_Context;
-using Tradof.Repository;
 using Tradof.Admin.Services;
-using Tradof.Data.Entities;
-using Tradof.Package.Services;
 using Tradof.Auth.Services;
+using Tradof.Data.Entities;
+using Tradof.EntityFramework.DataBase_Context;
+using Tradof.Package.Services;
+using Tradof.Repository;
 
 namespace Tradof.Api
 {
@@ -30,8 +30,8 @@ namespace Tradof.Api
                 options.AddPolicy("AllowAllOrigins", policy =>
                 {
                     policy.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
                 });
             });
 

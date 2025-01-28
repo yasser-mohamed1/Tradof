@@ -4,19 +4,8 @@ using Tradof.Data.Entities;
 
 namespace Tradof.Admin.Services.Helpers
 {
-    public class HelperService : IHelperService
+    public class HelperService(UserManager<ApplicationUser> _userManager) : IHelperService
     {
-        #region fields
-        private readonly UserManager<ApplicationUser> _userManager;
-        #endregion
-
-        #region ctor
-        public HelperService(UserManager<ApplicationUser> userManager)
-        {
-            _userManager = userManager;
-        }
-        #endregion
-
         #region GetAdmin
         public async Task<string> GetAdminAsync(ClaimsPrincipal user)
         {

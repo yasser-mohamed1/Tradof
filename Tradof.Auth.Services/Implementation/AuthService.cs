@@ -14,47 +14,22 @@ using SystemFile = System.IO.File;
 
 namespace Tradof.Auth.Services.Implementation
 {
-    public class AuthService : IAuthService
+    public class AuthService(
+        IEmailService _emailService,
+        IUserRepository _userRepository,
+        IRoleRepository _roleRepository,
+        UserManager<ApplicationUser> _userManager,
+        RoleManager<IdentityRole> _roleManager,
+        IFreelancerRepository _freelancerRepository,
+        ICompanyRepository _companyRepository,
+        IOtpRepository _otpRepository,
+        IFreelancerLanguagesPairRepository _freelancerLanguagesPairRepository,
+        TradofDbContext _context) : IAuthService
     {
-        private readonly IEmailService _emailService;
-        private readonly IUserRepository _userRepository;
-        private readonly IRoleRepository _roleRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IFreelancerRepository _freelancerRepository;
-        private readonly ICompanyRepository _companyRepository;
-        private readonly IOtpRepository _otpRepository;
-        private readonly IFreelancerLanguagesPairRepository _freelancerLanguagesPairRepository;
-        private readonly TradofDbContext _context;
 
-        private readonly string _jwtSecret;
-        private readonly int _jwtExpiryInMinutes;
 
-        public AuthService(
-            IEmailService emailService,
-            IUserRepository userRepository,
-            IRoleRepository roleRepository,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager,
-            IFreelancerRepository freelancerRepository,
-            ICompanyRepository companyRepository,
-            IOtpRepository otpRepository,
-            IFreelancerLanguagesPairRepository freelancerLanguagesPairRepository,
-            TradofDbContext context)
-        {
-            _emailService = emailService;
-            _userRepository = userRepository;
-            _roleRepository = roleRepository;
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _freelancerRepository = freelancerRepository;
-            _companyRepository = companyRepository;
-            _otpRepository = otpRepository;
-            _freelancerLanguagesPairRepository = freelancerLanguagesPairRepository;
-            _context = context;
-            _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new Exception("JWT_SECRET is not set.");
-            _jwtExpiryInMinutes = int.Parse(Environment.GetEnvironmentVariable("JWT_EXPIRY") ?? throw new Exception("JWT_EXPIRY is not set."));
-        }
+        private readonly string _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new Exception("JWT_SECRET is not set.");
+        private readonly int _jwtExpiryInMinutes = int.Parse(Environment.GetEnvironmentVariable("JWT_EXPIRY") ?? throw new Exception("JWT_EXPIRY is not set."));
 
         public async Task RegisterCompanyAsync(RegisterCompanyDto dto)
         {
@@ -226,12 +201,12 @@ namespace Tradof.Auth.Services.Implementation
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
+                Subject = new ClaimsIdentity(
+                [
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, user.UserType.ToString())
-                }),
+                ]),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtExpiryInMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -240,7 +215,7 @@ namespace Tradof.Auth.Services.Implementation
             return tokenHandler.WriteToken(token);
         }
 
-        private string GenerateOtp()
+        private static string GenerateOtp()
         {
             using var rng = System.Security.Cryptography.RandomNumberGenerator.Create();
             var bytes = new byte[4];
@@ -248,7 +223,7 @@ namespace Tradof.Auth.Services.Implementation
             return (BitConverter.ToUInt32(bytes, 0) % 1000000).ToString("D6");
         }
 
-        public bool VerifyPassword(string password, string storedHash, ApplicationUser user)
+        public static bool VerifyPassword(string password, string storedHash, ApplicationUser user)
         {
             var passwordHasher = new PasswordHasher<ApplicationUser>();
             var result = passwordHasher.VerifyHashedPassword(user, storedHash, password);
