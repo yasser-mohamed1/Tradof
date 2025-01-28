@@ -9,14 +9,8 @@ using PackageEntity = Tradof.Data.Entities.Package;
 
 namespace Tradof.Package.Services.Implementation
 {
-    public class PackageService : IPackageService
+    public class PackageService(IGeneralRepository<PackageEntity> _repository) : IPackageService
     {
-        private readonly IGeneralRepository<PackageEntity> _repository;
-
-        public PackageService(IGeneralRepository<PackageEntity> repository)
-        {
-            _repository = repository;
-        }
 
         public async Task<IEnumerable<PackageDto>> GetAllAsync()
         {
@@ -28,8 +22,7 @@ namespace Tradof.Package.Services.Implementation
         {
             if (id <= 0) throw new ValidationException("Invalid package ID.");
             var package = await _repository.GetByIdAsync(id);
-            if (package == null) throw new NotFoundException("Package not found");
-            return package.ToDto();
+            return package == null ? throw new NotFoundException("Package not found") : package.ToDto();
         }
 
         public async Task<PackageDto> CreateAsync(CreatePackageDto dto)
@@ -54,9 +47,7 @@ namespace Tradof.Package.Services.Implementation
         {
             ValidationHelper.ValidateUpdatePackageDto(dto);
 
-            var package = await _repository.GetByIdAsync(dto.Id);
-            if (package == null) throw new NotFoundException("Package not found");
-
+            var package = await _repository.GetByIdAsync(dto.Id) ?? throw new NotFoundException("Package not found");
             package.UpdateFromDto(dto);
 
             package.ModificationDate = DateTime.UtcNow;
@@ -69,8 +60,7 @@ namespace Tradof.Package.Services.Implementation
         public async Task<bool> DeleteAsync(long id)
         {
             if (id <= 0) throw new ValidationException("Invalid package ID.");
-            var package = await _repository.GetByIdAsync(id);
-            if (package == null) throw new NotFoundException("Package not found");
+            var package = await _repository.GetByIdAsync(id) ?? throw new NotFoundException("Package not found");
             await _repository.DeleteAsync(package.Id);
             return true;
         }

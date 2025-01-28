@@ -5,14 +5,8 @@ using Tradof.EntityFramework.DataBase_Context;
 
 namespace Tradof.Auth.Services.Implementation
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(TradofDbContext _context) : IUserRepository
     {
-        private readonly TradofDbContext _context;
-
-        public UserRepository(TradofDbContext context)
-        {
-            _context = context;
-        }
 
         public async Task<ApplicationUser> GetByEmailAsync(string email)
         {

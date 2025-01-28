@@ -3,6 +3,8 @@
     public interface IUnitOfWork
     {
         Task CommitAsync();
-        IGeneralRepository<T> Repository<T>() where T : class;
+        IGeneralRepository<TEntity> Repository<TEntity>() where TEntity : class;
+        void Dispose();
+
     }
 }

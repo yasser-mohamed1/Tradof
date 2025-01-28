@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Tradof.Auth.Services.DTOs;
-using Tradof.Common.Enums;
 
 namespace Tradof.Auth.Services.Validation
 {

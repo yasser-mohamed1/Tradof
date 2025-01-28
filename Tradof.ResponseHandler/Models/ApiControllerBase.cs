@@ -9,10 +9,10 @@ namespace Tradof.ResponseHandler.Models
         {
             return StatusCode((int)errorCode, new { code = CommonErrorCodes.NULL.Code, erroMessage });
         }
-    
+
         protected ActionResult ProcessResponse<T>(APIOperationResponse<T> response)
         {
-            return response.StatusCode== (int)ResponseType.Success ? Ok(response.Data) : StatusCode((int)response.StatusCode, new { code = response.Code.Code, value = response.Code.Value, response.Message });
+            return response.StatusCode == (int)ResponseType.Success ? Ok(response.Data) : StatusCode((int)response.StatusCode, new { code = response.Code.Code, value = response.Code.Value, response.Message });
         }
     }
 }

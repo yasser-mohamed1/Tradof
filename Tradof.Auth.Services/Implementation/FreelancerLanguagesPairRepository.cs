@@ -4,14 +4,8 @@ using Tradof.EntityFramework.DataBase_Context;
 
 namespace Tradof.Auth.Services.Implementation
 {
-    public class FreelancerLanguagesPairRepository : IFreelancerLanguagesPairRepository
+    public class FreelancerLanguagesPairRepository(TradofDbContext _context) : IFreelancerLanguagesPairRepository
     {
-        private readonly TradofDbContext _context;
-
-        public FreelancerLanguagesPairRepository(TradofDbContext context)
-        {
-            _context = context;
-        }
 
         public async Task AddRangeAsync(IEnumerable<FreelancerLanguagesPair> entities)
         {

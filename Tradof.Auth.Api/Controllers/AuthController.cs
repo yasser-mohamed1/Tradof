@@ -7,14 +7,8 @@ namespace Tradof.Auth.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    public class AuthController(IAuthService _authService) : ControllerBase
     {
-        private readonly IAuthService _authService;
-
-        public AuthController(IAuthService authService)
-        {
-            _authService = authService;
-        }
 
         [HttpPost("register-company")]
         public async Task<IActionResult> RegisterCompany([FromBody] RegisterCompanyDto dto)
@@ -74,7 +68,7 @@ namespace Tradof.Auth.Api.Controllers
             {
                 var (token, userId, role) = await _authService.LoginAsync(dto);
 
-                return Ok(new { UserId = userId, Role = role, Token = token});
+                return Ok(new { UserId = userId, Role = role, Token = token });
             }
             catch (UnauthorizedAccessException ex)
             {

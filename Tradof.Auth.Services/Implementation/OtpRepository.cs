@@ -3,14 +3,9 @@ using Tradof.Auth.Services.Interfaces;
 
 namespace Tradof.Auth.Services.Implementation
 {
-    public class OtpRepository : IOtpRepository
+    public class OtpRepository(IMemoryCache cache) : IOtpRepository
     {
-        private readonly IMemoryCache _cache;
-
-        public OtpRepository(IMemoryCache cache)
-        {
-            _cache = cache;
-        }
+        private readonly IMemoryCache _cache = cache;
 
         public async Task SaveOtpAsync(string email, string otp, TimeSpan expiration)
         {

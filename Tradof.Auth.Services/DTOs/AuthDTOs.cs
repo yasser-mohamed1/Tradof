@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Tradof.Common.Enums;
 
 namespace Tradof.Auth.Services.DTOs
 {

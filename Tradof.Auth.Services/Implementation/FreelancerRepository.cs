@@ -4,14 +4,8 @@ using Tradof.EntityFramework.DataBase_Context;
 
 namespace Tradof.Auth.Services.Implementation
 {
-    public class FreelancerRepository : IFreelancerRepository
+    public class FreelancerRepository(TradofDbContext _context) : IFreelancerRepository
     {
-        private readonly TradofDbContext _context;
-
-        public FreelancerRepository(TradofDbContext context)
-        {
-            _context = context;
-        }
 
         public async Task AddAsync(Freelancer freelancer)
         {

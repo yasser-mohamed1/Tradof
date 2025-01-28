@@ -1,22 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tradof.Auth.Services.Interfaces;
 using Tradof.EntityFramework.DataBase_Context;
 
 namespace Tradof.Auth.Services.Implementation
 {
-    public class RoleRepository : IRoleRepository
+    public class RoleRepository(TradofDbContext _context) : IRoleRepository
     {
-        private readonly TradofDbContext _context;
-
-        public RoleRepository(TradofDbContext context)
-        {
-            _context = context;
-        }
 
         public async Task<string> GetUserRoleAsync(string userId)
         {

@@ -4,14 +4,8 @@ using Tradof.EntityFramework.DataBase_Context;
 
 namespace Tradof.Auth.Services.Implementation
 {
-    public class CompanyRepository : ICompanyRepository
+    public class CompanyRepository(TradofDbContext _context) : ICompanyRepository
     {
-        private readonly TradofDbContext _context;
-
-        public CompanyRepository(TradofDbContext context)
-        {
-            _context = context;
-        }
 
         public async Task AddAsync(Company company)
         {
