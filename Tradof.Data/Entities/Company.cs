@@ -22,6 +22,6 @@ namespace Tradof.Data.Entities
         public ICollection<Specialization> Specializations = [];
         public ICollection<CompanySubscription> Subscriptions { get; set; } = new List<CompanySubscription>();
         public ICollection<Project> Projects { get; set; } = new List<Project>();
-        public ICollection<Language> PreferdLanguages = [];
+        public ICollection<Language> PreferredLanguages = [];
     }
 }

@@ -42,7 +42,7 @@ namespace Tradof.Auth.Services.Implementation
                 roleName: UserType.CompanyAdmin.ToString(),
                 additionalEntityAction: async newUser =>
                 {
-                    var newCompany = dto.ToCompanyEntity(newUser);
+                    var newCompany = dto.ToCompanyEntity(newUser, _context);
                     await _companyRepository.AddAsync(newCompany);
 
                     await SendConfirmationEmailAsync(newUser);

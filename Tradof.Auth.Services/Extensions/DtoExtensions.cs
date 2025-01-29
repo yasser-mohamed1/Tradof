@@ -1,12 +1,13 @@
 ﻿using Tradof.Auth.Services.DTOs;
 using Tradof.Common.Enums;
 using Tradof.Data.Entities;
+using Tradof.EntityFramework.DataBase_Context;
 
 namespace Tradof.Auth.Services.Extensions
 {
     public static class DtoExtensions
     {
-        public static Company ToCompanyEntity(this RegisterCompanyDto dto, ApplicationUser newUser)
+        public static Company ToCompanyEntity(this RegisterCompanyDto dto, ApplicationUser newUser, TradofDbContext context)
         {
             return new Company
             {
@@ -19,7 +20,13 @@ namespace Tradof.Auth.Services.Extensions
                 CreationDate = DateTime.UtcNow,
                 ModificationDate = DateTime.UtcNow,
                 CreatedBy = "System",
-                ModifiedBy = "System"
+                ModifiedBy = "System",
+                Specializations = context.Specializations
+                .Where(s => dto.SpecializationIds.Contains(s.Id))
+                .ToList(),
+                PreferredLanguages = context.Languages
+                .Where(l => dto.PreferredLanguageIds.Contains(l.Id))
+                .ToList()
             };
         }
 
