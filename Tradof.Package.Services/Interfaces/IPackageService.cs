@@ -1,10 +1,10 @@
-﻿using Tradof.Package.Services.DTOs;
+﻿using Tradof.PackageNamespace.Services.DTOs;
 
-namespace Tradof.Package.Services.Interfaces
+namespace Tradof.PackageNamespace.Services.Interfaces
 {
     public interface IPackageService
     {
-        Task<IEnumerable<PackageDto>> GetAllAsync();
+        Task<IReadOnlyList<PackageDto>> GetAllAsync();
         Task<PackageDto> GetByIdAsync(long id);
         Task<PackageDto> CreateAsync(CreatePackageDto dto);
         Task<PackageDto> UpdateAsync(UpdatePackageDto dto);

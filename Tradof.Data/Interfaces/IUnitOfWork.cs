@@ -2,7 +2,7 @@
 {
     public interface IUnitOfWork
     {
-        Task CommitAsync();
+        Task<bool> CommitAsync();
         IGeneralRepository<TEntity> Repository<TEntity>() where TEntity : class;
         void Dispose();
 

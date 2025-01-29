@@ -1,17 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Tradof.Data.Interfaces;
-using Tradof.Package.Services.Implementation;
-using Tradof.Package.Services.Interfaces;
-using Tradof.Repository.Repository;
-using PackageEntity = Tradof.Data.Entities.Package;
+using Tradof.PackageNamespace.Services.Implementation;
+using Tradof.PackageNamespace.Services.Interfaces;
 
-namespace Tradof.Package.Services
+namespace Tradof.PackageNamespace.Services
 {
     public static class PackageModuleDependencies
     {
         public static IServiceCollection AddPackageServices(this IServiceCollection service)
         {
-            service.AddScoped<IGeneralRepository<PackageEntity>, GeneralRepository<PackageEntity>>();
             service.AddScoped<IPackageService, PackageService>();
             return service;
         }

@@ -1,7 +1,7 @@
-﻿using Tradof.Package.Services.DTOs;
+﻿using Tradof.PackageNamespace.Services.DTOs;
 using PackageEntity = Tradof.Data.Entities.Package;
 
-namespace Tradof.Package.Services.Extensions
+namespace Tradof.PackageNamespace.Services.Extensions
 {
     public static class PackageExtensions
     {

@@ -1,11 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tradof.Data.Interfaces;
-using Tradof.Repository.Repositories;
+using Tradof.Repository.Repository;
 
 namespace Tradof.Repository
 {
@@ -13,7 +8,8 @@ namespace Tradof.Repository
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection service)
         {
-            service.AddTransient<UnitOfWork>();
+            service.AddScoped(typeof(IGeneralRepository<>), typeof(GeneralRepository<>));
+            service.AddScoped<IUnitOfWork, UnitOfWork>();
             return service;
         }
     }

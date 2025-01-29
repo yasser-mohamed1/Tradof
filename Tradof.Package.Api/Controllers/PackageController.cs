@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using Tradof.Package.Services.DTOs;
-using Tradof.Package.Services.Interfaces;
+using Tradof.PackageNamespace.Services.DTOs;
+using Tradof.PackageNamespace.Services.Interfaces;
 
 namespace Tradof.Package.Api.Controllers
 {
