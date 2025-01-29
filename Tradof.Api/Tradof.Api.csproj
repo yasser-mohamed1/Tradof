@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Tradof.Admin.Services\Tradof.Admin.Services.csproj" />
     <ProjectReference Include="..\Tradof.Auth.Api\Tradof.Auth.Api.csproj" />
     <ProjectReference Include="..\Tradof.Comman\Tradof.Common.csproj" />
+    <ProjectReference Include="..\Tradof.Country.Api\Tradof.Country.Api.csproj" />
     <ProjectReference Include="..\Tradof.EntityFramework\Tradof.EntityFramework.csproj" />
     <ProjectReference Include="..\Tradof.Language.Api\Tradof.Language.Api.csproj" />
     <ProjectReference Include="..\Tradof.Package.Api\Tradof.Package.Api.csproj" />
