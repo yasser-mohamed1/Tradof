@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
@@ -24,7 +25,8 @@ namespace Tradof.Auth.Services.Implementation
         ICompanyRepository _companyRepository,
         IOtpRepository _otpRepository,
         IFreelancerLanguagesPairRepository _freelancerLanguagesPairRepository,
-        TradofDbContext _context) : IAuthService
+        TradofDbContext _context,
+        IBackgroundJobClient _backgroundJob) : IAuthService
     {
 
 
@@ -45,7 +47,7 @@ namespace Tradof.Auth.Services.Implementation
                     var newCompany = dto.ToCompanyEntity(newUser, _context);
                     await _companyRepository.AddAsync(newCompany);
 
-                    await SendConfirmationEmailAsync(newUser);
+                    _backgroundJob.Enqueue(() => SendConfirmationEmailAsync(newUser));
                 });
         }
 
@@ -67,7 +69,7 @@ namespace Tradof.Auth.Services.Implementation
 
                     await _freelancerLanguagesPairRepository.AddRangeAsync(freelancerLanguagePairs);
 
-                    await SendConfirmationEmailAsync(newUser);
+                    _backgroundJob.Enqueue(() => SendConfirmationEmailAsync(newUser));
                 });
         }
 
@@ -101,7 +103,7 @@ namespace Tradof.Auth.Services.Implementation
             }
         }
 
-        private async Task SendConfirmationEmailAsync(ApplicationUser newUser)
+        public async Task SendConfirmationEmailAsync(ApplicationUser newUser)
         {
             string templatePath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "Templates", "ConfirmEmail.html");
             string emailTemplate = await SystemFile.ReadAllTextAsync(templatePath);

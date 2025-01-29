@@ -56,7 +56,7 @@ namespace Tradof.Auth.Api.Controllers
             }
         }
 
-        [HttpPost("login")]
+        [HttpPost("log-in")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             if (!ModelState.IsValid)

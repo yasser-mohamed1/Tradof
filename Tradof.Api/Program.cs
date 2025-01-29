@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -6,12 +7,12 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Tradof.Admin.Services;
 using Tradof.Auth.Services;
+using Tradof.CountryModule.Services;
 using Tradof.Data.Entities;
 using Tradof.EntityFramework.DataBase_Context;
+using Tradof.Language.Services;
 using Tradof.Package.Services;
 using Tradof.Repository;
-using Tradof.Language.Services;
-using Tradof.CountryModule.Services;
 using Tradof.SpecializationModule.Services;
 
 namespace Tradof.Api
@@ -42,14 +43,28 @@ namespace Tradof.Api
 
             DotNetEnv.Env.Load();
 
+            //#region Connection String
+            //builder.Services.AddDbContext<TradofDbContext>(options =>
+            //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+            //    b => b.MigrationsAssembly(typeof(TradofDbContext).Assembly.FullName)));
+            //#endregion
+
             #region Connection String
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
             builder.Services.AddDbContext<TradofDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+                options.UseSqlServer(connectionString,
                 b => b.MigrationsAssembly(typeof(TradofDbContext).Assembly.FullName)));
+
+            //  Hangfire to the Connection String
+            builder.Services.AddHangfire(config =>
+                config.UseSqlServerStorage(connectionString));
+
+            builder.Services.AddHangfireServer();
             #endregion
 
             #region Identity
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<TradofDbContext>()
                     .AddDefaultTokenProviders();
             #endregion
@@ -121,6 +136,8 @@ namespace Tradof.Api
                             .AddLanguageServices()
                             .AddCountryServices()
                             .AddSpecializationServices();
+            builder.Services.AddScoped<IBackgroundJobClient, BackgroundJobClient>();
+
             #endregion
 
             var app = builder.Build();
@@ -139,7 +156,13 @@ namespace Tradof.Api
 
             app.UseAuthorization();
 
+            app.UseHangfireDashboard();
+
+            app.UseMiddleware<PerformanceMiddleware>();
+
             app.MapControllers();
+
+            app.MapGroup("api/auth").MapIdentityApi<ApplicationUser>();
 
             app.Run();
         }
