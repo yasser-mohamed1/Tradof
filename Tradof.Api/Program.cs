@@ -12,6 +12,7 @@ using Tradof.Package.Services;
 using Tradof.Repository;
 using Tradof.Language.Services;
 using Tradof.CountryModule.Services;
+using Tradof.SpecializationModule.Services;
 
 namespace Tradof.Api
 {
@@ -118,7 +119,8 @@ namespace Tradof.Api
                             .AddPackageServices()
                             .AddAuthServices()
                             .AddLanguageServices()
-                            .AddCountryServices();
+                            .AddCountryServices()
+                            .AddSpecializationServices();
             #endregion
 
             var app = builder.Build();

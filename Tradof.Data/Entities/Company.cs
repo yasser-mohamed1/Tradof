@@ -11,18 +11,17 @@ namespace Tradof.Data.Entities
         public CompanyUserType UserType { get; set; }
         public GroupName GroupName { get; set; }
         public long CountryId { get; set; }
-        public long SpecializationId { get; set; }
         public string UserId { get; set; }
 
         [ForeignKey("CountryId")]
         public Country Country { get; set; }
 
-        [ForeignKey("SpecializationId")]
-        public Specialization Specialization { get; set; }
 
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
+        public ICollection<Specialization> Specializations = [];
         public ICollection<CompanySubscription> Subscriptions { get; set; } = new List<CompanySubscription>();
         public ICollection<Project> Projects { get; set; } = new List<Project>();
+        public ICollection<Language> PreferdLanguages = [];
     }
 }

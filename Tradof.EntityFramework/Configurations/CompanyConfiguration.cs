@@ -8,8 +8,6 @@ namespace Tradof.EntityFramework.Configurations
     {
         public void Configure(EntityTypeBuilder<Company> builder)
         {
-
-
             builder.HasOne(c => c.User)
                       .WithOne()
                       .HasForeignKey<Company>(c => c.UserId);
@@ -18,9 +16,8 @@ namespace Tradof.EntityFramework.Configurations
                       .WithMany(co => co.Companies)
                       .HasForeignKey(c => c.CountryId);
 
-            builder.HasOne(c => c.Specialization)
-                      .WithMany(s => s.Companies)
-                      .HasForeignKey(c => c.SpecializationId);
+            builder.HasMany(c => c.Specializations)
+                      .WithMany(s => s.Companies);
 
             builder.HasMany(c => c.Subscriptions)
                       .WithOne(cs => cs.Company)
@@ -29,8 +26,6 @@ namespace Tradof.EntityFramework.Configurations
             builder.HasMany(c => c.Projects)
                       .WithOne(p => p.Company)
                       .HasForeignKey(p => p.CompanyId);
-
-
         }
     }
 }

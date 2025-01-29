@@ -13,7 +13,6 @@ namespace Tradof.Auth.Services.Extensions
                 CompanyAddress = dto.CompanyAddress,
                 JobTitle = dto.JobTitle,
                 CountryId = dto.CountryId,
-                SpecializationId = dto.SpecializationId,
                 GroupName = GroupName.Adminstrator,
                 UserId = newUser.Id,
                 User = newUser,
