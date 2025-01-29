@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -42,10 +43,24 @@ namespace Tradof.Api
 
             DotNetEnv.Env.Load();
 
+            //#region Connection String
+            //builder.Services.AddDbContext<TradofDbContext>(options =>
+            //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+            //    b => b.MigrationsAssembly(typeof(TradofDbContext).Assembly.FullName)));
+            //#endregion
+
             #region Connection String
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
             builder.Services.AddDbContext<TradofDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+                options.UseSqlServer(connectionString,
                 b => b.MigrationsAssembly(typeof(TradofDbContext).Assembly.FullName)));
+
+            //  Hangfire to the Connection String
+            builder.Services.AddHangfire(config =>
+                config.UseSqlServerStorage(connectionString));
+
+            builder.Services.AddHangfireServer();
             #endregion
 
             #region Identity
@@ -121,6 +136,8 @@ namespace Tradof.Api
                             .AddLanguageServices()
                             .AddCountryServices()
                             .AddSpecializationServices();
+            builder.Services.AddScoped<IBackgroundJobClient, BackgroundJobClient>();
+
             #endregion
 
             var app = builder.Build();
@@ -138,6 +155,8 @@ namespace Tradof.Api
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseHangfireDashboard();
 
             app.UseMiddleware<PerformanceMiddleware>();
 
