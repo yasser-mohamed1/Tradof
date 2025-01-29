@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tradof.EntityFramework.DataBase_Context;
 
@@ -11,9 +12,11 @@ using Tradof.EntityFramework.DataBase_Context;
 namespace Tradof.EntityFramework.Migrations
 {
     [DbContext(typeof(TradofDbContext))]
-    partial class TradofDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250129155951_editProject")]
+    partial class editProject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,21 +38,6 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasIndex("SpecializationsId");
 
                     b.ToTable("CompanySpecialization");
-                });
-
-            modelBuilder.Entity("FreelancerSpecialization", b =>
-                {
-                    b.Property<long>("FreelancersId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("SpecializationsId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("FreelancersId", "SpecializationsId");
-
-                    b.HasIndex("SpecializationsId");
-
-                    b.ToTable("FreelancerSpecialization");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -505,6 +493,9 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long>("SpecializationId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -515,6 +506,8 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CountryId");
+
+                    b.HasIndex("SpecializationId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -1349,21 +1342,6 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FreelancerSpecialization", b =>
-                {
-                    b.HasOne("Tradof.Data.Entities.Freelancer", null)
-                        .WithMany()
-                        .HasForeignKey("FreelancersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tradof.Data.Entities.Specialization", null)
-                        .WithMany()
-                        .HasForeignKey("SpecializationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1483,6 +1461,12 @@ namespace Tradof.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Tradof.Data.Entities.Specialization", "Specialization")
+                        .WithMany("Freelancers")
+                        .HasForeignKey("SpecializationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Tradof.Data.Entities.ApplicationUser", "User")
                         .WithOne()
                         .HasForeignKey("Tradof.Data.Entities.Freelancer", "UserId")
@@ -1490,6 +1474,8 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired();
 
                     b.Navigation("Country");
+
+                    b.Navigation("Specialization");
 
                     b.Navigation("User");
                 });
@@ -1839,6 +1825,8 @@ namespace Tradof.EntityFramework.Migrations
 
             modelBuilder.Entity("Tradof.Data.Entities.Specialization", b =>
                 {
+                    b.Navigation("Freelancers");
+
                     b.Navigation("Projects");
                 });
 

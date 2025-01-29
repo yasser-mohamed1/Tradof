@@ -26,6 +26,7 @@
     <ProjectReference Include="..\Tradof.EntityFramework\Tradof.EntityFramework.csproj" />
     <ProjectReference Include="..\Tradof.Language.Api\Tradof.Language.Api.csproj" />
     <ProjectReference Include="..\Tradof.Package.Api\Tradof.Package.Api.csproj" />
+    <ProjectReference Include="..\Tradof.Project.Api\Tradof.Project.Api.csproj" />
     <ProjectReference Include="..\Tradof.Repository\Tradof.Repository.csproj" />
     <ProjectReference Include="..\Tradof.Specialization.Api\Tradof.Specialization.Api.csproj" />
   </ItemGroup>

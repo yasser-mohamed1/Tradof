@@ -11,6 +11,11 @@ namespace Tradof.Data.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public ProjectStatus Status { get; set; }
+        public int Days { get; set; }
+        public double MinPrice { get; set; }
+        public double MaxPrice { get; set; }
+        public double Price { get; set; }
+
         public long FreelancerId { get; set; }
         public long CompanyId { get; set; }
         public long SpecializationId { get; set; }
