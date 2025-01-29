@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
 using Tradof.Data.Entities;
 using Tradof.Data.Interfaces;
@@ -30,24 +31,36 @@ namespace Tradof.Project.Services.Implementation
 
         public async Task<ProjectDto> CreateAsync(CreateProjectDto dto)
         {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto), "Project data cannot be null.");
+
             ValidationHelper.ValidateCreateProjectDto(dto);
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
             var specialization = await _unitOfWork.Repository<Specialization>().GetByIdAsync(dto.SpecializationId);
             var langFrom = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageFromId);
             var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
-            List<Data.Entities.File> files = [];
-            foreach (var url in dto.Urls)
-            {
-                var file = await _unitOfWork.Repository<Data.Entities.File>().FindFirstAsync(f => f.FilePath == url);
-                files.Add(file);
-            }
+
 
             var project = dto.ToEntity();
             project.Company.User = currentUser;
             project.LanguageFrom = langFrom;
             project.LanguageTo = langTo;
             project.Specialization = specialization;
-            project.Files = files;
+            foreach (var url in dto.Urls)
+            {
+                project.Files.Add(new Data.Entities.File
+                {
+                    FilePath = url,
+                    Project = project,
+                    FileName = url,
+                    FileType = FileType.Excel,
+                    ModificationDate = DateTime.Now,
+                    CreationDate = DateTime.Now,
+                    CreatedBy = currentUser.Email,
+                    FileSize = 4,
+                    ModifiedBy = currentUser.Email
+                });
+            }
 
             await _unitOfWork.Repository<ProjectEntity>().AddAsync(project);
             if (await _unitOfWork.CommitAsync())
@@ -61,16 +74,28 @@ namespace Tradof.Project.Services.Implementation
         {
             ValidationHelper.ValidateUpdateProjectDto(dto);
 
-            var package = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(dto.Id) ?? throw new NotFoundException("Package not found");
-            package.UpdateFromDto(dto);
+            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(dto.Id) ?? throw new NotFoundException("Package not found");
+            project.UpdateFromDto(dto);
+            var specialization = await _unitOfWork.Repository<Specialization>().GetByIdAsync(dto.SpecializationId);
+            var langFrom = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageFromId);
+            var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
+            List<Data.Entities.File> files = [];
+            foreach (var url in dto.Urls)
+            {
+                var file = await _unitOfWork.Repository<Data.Entities.File>().FindFirstAsync(f => f.FilePath == url);
+                files.Add(file);
+            }
+            project.LanguageFrom = langFrom;
+            project.LanguageTo = langTo;
+            project.Specialization = specialization;
+            project.Files = files;
+            project.ModificationDate = DateTime.UtcNow;
+            project.ModifiedBy = "System";
 
-            package.ModificationDate = DateTime.UtcNow;
-            package.ModifiedBy = "System";
-
-            await _unitOfWork.Repository<ProjectEntity>().UpdateAsync(package);
+            await _unitOfWork.Repository<ProjectEntity>().UpdateAsync(project);
 
             if (await _unitOfWork.CommitAsync())
-                return package.ToDto();
+                return project.ToDto();
             else
                 throw new Exception("failed to update");
         }
