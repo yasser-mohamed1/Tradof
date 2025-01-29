@@ -6,12 +6,12 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Tradof.Admin.Services;
 using Tradof.Auth.Services;
+using Tradof.CountryModule.Services;
 using Tradof.Data.Entities;
 using Tradof.EntityFramework.DataBase_Context;
+using Tradof.Language.Services;
 using Tradof.Package.Services;
 using Tradof.Repository;
-using Tradof.Language.Services;
-using Tradof.CountryModule.Services;
 using Tradof.SpecializationModule.Services;
 
 namespace Tradof.Api
@@ -49,7 +49,7 @@ namespace Tradof.Api
             #endregion
 
             #region Identity
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<TradofDbContext>()
                     .AddDefaultTokenProviders();
             #endregion
@@ -139,7 +139,11 @@ namespace Tradof.Api
 
             app.UseAuthorization();
 
+            app.UseMiddleware<PerformanceMiddleware>();
+
             app.MapControllers();
+
+            app.MapGroup("api/auth").MapIdentityApi<ApplicationUser>();
 
             app.Run();
         }
