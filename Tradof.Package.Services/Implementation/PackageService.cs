@@ -1,27 +1,28 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Tradof.Common.Exceptions;
 using Tradof.Data.Interfaces;
-using Tradof.Package.Services.DTOs;
-using Tradof.Package.Services.Extensions;
-using Tradof.Package.Services.Interfaces;
-using Tradof.Package.Services.Validation;
-using PackageEntity = Tradof.Data.Entities.Package;
+using Tradof.PackageNamespace.Services.DTOs;
+using Tradof.PackageNamespace.Services.Extensions;
+using Tradof.PackageNamespace.Services.Interfaces;
+using Tradof.PackageNamespace.Services.Validation;
+using Package = Tradof.Data.Entities.Package;
 
-namespace Tradof.Package.Services.Implementation
+namespace Tradof.PackageNamespace.Services.Implementation
 {
-    public class PackageService(IGeneralRepository<PackageEntity> _repository) : IPackageService
+    public class PackageService(IUnitOfWork _unitOfWork) : IPackageService
     {
 
-        public async Task<IEnumerable<PackageDto>> GetAllAsync()
+        public async Task<IReadOnlyList<PackageDto>> GetAllAsync()
         {
-            var packages = await _repository.GetAllAsync();
-            return packages.Select(p => p.ToDto());
+            var packages = await _unitOfWork.Repository<Package>().GetAllAsync();
+            return packages.Select(p => p.ToDto()).ToList().AsReadOnly();
         }
+
 
         public async Task<PackageDto> GetByIdAsync(long id)
         {
             if (id <= 0) throw new ValidationException("Invalid package ID.");
-            var package = await _repository.GetByIdAsync(id);
+            var package = await _unitOfWork.Repository<Package>().GetByIdAsync(id);
             return package == null ? throw new NotFoundException("Package not found") : package.ToDto();
         }
 
@@ -39,30 +40,39 @@ namespace Tradof.Package.Services.Implementation
                 CreatedBy = "System",
                 ModifiedBy = "System"
             };
-            await _repository.AddAsync(package);
-            return package.ToDto();
+            await _unitOfWork.Repository<Package>().AddAsync(package);
+            if (await _unitOfWork.CommitAsync())
+                return package.ToDto();
+            else
+                throw new Exception("failed to create");
+
         }
 
         public async Task<PackageDto> UpdateAsync(UpdatePackageDto dto)
         {
             ValidationHelper.ValidateUpdatePackageDto(dto);
 
-            var package = await _repository.GetByIdAsync(dto.Id) ?? throw new NotFoundException("Package not found");
+            var package = await _unitOfWork.Repository<Package>().GetByIdAsync(dto.Id) ?? throw new NotFoundException("Package not found");
             package.UpdateFromDto(dto);
 
             package.ModificationDate = DateTime.UtcNow;
             package.ModifiedBy = "System";
 
-            await _repository.UpdateAsync(package);
-            return package.ToDto();
+            await _unitOfWork.Repository<Package>().UpdateAsync(package);
+            if (await _unitOfWork.CommitAsync())
+                return package.ToDto();
+            else
+                throw new Exception("failed to update");
         }
 
         public async Task<bool> DeleteAsync(long id)
         {
             if (id <= 0) throw new ValidationException("Invalid package ID.");
-            var package = await _repository.GetByIdAsync(id) ?? throw new NotFoundException("Package not found");
-            await _repository.DeleteAsync(package.Id);
-            return true;
+            var package = await _unitOfWork.Repository<Package>().GetByIdAsync(id) ?? throw new NotFoundException("Package not found");
+            await _unitOfWork.Repository<Package>().DeleteAsync(package.Id);
+
+            return await _unitOfWork.CommitAsync();
+
         }
     }
 }

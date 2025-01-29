@@ -1,4 +1,4 @@
-﻿namespace Tradof.Package.Services.DTOs
+﻿namespace Tradof.PackageNamespace.Services.DTOs
 {
     public record PackageDto(
         long Id,

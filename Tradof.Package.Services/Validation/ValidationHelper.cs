@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Tradof.Package.Services.DTOs;
+using Tradof.PackageNamespace.Services.DTOs;
 
-namespace Tradof.Package.Services.Validation
+namespace Tradof.PackageNamespace.Services.Validation
 {
     public static class ValidationHelper
     {

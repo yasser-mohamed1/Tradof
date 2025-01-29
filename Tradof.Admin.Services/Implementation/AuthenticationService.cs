@@ -10,17 +10,14 @@ using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
 using Tradof.Admin.Services.Interfaces;
 using Tradof.Common.Enums;
 using Tradof.Data.Entities;
-using Tradof.Data.Interfaces;
-using Tradof.Repository.Repositories;
 using Tradof.ResponseHandler.Consts;
 using Tradof.ResponseHandler.Models;
 
 namespace Tradof.Admin.Services.Implementation
 {
     public class AuthenticationService(UserManager<ApplicationUser> _userManager,
-        UnitOfWork unitOfWork, IMapper _mapper, IConfiguration _configuration, RoleManager<IdentityRole> _roleManager) : IAuthenticationService
+        IMapper _mapper, IConfiguration _configuration, RoleManager<IdentityRole> _roleManager) : IAuthenticationService
     {
-        private readonly IUnitOfWork _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
 
         #region AddAdmin
         public async Task<APIOperationResponse<object>> AddAdminAsync(RegisterAdminDto addAdminDto)
