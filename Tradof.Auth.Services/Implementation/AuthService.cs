@@ -60,7 +60,7 @@ namespace Tradof.Auth.Services.Implementation
                 roleName: UserType.Freelancer.ToString(),
                 additionalEntityAction: async newUser =>
                 {
-                    var newFreelancer = dto.ToFreelancerEntity(newUser);
+                    var newFreelancer = dto.ToFreelancerEntity(newUser, _context);
                     await _freelancerRepository.AddAsync(newFreelancer);
 
                     var freelancerLanguagePairs = dto.LanguagePairs.Select(lp => lp.ToFreelancerLanguagesPairEntity(newFreelancer));

@@ -46,15 +46,17 @@ namespace Tradof.Auth.Services.Extensions
             };
         }
 
-        public static Freelancer ToFreelancerEntity(this RegisterFreelancerDto dto, ApplicationUser newUser)
+        public static Freelancer ToFreelancerEntity(this RegisterFreelancerDto dto, ApplicationUser newUser, TradofDbContext context)
         {
             return new Freelancer
             {
                 WorkExperience = dto.WorkExperience,
                 CountryId = dto.CountryId,
-                SpecializationId = dto.SpecializationId,
                 UserId = newUser.Id,
                 User = newUser,
+                Specializations = context.Specializations
+                .Where(s => dto.SpecializationIds.Contains(s.Id))
+                .ToList(),
                 CreationDate = DateTime.UtcNow,
                 ModificationDate = DateTime.UtcNow,
                 CreatedBy = "System",
