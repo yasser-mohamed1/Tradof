@@ -8,6 +8,7 @@ using Tradof.Project.Services.DTOs;
 using Tradof.Project.Services.Extensions;
 using Tradof.Project.Services.Interfaces;
 using Tradof.Project.Services.Validation;
+using File = Tradof.Data.Entities.File;
 using ProjectEntity = Tradof.Data.Entities.Project;
 
 namespace Tradof.Project.Services.Implementation
@@ -17,7 +18,7 @@ namespace Tradof.Project.Services.Implementation
 
         public async Task<IReadOnlyList<ProjectDto>> GetAllAsync()
         {
-            var projects = await _unitOfWork.Repository<ProjectEntity>().GetAllAsync();
+            var projects = await _unitOfWork.Repository<ProjectEntity>().GetAllAsync(includes: [p => p.Files]);
             return projects.Select(p => p.ToDto()).ToList().AsReadOnly();
         }
 
@@ -39,10 +40,10 @@ namespace Tradof.Project.Services.Implementation
             var specialization = await _unitOfWork.Repository<Specialization>().GetByIdAsync(dto.SpecializationId);
             var langFrom = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageFromId);
             var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
-
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id) ?? throw new Exception("current user not found");
 
             var project = dto.ToEntity();
-            project.Company.User = currentUser;
+            project.Company = company;
             project.LanguageFrom = langFrom;
             project.LanguageTo = langTo;
             project.Specialization = specialization;
@@ -61,7 +62,10 @@ namespace Tradof.Project.Services.Implementation
                     ModifiedBy = currentUser.Email
                 });
             }
-
+            project.CreatedBy = company.User.UserName;
+            project.CreationDate = DateTime.Now;
+            project.ModifiedBy = company.User.UserName;
+            project.ModificationDate = DateTime.Now;
             await _unitOfWork.Repository<ProjectEntity>().AddAsync(project);
             if (await _unitOfWork.CommitAsync())
                 return project.ToDto();
@@ -73,22 +77,35 @@ namespace Tradof.Project.Services.Implementation
         public async Task<ProjectDto> UpdateAsync(UpdateProjectDto dto)
         {
             ValidationHelper.ValidateUpdateProjectDto(dto);
-
-            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(dto.Id) ?? throw new NotFoundException("Package not found");
-            project.UpdateFromDto(dto);
             var specialization = await _unitOfWork.Repository<Specialization>().GetByIdAsync(dto.SpecializationId);
             var langFrom = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageFromId);
             var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
-            List<Data.Entities.File> files = [];
+            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(dto.Id) ?? throw new NotFoundException("Package not found");
+
+            await _unitOfWork.Repository<File>().DeleteWithCrateriaAsync(f => f.ProjectId == project.Id);
+            project.Files.Clear();
+            await _unitOfWork.CommitAsync();
+
+            project.UpdateFromDto(dto);
+
             foreach (var url in dto.Urls)
             {
-                var file = await _unitOfWork.Repository<Data.Entities.File>().FindFirstAsync(f => f.FilePath == url);
-                files.Add(file);
+                project.Files.Add(new Data.Entities.File
+                {
+                    FilePath = url,
+                    Project = project,
+                    FileName = url,
+                    FileType = FileType.Excel,
+                    ModificationDate = DateTime.Now,
+                    CreationDate = DateTime.Now,
+                    CreatedBy = "system",
+                    FileSize = 4,
+                    ModifiedBy = "system"
+                });
             }
             project.LanguageFrom = langFrom;
             project.LanguageTo = langTo;
             project.Specialization = specialization;
-            project.Files = files;
             project.ModificationDate = DateTime.UtcNow;
             project.ModifiedBy = "System";
 
@@ -104,8 +121,9 @@ namespace Tradof.Project.Services.Implementation
         {
             if (id <= 0) throw new ValidationException("Invalid package ID.");
             var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(id) ?? throw new NotFoundException("project not found");
-            await _unitOfWork.Repository<ProjectEntity>().DeleteAsync(project.Id);
 
+            await _unitOfWork.Repository<ProjectEntity>().DeleteAsync(project.Id);
+            await _unitOfWork.Repository<File>().DeleteWithCrateriaAsync(f => f.ProjectId == project.Id);
             return await _unitOfWork.CommitAsync();
 
         }

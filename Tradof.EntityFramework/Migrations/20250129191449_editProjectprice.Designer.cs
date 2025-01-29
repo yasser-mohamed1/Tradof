@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tradof.EntityFramework.DataBase_Context;
 
@@ -11,9 +12,11 @@ using Tradof.EntityFramework.DataBase_Context;
 namespace Tradof.EntityFramework.Migrations
 {
     [DbContext(typeof(TradofDbContext))]
-    partial class TradofDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250129191449_editProjectprice")]
+    partial class editProjectprice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -867,7 +870,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("FreelancerId")
+                    b.Property<long>("FreelancerId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("LanguageFromId")
@@ -899,7 +902,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<double?>("Price")
                         .HasColumnType("float");
 
-                    b.Property<long?>("SpecializationId")
+                    b.Property<long>("SpecializationId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("StartDate")
@@ -1591,7 +1594,8 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasOne("Tradof.Data.Entities.Freelancer", "Freelancer")
                         .WithMany("Projects")
                         .HasForeignKey("FreelancerId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Tradof.Data.Entities.Language", "LanguageFrom")
                         .WithMany("ProjectsLanguageFrom")
@@ -1612,7 +1616,8 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasOne("Tradof.Data.Entities.Specialization", "Specialization")
                         .WithMany("Projects")
                         .HasForeignKey("SpecializationId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Company");
 

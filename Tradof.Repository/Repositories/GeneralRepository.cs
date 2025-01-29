@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using Tradof.Common.Consts;
 using Tradof.Data.Interfaces;
 using Tradof.EntityFramework.DataBase_Context;
 
@@ -8,7 +9,23 @@ namespace Tradof.Repository.Repository
     public class GeneralRepository<T>(TradofDbContext _context) : IGeneralRepository<T> where T : class
     {
 
-        public async Task<IReadOnlyList<T>> GetAllAsync() => await _context.Set<T>().ToListAsync();
+        public async Task<IReadOnlyList<T>> GetAllAsync(Expression<Func<T, object>> orderBy = null, string direction = null, List<Expression<Func<T, object>>> includes = null)
+        {
+            IQueryable<T> query = _context.Set<T>().AsNoTracking();
+
+            if (orderBy != null)
+            {
+                if (direction == OrderDirection.Ascending)
+                    query = query.OrderBy(orderBy);
+                else
+                    query = query.OrderByDescending(orderBy);
+            }
+            if (includes != null)
+                foreach (var include in includes)
+                    query = query.Include(include);
+
+            return await query.ToListAsync();
+        }
 
         public async Task<T?> GetByIdAsync(long id) => await _context.Set<T>().FindAsync(id);
 
@@ -47,5 +64,16 @@ namespace Tradof.Repository.Repository
             }
 
         }
+
+        public async Task DeleteWithCrateriaAsync(Expression<Func<T, bool>> expression)
+        {
+            var entities = _context.Set<T>().Where(expression);
+            if (entities != null)
+            {
+                _context.Set<T>().RemoveRange(entities);
+            }
+
+        }
+
     }
 }
