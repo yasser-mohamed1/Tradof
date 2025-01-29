@@ -59,6 +59,7 @@ namespace Tradof.PackageNamespace.Services.Implementation
             package.ModifiedBy = "System";
 
             await _unitOfWork.Repository<Package>().UpdateAsync(package);
+
             if (await _unitOfWork.CommitAsync())
                 return package.ToDto();
             else

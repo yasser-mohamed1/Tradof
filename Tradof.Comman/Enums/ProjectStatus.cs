@@ -1,7 +1,7 @@
 ﻿namespace Tradof.Common.Enums
 {
-	public enum ProjectStatus
-	{
-
-	}
+    public enum ProjectStatus
+    {
+        Pinding
+    }
 }

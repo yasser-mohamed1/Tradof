@@ -12,6 +12,7 @@ using Tradof.Data.Entities;
 using Tradof.EntityFramework.DataBase_Context;
 using Tradof.Language.Services;
 using Tradof.PackageNamespace.Services;
+using Tradof.Project.Services;
 using Tradof.Repository;
 using Tradof.SpecializationModule.Services;
 namespace Tradof.Api
@@ -134,7 +135,8 @@ namespace Tradof.Api
                             .AddAuthServices()
                             .AddLanguageServices()
                             .AddCountryServices()
-                            .AddSpecializationServices();
+                            .AddSpecializationServices()
+                            .AddProjectServices();
             builder.Services.AddScoped<IBackgroundJobClient, BackgroundJobClient>();
 
             #endregion
@@ -146,6 +148,7 @@ namespace Tradof.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseStaticFiles();
 
             app.UseCors("AllowAllOrigins");
 
