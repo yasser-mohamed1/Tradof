@@ -11,5 +11,6 @@ namespace Tradof.Data.Entities
         public ICollection<Project> ProjectsLanguageFrom { get; set; } = new List<Project>();
         public ICollection<FreelancerLanguagesPair> LanguagePairsTo { get; set; } = new List<FreelancerLanguagesPair>();
         public ICollection<FreelancerLanguagesPair> LanguagePairsFrom { get; set; } = new List<FreelancerLanguagesPair>();
+        public ICollection<Company> Companies = [];
     }
 }

@@ -22,6 +22,21 @@ namespace Tradof.EntityFramework.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CompanyLanguage", b =>
+                {
+                    b.Property<long>("CompaniesId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("PreferredLanguagesId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("CompaniesId", "PreferredLanguagesId");
+
+                    b.HasIndex("PreferredLanguagesId");
+
+                    b.ToTable("CompanyPreferredLanguages", (string)null);
+                });
+
             modelBuilder.Entity("CompanySpecialization", b =>
                 {
                     b.Property<long>("CompaniesId")
@@ -271,6 +286,9 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("CountryId")
                         .HasColumnType("bigint");
 
@@ -310,6 +328,98 @@ namespace Tradof.EntityFramework.Migrations
                         .IsUnique();
 
                     b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("Tradof.Data.Entities.CompanyEmployee", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CountryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GroupName")
+                        .HasColumnType("int");
+
+                    b.Property<string>("JobTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("UserType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CompanyEmployees");
+                });
+
+            modelBuilder.Entity("Tradof.Data.Entities.CompanySocialMedia", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Link")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PlatformType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("CompanySocialMedia");
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.CompanySubscription", b =>
@@ -1334,6 +1444,21 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
+            modelBuilder.Entity("CompanyLanguage", b =>
+                {
+                    b.HasOne("Tradof.Data.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompaniesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tradof.Data.Entities.Language", null)
+                        .WithMany()
+                        .HasForeignKey("PreferredLanguagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CompanySpecialization", b =>
                 {
                     b.HasOne("Tradof.Data.Entities.Company", null)
@@ -1432,6 +1557,44 @@ namespace Tradof.EntityFramework.Migrations
                     b.Navigation("Country");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Tradof.Data.Entities.CompanyEmployee", b =>
+                {
+                    b.HasOne("Tradof.Data.Entities.Company", "Company")
+                        .WithMany("Employees")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Tradof.Data.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tradof.Data.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Country");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Tradof.Data.Entities.CompanySocialMedia", b =>
+                {
+                    b.HasOne("Tradof.Data.Entities.Company", "Company")
+                        .WithMany("Medias")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.CompanySubscription", b =>
@@ -1782,6 +1945,10 @@ namespace Tradof.EntityFramework.Migrations
 
             modelBuilder.Entity("Tradof.Data.Entities.Company", b =>
                 {
+                    b.Navigation("Employees");
+
+                    b.Navigation("Medias");
+
                     b.Navigation("Projects");
 
                     b.Navigation("Subscriptions");

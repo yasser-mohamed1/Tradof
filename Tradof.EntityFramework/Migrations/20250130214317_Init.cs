@@ -81,6 +81,7 @@ namespace Tradof.EntityFramework.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -329,6 +330,72 @@ namespace Tradof.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Companies",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CountryId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    JobTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserType = table.Column<int>(type: "int", nullable: false),
+                    GroupName = table.Column<int>(type: "int", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Companies", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Companies_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Companies_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Freelancers",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    WorkExperience = table.Column<int>(type: "int", nullable: false),
+                    CountryId = table.Column<long>(type: "bigint", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Freelancers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Freelancers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Freelancers_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NotificationReceivers",
                 columns: table => new
                 {
@@ -355,86 +422,6 @@ namespace Tradof.EntityFramework.Migrations
                         name: "FK_NotificationReceivers_Notifications_NotificationId",
                         column: x => x.NotificationId,
                         principalTable: "Notifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Companies",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CompanyAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    JobTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false),
-                    GroupName = table.Column<int>(type: "int", nullable: false),
-                    CountryId = table.Column<long>(type: "bigint", nullable: false),
-                    SpecializationId = table.Column<long>(type: "bigint", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Companies", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Companies_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Companies_Countries_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "Countries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Companies_Specializations_SpecializationId",
-                        column: x => x.SpecializationId,
-                        principalTable: "Specializations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Freelancers",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    WorkExperience = table.Column<int>(type: "int", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    CountryId = table.Column<long>(type: "bigint", nullable: false),
-                    SpecializationId = table.Column<long>(type: "bigint", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Freelancers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Freelancers_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Freelancers_Countries_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "Countries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Freelancers_Specializations_SpecializationId",
-                        column: x => x.SpecializationId,
-                        principalTable: "Specializations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -469,6 +456,118 @@ namespace Tradof.EntityFramework.Migrations
                         principalTable: "TechnicalSupports",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanyEmployees",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    JobTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserType = table.Column<int>(type: "int", nullable: false),
+                    GroupName = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CountryId = table.Column<long>(type: "bigint", nullable: false),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanyEmployees", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CompanyEmployees_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompanyEmployees_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CompanyEmployees_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanyPreferredLanguages",
+                columns: table => new
+                {
+                    CompaniesId = table.Column<long>(type: "bigint", nullable: false),
+                    PreferredLanguagesId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanyPreferredLanguages", x => new { x.CompaniesId, x.PreferredLanguagesId });
+                    table.ForeignKey(
+                        name: "FK_CompanyPreferredLanguages_Companies_CompaniesId",
+                        column: x => x.CompaniesId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompanyPreferredLanguages_Languages_PreferredLanguagesId",
+                        column: x => x.PreferredLanguagesId,
+                        principalTable: "Languages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanySocialMedia",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PlatformType = table.Column<int>(type: "int", nullable: false),
+                    Link = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CompanyId = table.Column<long>(type: "bigint", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanySocialMedia", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CompanySocialMedia_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanySpecialization",
+                columns: table => new
+                {
+                    CompaniesId = table.Column<long>(type: "bigint", nullable: false),
+                    SpecializationsId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanySpecialization", x => new { x.CompaniesId, x.SpecializationsId });
+                    table.ForeignKey(
+                        name: "FK_CompanySpecialization_Companies_CompaniesId",
+                        column: x => x.CompaniesId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompanySpecialization_Specializations_SpecializationsId",
+                        column: x => x.SpecializationsId,
+                        principalTable: "Specializations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -568,6 +667,30 @@ namespace Tradof.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FreelancerSpecialization",
+                columns: table => new
+                {
+                    FreelancersId = table.Column<long>(type: "bigint", nullable: false),
+                    SpecializationsId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FreelancerSpecialization", x => new { x.FreelancersId, x.SpecializationsId });
+                    table.ForeignKey(
+                        name: "FK_FreelancerSpecialization_Freelancers_FreelancersId",
+                        column: x => x.FreelancersId,
+                        principalTable: "Freelancers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FreelancerSpecialization_Specializations_SpecializationsId",
+                        column: x => x.SpecializationsId,
+                        principalTable: "Specializations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Projects",
                 columns: table => new
                 {
@@ -578,6 +701,10 @@ namespace Tradof.EntityFramework.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    Days = table.Column<int>(type: "int", nullable: false),
+                    MinPrice = table.Column<double>(type: "float", nullable: false),
+                    MaxPrice = table.Column<double>(type: "float", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: false),
                     FreelancerId = table.Column<long>(type: "bigint", nullable: false),
                     CompanyId = table.Column<long>(type: "bigint", nullable: false),
                     SpecializationId = table.Column<long>(type: "bigint", nullable: false),
@@ -919,15 +1046,40 @@ namespace Tradof.EntityFramework.Migrations
                 column: "CountryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Companies_SpecializationId",
-                table: "Companies",
-                column: "SpecializationId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Companies_UserId",
                 table: "Companies",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyEmployees_CompanyId",
+                table: "CompanyEmployees",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyEmployees_CountryId",
+                table: "CompanyEmployees",
+                column: "CountryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyEmployees_UserId",
+                table: "CompanyEmployees",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyPreferredLanguages_PreferredLanguagesId",
+                table: "CompanyPreferredLanguages",
+                column: "PreferredLanguagesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanySocialMedia_CompanyId",
+                table: "CompanySocialMedia",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanySpecialization_SpecializationsId",
+                table: "CompanySpecialization",
+                column: "SpecializationsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CompanySubscriptions_CompanyId",
@@ -970,11 +1122,6 @@ namespace Tradof.EntityFramework.Migrations
                 column: "CountryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Freelancers_SpecializationId",
-                table: "Freelancers",
-                column: "SpecializationId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Freelancers_UserId",
                 table: "Freelancers",
                 column: "UserId",
@@ -984,6 +1131,11 @@ namespace Tradof.EntityFramework.Migrations
                 name: "IX_FreelancerSocialMedias_FreelancerId",
                 table: "FreelancerSocialMedias",
                 column: "FreelancerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FreelancerSpecialization_SpecializationsId",
+                table: "FreelancerSpecialization",
+                column: "SpecializationsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoices_ProjectId",
@@ -1157,23 +1309,27 @@ namespace Tradof.EntityFramework.Migrations
                 table: "Freelancers");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Companies_Specializations_SpecializationId",
-                table: "Companies");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Freelancers_Specializations_SpecializationId",
-                table: "Freelancers");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Projects_Specializations_SpecializationId",
-                table: "Projects");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_PaymentProcess_Companies_CompanyId",
                 table: "PaymentProcess");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Projects_Companies_CompanyId",
+                table: "Projects");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Projects_Languages_LanguageFromId",
+                table: "Projects");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Projects_Languages_LanguageId",
+                table: "Projects");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Projects_Languages_LanguageToId",
+                table: "Projects");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Projects_Specializations_SpecializationId",
                 table: "Projects");
 
             migrationBuilder.DropForeignKey(
@@ -1204,6 +1360,18 @@ namespace Tradof.EntityFramework.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CompanyEmployees");
+
+            migrationBuilder.DropTable(
+                name: "CompanyPreferredLanguages");
+
+            migrationBuilder.DropTable(
+                name: "CompanySocialMedia");
+
+            migrationBuilder.DropTable(
+                name: "CompanySpecialization");
+
+            migrationBuilder.DropTable(
                 name: "CompanySubscriptions");
 
             migrationBuilder.DropTable(
@@ -1217,6 +1385,9 @@ namespace Tradof.EntityFramework.Migrations
 
             migrationBuilder.DropTable(
                 name: "FreelancerSocialMedias");
+
+            migrationBuilder.DropTable(
+                name: "FreelancerSpecialization");
 
             migrationBuilder.DropTable(
                 name: "Invoices");
@@ -1261,16 +1432,16 @@ namespace Tradof.EntityFramework.Migrations
                 name: "Countries");
 
             migrationBuilder.DropTable(
-                name: "Specializations");
-
-            migrationBuilder.DropTable(
                 name: "Companies");
 
             migrationBuilder.DropTable(
-                name: "Projects");
+                name: "Languages");
 
             migrationBuilder.DropTable(
-                name: "Languages");
+                name: "Specializations");
+
+            migrationBuilder.DropTable(
+                name: "Projects");
 
             migrationBuilder.DropTable(
                 name: "Freelancers");

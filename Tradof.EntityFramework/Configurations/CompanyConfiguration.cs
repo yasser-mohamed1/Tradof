@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 using Tradof.Data.Entities;
 
 namespace Tradof.EntityFramework.Configurations
@@ -26,6 +27,14 @@ namespace Tradof.EntityFramework.Configurations
             builder.HasMany(c => c.Projects)
                       .WithOne(p => p.Company)
                       .HasForeignKey(p => p.CompanyId);
+
+            builder.HasMany(c => c.PreferredLanguages)
+                    .WithMany(l => l.Companies)
+                    .UsingEntity(j => j.ToTable("CompanyPreferredLanguages"));
+
+            builder.HasMany(c => c.Medias)
+                   .WithOne(m => m.Company)
+                   .HasForeignKey(m => m.CompanyId);
         }
     }
 }

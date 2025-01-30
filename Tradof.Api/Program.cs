@@ -15,6 +15,8 @@ using Tradof.PackageNamespace.Services;
 using Tradof.Project.Services;
 using Tradof.Repository;
 using Tradof.SpecializationModule.Services;
+using Tradof.CompanyModule.Services;
+
 namespace Tradof.Api
 {
     public class Program
@@ -136,7 +138,8 @@ namespace Tradof.Api
                             .AddLanguageServices()
                             .AddCountryServices()
                             .AddSpecializationServices()
-                            .AddProjectServices();
+                            .AddProjectServices()
+                            .AddCompanyServices();
             builder.Services.AddScoped<IBackgroundJobClient, BackgroundJobClient>();
 
             #endregion
