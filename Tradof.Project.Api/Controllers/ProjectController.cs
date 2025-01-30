@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tradof.Data.SpecificationParams;
 using Tradof.Project.Services.DTOs;
 using Tradof.Project.Services.Interfaces;
 
@@ -11,9 +12,9 @@ namespace Tradof.Admin.Api.Controllers
     {
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] ProjectSpecParams specParams)
         {
-            return Ok(await _projectService.GetAllAsync());
+            return Ok(await _projectService.GetAllAsync(specParams));
         }
 
         [HttpGet("{id}")]

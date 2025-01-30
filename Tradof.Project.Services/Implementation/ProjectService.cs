@@ -3,10 +3,13 @@ using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
 using Tradof.Data.Entities;
 using Tradof.Data.Interfaces;
+using Tradof.Data.SpecificationParams;
+using Tradof.Data.Specifications;
 using Tradof.Project.Helpers;
 using Tradof.Project.Services.DTOs;
 using Tradof.Project.Services.Extensions;
 using Tradof.Project.Services.Interfaces;
+using Tradof.Project.Services.RequestHelpers;
 using Tradof.Project.Services.Validation;
 using File = Tradof.Data.Entities.File;
 using ProjectEntity = Tradof.Data.Entities.Project;
@@ -16,10 +19,14 @@ namespace Tradof.Project.Services.Implementation
     public class ProjectService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers) : IProjectService
     {
 
-        public async Task<IReadOnlyList<ProjectDto>> GetAllAsync()
+        public async Task<Pagination<ProjectEntity>> GetAllAsync(ProjectSpecParams specParams)
         {
-            var projects = await _unitOfWork.Repository<ProjectEntity>().GetAllAsync(includes: [p => p.Files]);
-            return projects.Select(p => p.ToDto()).ToList().AsReadOnly();
+            var specification = new ProjectFilterSortPaginationSpecification(specParams);
+            var items = await _unitOfWork.Repository<ProjectEntity>().ListAsync(specification);
+            var count = await _unitOfWork.Repository<ProjectEntity>().CountAsync(specification);
+            var pagination = new Pagination<ProjectEntity>(specParams.PageIndex, specParams.PageSize, count, items);
+
+            return pagination;
         }
 
 
