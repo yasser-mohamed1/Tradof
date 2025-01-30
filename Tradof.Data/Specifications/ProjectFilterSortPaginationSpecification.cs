@@ -10,7 +10,8 @@ namespace Tradof.Data.Specifications
             (specParams._specialization.Count == 0 || specParams._specialization.Contains((long)project.SpecializationId)) &&
             (specParams.Days == null || specParams.Days.Count == 0 || specParams.Days.Contains(project.Days)) &&
             (!specParams.LanguageFromId.HasValue || project.LanguageFromId == specParams.LanguageFromId) &&
-            (!specParams.LanguageToId.HasValue || project.LanguageToId == specParams.LanguageToId)
+            (!specParams.LanguageToId.HasValue || project.LanguageToId == specParams.LanguageToId) &&
+            (!specParams.Budget.HasValue || (specParams.Budget >= project.MinPrice && specParams.Budget <= project.MaxPrice))
         )
         {
             AddInclude(p => p.Files);
