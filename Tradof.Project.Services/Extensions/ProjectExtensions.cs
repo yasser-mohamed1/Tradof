@@ -19,7 +19,7 @@ namespace Tradof.Project.Services.Extensions
                 MinPrice = project.MinPrice,
                 NumberOfOffers = project.Proposals.Count,
                 SpecializationId = project.SpecializationId,
-                Urls = project.Files.Select(f => f.FilePath).ToList(),
+                Files = project.Files.Select(f => f.ToDto()).ToList(),
                 Price = project.Price,
                 StartDate = project.StartDate,
                 EndDate = project.EndDate,
