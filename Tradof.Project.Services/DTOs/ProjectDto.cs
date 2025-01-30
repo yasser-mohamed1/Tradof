@@ -18,7 +18,7 @@ namespace Tradof.Project.Services.DTOs
         public ProjectStatus Status { get; set; }
         public long? SpecializationId { get; set; }
         public int NumberOfOffers { get; set; }
-        public List<string>? Urls { get; set; }
+        public List<FileDto>? Files { get; set; }
 
     }
 }

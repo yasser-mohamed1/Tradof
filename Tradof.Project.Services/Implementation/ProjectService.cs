@@ -19,12 +19,13 @@ namespace Tradof.Project.Services.Implementation
     public class ProjectService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers) : IProjectService
     {
 
-        public async Task<Pagination<ProjectEntity>> GetAllAsync(ProjectSpecParams specParams)
+        public async Task<Pagination<ProjectDto>> GetAllAsync(ProjectSpecParams specParams)
         {
             var specification = new ProjectFilterSortPaginationSpecification(specParams);
             var items = await _unitOfWork.Repository<ProjectEntity>().ListAsync(specification);
             var count = await _unitOfWork.Repository<ProjectEntity>().CountAsync(specification);
-            var pagination = new Pagination<ProjectEntity>(specParams.PageIndex, specParams.PageSize, count, items);
+            var dtos = items.Select(p => p.ToDto()).ToList();
+            var pagination = new Pagination<ProjectDto>(specParams.PageIndex, specParams.PageSize, count, dtos);
 
             return pagination;
         }

@@ -14,6 +14,7 @@
         public List<long>? _specialization = [];
 
         private string? _search;
+        public double? Budget { get; set; }
 
         public string? Search
         {
