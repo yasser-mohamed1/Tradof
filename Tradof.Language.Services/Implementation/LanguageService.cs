@@ -13,7 +13,9 @@ namespace Tradof.Language.Services.Implementation
         public async Task<IEnumerable<LanguageDto>> GetAllAsync()
         {
             var languages = await _repository.GetAllAsync();
-            return languages.Select(l => l.ToDto());
+            return languages
+                .Where(l => l != null && !string.IsNullOrWhiteSpace(l.Name) && !string.IsNullOrWhiteSpace(l.Code))
+                .Select(l => l.ToDto());
         }
 
         public async Task<LanguageDto> GetByIdAsync(long id)

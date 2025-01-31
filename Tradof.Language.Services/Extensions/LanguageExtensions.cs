@@ -9,8 +9,8 @@ namespace Tradof.Language.Services.Extensions
         {
             return new LanguageDto(
                 language.Id,
-                language.Name,
-                language.Code
+                language.Name ?? "N/A",
+                language.Code ?? "N/A"
                 //language.CreationDate,
                 //language.ModificationDate,
                 //language.CreatedBy,
