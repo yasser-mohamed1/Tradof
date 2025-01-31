@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Tradof.Data.Interfaces;
+using Tradof.EntityFramework.Helpers;
 using Tradof.Repository.Repository;
 
 namespace Tradof.Repository
@@ -10,6 +11,8 @@ namespace Tradof.Repository
         {
             service.AddScoped(typeof(IGeneralRepository<>), typeof(GeneralRepository<>));
             service.AddScoped<IUnitOfWork, UnitOfWork>();
+            service.AddScoped<IUserHelpers, UserHelpers>();
+
             return service;
         }
     }

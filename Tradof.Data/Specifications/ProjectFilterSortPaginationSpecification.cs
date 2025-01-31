@@ -1,4 +1,5 @@
-﻿using Tradof.Data.Entities;
+﻿using Tradof.Common.Enums;
+using Tradof.Data.Entities;
 using Tradof.Data.SpecificationParams;
 
 namespace Tradof.Data.Specifications
@@ -11,7 +12,8 @@ namespace Tradof.Data.Specifications
             (specParams.Days == null || specParams.Days.Count == 0 || specParams.Days.Contains(project.Days)) &&
             (!specParams.LanguageFromId.HasValue || project.LanguageFromId == specParams.LanguageFromId) &&
             (!specParams.LanguageToId.HasValue || project.LanguageToId == specParams.LanguageToId) &&
-            (!specParams.Budget.HasValue || (specParams.Budget >= project.MinPrice && specParams.Budget <= project.MaxPrice))
+            (!specParams.Budget.HasValue || (specParams.Budget >= project.MinPrice && specParams.Budget <= project.MaxPrice)) &&
+            (specParams.IsAvailable ? project.Status == ProjectStatus.Available : project.Status != null)
         )
         {
             AddInclude(p => p.Files);

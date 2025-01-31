@@ -16,7 +16,6 @@ namespace Tradof.Admin.Api.Controllers
         {
             return Ok(await _projectService.GetAllAsync(specParams));
         }
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(long id)
         {

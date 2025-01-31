@@ -12,16 +12,13 @@ namespace Tradof.Data.Entities
         public GroupName GroupName { get; set; }
         public long CountryId { get; set; }
         public string UserId { get; set; }
-
         [ForeignKey("CountryId")]
         public Country Country { get; set; }
-
-
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
         public ICollection<Specialization> Specializations = [];
-        public ICollection<CompanySubscription> Subscriptions { get; set; } = new List<CompanySubscription>();
-        public ICollection<Project> Projects { get; set; } = new List<Project>();
-        public ICollection<Language> PreferdLanguages = [];
+        public ICollection<CompanySubscription> Subscriptions { get; set; } = [];
+        public ICollection<Project> Projects { get; set; } = [];
+        public ICollection<Language> PreferdLanguages { get; set; } = [];
     }
 }

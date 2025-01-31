@@ -7,9 +7,9 @@ namespace Tradof.Data.Entities
         public string Name { get; set; }
         public string Code { get; set; }
 
-        public ICollection<Project> ProjectsLanguageTo { get; set; } = new List<Project>();
-        public ICollection<Project> ProjectsLanguageFrom { get; set; } = new List<Project>();
-        public ICollection<FreelancerLanguagesPair> LanguagePairsTo { get; set; } = new List<FreelancerLanguagesPair>();
-        public ICollection<FreelancerLanguagesPair> LanguagePairsFrom { get; set; } = new List<FreelancerLanguagesPair>();
+        public ICollection<Project> ProjectsLanguageTo { get; set; } = [];
+        public ICollection<Project> ProjectsLanguageFrom { get; set; } = [];
+        public ICollection<FreelancerLanguagesPair> LanguagePairsTo { get; set; } = [];
+        public ICollection<FreelancerLanguagesPair> LanguagePairsFrom { get; set; } = [];
     }
 }
