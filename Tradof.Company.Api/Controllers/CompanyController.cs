@@ -17,6 +17,15 @@ namespace Tradof.Company.Api.Controllers
             return Ok(company);
         }
 
+        [HttpGet("{id}/employees")]
+        public async Task<IActionResult> GetCompanyEmployees(string id)
+        {
+            var employees = await _companyService.GetCompanyEmployeesAsync(id);
+            if (employees == null || !employees.Any()) return NotFound("No employees found for this company.");
+
+            return Ok(employees);
+        }
+
         [HttpPut("ChangePassword")]
         public async Task<IActionResult> ChangePassword(ChangeCompanyPasswordDto dto)
         {

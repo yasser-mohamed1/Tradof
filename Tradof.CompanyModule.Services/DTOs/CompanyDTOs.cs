@@ -1,20 +1,39 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Tradof.Common.Enums;
-using Tradof.Data.Entities;
 
 namespace Tradof.CompanyModule.Services.DTOs
 {
     public record CompanyDto(
-        long Id,
+        string Id,
         string CompanyAddress,
-        string UserId,
+        string CompanyName,
         long CountryId,
-        List<string> Specializations,
-        List<string> PreferredLanguages,
+        List<SpecializationDto> Specializations,
+        List<LanguageDto> PreferredLanguages,
         List<SocialMediaDto> SocialMedia,
         double NetPrice,
         DateTime SubscriptionStartDate,
         DateTime SubscriptionEndDate
+    );
+
+    public record EmployeeDto(
+        string Id,
+        string FullName,
+        string JobTitle,
+        string Email,
+        string PhoneNumber,
+        string GroupName,
+        string Country
+    );
+
+    public record SpecializationDto(
+        long Id,
+        string Name
+    );
+
+    public record LanguageDto(
+        long Id,
+        string Name,
+        string Code
     );
 
     public record CreateCompanyEmployeeDto(
@@ -24,7 +43,10 @@ namespace Tradof.CompanyModule.Services.DTOs
         [Required, StringLength(50)] string LastName,
         [Required, Phone] string PhoneNumber,
         [Required, EmailAddress] string Email,
-        [Required, MinLength(6)] string Password,
+        [Required, MinLength(6)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$",
+            ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.")]
+        string Password,
         [Required] string GroupName,
         [Required] string CompanyId
     );
@@ -32,6 +54,7 @@ namespace Tradof.CompanyModule.Services.DTOs
     public record UpdateCompanyDto(
         [Required] string Id,
         [Required, StringLength(100)] string CompanyAddress,
+        [Required, StringLength(100)] string CompanyName,
         [Range(1, long.MaxValue)] long CountryId,
         [Required, StringLength(50)] string FirstName,
         [Required, StringLength(50)] string LastName,

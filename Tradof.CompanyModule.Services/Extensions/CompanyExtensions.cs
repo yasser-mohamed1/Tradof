@@ -1,7 +1,4 @@
-﻿using System.Drawing;
-using System.Security.Cryptography;
-using System.Text;
-using Tradof.Common.Enums;
+﻿using Tradof.Common.Enums;
 using Tradof.CompanyModule.Services.DTOs;
 using Tradof.Data.Entities;
 
@@ -11,12 +8,12 @@ namespace Tradof.CompanyModule.Services.Extensions
     {
         public static CompanyDto ToDto(this Company company) =>
             new(
-                company.Id,
-                company.CompanyAddress,
                 company.UserId,
+                company.CompanyAddress,
+                company.CompanyName ?? "Unnamed",
                 company.CountryId,
-                company.Specializations.Select(s => s.Name).ToList(),
-                company.PreferredLanguages.Select(l => l.Name).ToList(),
+                company.Specializations.Select(s => new SpecializationDto(s.Id, s.Name)).ToList(),
+                company.PreferredLanguages.Select(l => new LanguageDto(l.Id, l.Name, l.Code)).ToList(),
                 company.Medias.Select(m => new SocialMediaDto(m.PlatformType.ToString(), m.Link)).ToList(),
                 company.Subscriptions.FirstOrDefault()?.NetPrice ?? 0,
                 company.Subscriptions.FirstOrDefault()?.StartDate ?? DateTime.MinValue,
@@ -68,6 +65,7 @@ namespace Tradof.CompanyModule.Services.Extensions
         {
             company.CompanyAddress = dto.CompanyAddress;
             company.CountryId = dto.CountryId;
+            company.CompanyName = dto.CompanyName;
 
             if (company.User != null)
             {

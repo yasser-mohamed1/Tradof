@@ -75,6 +75,28 @@ namespace Tradof.CompanyModule.Services.Implementation
             });
         }
 
+        public async Task<IEnumerable<EmployeeDto>> GetCompanyEmployeesAsync(string companyId)
+        {
+            var company = await _context.Companies
+               .Include(c => c.Employees)
+                   .ThenInclude(e => e.Country)
+               .Include(c => c.Employees)
+                   .ThenInclude(e => e.User)
+               .FirstOrDefaultAsync(c => c.UserId == companyId);
+
+            if (company == null) return Enumerable.Empty<EmployeeDto>();
+
+            return company.Employees.Select(e => new EmployeeDto(
+                e.UserId,
+                $"{e.User.FirstName} {e.User.LastName}",
+                e.JobTitle,
+                e.User.Email ?? "N/A",
+                e.User.PhoneNumber ?? "N/A",
+                e.GroupName.ToString(),
+                e.Country?.Name ?? "N/A"
+            )).ToList();
+        }
+
         private async Task RegisterUserAsync(ApplicationUser newUser, string password, string email, string roleName, Func<ApplicationUser, Task> additionalEntityAction)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
