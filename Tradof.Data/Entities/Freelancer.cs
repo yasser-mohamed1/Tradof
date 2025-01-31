@@ -8,10 +8,6 @@ namespace Tradof.Data.Entities
         public string UserId { get; set; }
         public int WorkExperience { get; set; }
         public long CountryId { get; set; }
-        public long SpecializationId { get; set; }
-
-        [ForeignKey("SpecializationId")]
-        public Specialization Specialization { get; set; }
 
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }

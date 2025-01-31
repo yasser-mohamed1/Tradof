@@ -43,3 +43,4 @@ if (app.Environment.IsDevelopment())
 app.UseCustomMiddlewares();
 
 app.Run();
+
