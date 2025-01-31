@@ -2,8 +2,6 @@
 {
     public enum ProjectStatus
     {
-        Available,
-        Pinding,
-        Finished
+        Pinding
     }
 }

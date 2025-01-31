@@ -35,17 +35,13 @@ namespace Tradof.Auth.Services.DTOs
         [Range(1, long.MaxValue, ErrorMessage = "Invalid Country ID.")]
         long CountryId,
 
+        [Required(ErrorMessage = "Specialization ID is required.")]
+        [Range(1, long.MaxValue, ErrorMessage = "Invalid Specialization ID.")]
+        long SpecializationId,
+
         [Required(ErrorMessage = "Phone number is required.")]
         [Phone(ErrorMessage = "Invalid phone number format.")]
         string PhoneNumber,
-
-        [Required(ErrorMessage = "Specialization IDs are required.")]
-        [MinLength(1, ErrorMessage = "At least one Specialization ID must be provided.")]
-        List<long> SpecializationIds,
-
-        [Required(ErrorMessage = "Preferred language IDs are required.")]
-        [MinLength(1, ErrorMessage = "At least one Preferred Language ID must be provided.")]
-        List<long> PreferredLanguageIds,
 
         string? ProfileImageUrl = null
     );
@@ -71,6 +67,10 @@ namespace Tradof.Auth.Services.DTOs
         [Range(0, ValidationConstants.MaxWorkExperience, ErrorMessage = "Work experience must be between 0 and 50 years.")]
         int WorkExperience,
 
+        [Required(ErrorMessage = "Specialization ID is required.")]
+        [Range(1, long.MaxValue, ErrorMessage = "Invalid Specialization ID.")]
+        long SpecializationId,
+
         [Required(ErrorMessage = "Country ID is required.")]
         [Range(1, long.MaxValue, ErrorMessage = "Invalid Country ID.")]
         long CountryId,
@@ -78,10 +78,6 @@ namespace Tradof.Auth.Services.DTOs
         [Required(ErrorMessage = "Phone number is required.")]
         [Phone(ErrorMessage = "Invalid phone number format.")]
         string PhoneNumber,
-
-        [Required(ErrorMessage = "Specialization IDs are required.")]
-        [MinLength(1, ErrorMessage = "At least one Specialization ID must be provided.")]
-        List<long> SpecializationIds,
 
         [Required(ErrorMessage = "Language pairs are required.")]
         IEnumerable<LanguagePairDto> LanguagePairs,

@@ -13,7 +13,7 @@ namespace Tradof.Data.Entities
         public int ProjecDeliveryTime { get; set; }
         public double OfferPrice { get; set; }
         public DateTime TimePosted { get; set; } = DateTime.UtcNow;
-        [ForeignKey("ProjectId")]
+        [ForeignKey(nameof(ProjectId))]
         public Project Project { get; set; }
         [ForeignKey("FreelancerId")]
         public Freelancer Freelancer { get; set; }

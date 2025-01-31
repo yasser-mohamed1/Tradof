@@ -16,7 +16,6 @@
         private string? _search;
         public double? Budget { get; set; }
 
-        public bool IsAvailable { get; set; } = false;
         public string? Search
         {
             get => _search ?? "";

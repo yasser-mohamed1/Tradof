@@ -4,7 +4,6 @@
 	{
 		Facebook,
 		LinkedIn,
-		Gmail,
 		GitHub
 	}
 }

@@ -12,8 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Implementation\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="RequestHelpers\" />
     <Folder Include="Validation\" />
   </ItemGroup>

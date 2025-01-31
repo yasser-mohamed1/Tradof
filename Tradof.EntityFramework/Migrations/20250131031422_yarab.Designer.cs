@@ -12,8 +12,8 @@ using Tradof.EntityFramework.DataBase_Context;
 namespace Tradof.EntityFramework.Migrations
 {
     [DbContext(typeof(TradofDbContext))]
-    [Migration("20250129191449_editProjectprice")]
-    partial class editProjectprice
+    [Migration("20250131031422_yarab")]
+    partial class yarab
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -870,7 +870,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("FreelancerId")
+                    b.Property<long?>("FreelancerId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("LanguageFromId")
@@ -902,7 +902,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<double?>("Price")
                         .HasColumnType("float");
 
-                    b.Property<long>("SpecializationId")
+                    b.Property<long?>("SpecializationId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("StartDate")
@@ -1006,6 +1006,12 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("OfferPrice")
+                        .HasColumnType("float");
+
+                    b.Property<int>("ProjecDeliveryTime")
+                        .HasColumnType("int");
+
                     b.Property<long>("ProjectId")
                         .HasColumnType("bigint");
 
@@ -1015,6 +1021,9 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.Property<int>("ProposalStatus")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("TimePosted")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -1594,8 +1603,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasOne("Tradof.Data.Entities.Freelancer", "Freelancer")
                         .WithMany("Projects")
                         .HasForeignKey("FreelancerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tradof.Data.Entities.Language", "LanguageFrom")
                         .WithMany("ProjectsLanguageFrom")
@@ -1616,8 +1624,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasOne("Tradof.Data.Entities.Specialization", "Specialization")
                         .WithMany("Projects")
                         .HasForeignKey("SpecializationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Company");
 
@@ -1671,7 +1678,7 @@ namespace Tradof.EntityFramework.Migrations
             modelBuilder.Entity("Tradof.Data.Entities.ProposalAttachments", b =>
                 {
                     b.HasOne("Tradof.Data.Entities.Proposal", "Proposal")
-                        .WithMany()
+                        .WithMany("ProposalAttachments")
                         .HasForeignKey("ProposalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1821,6 +1828,11 @@ namespace Tradof.EntityFramework.Migrations
                     b.Navigation("Proposals");
 
                     b.Navigation("Ratings");
+                });
+
+            modelBuilder.Entity("Tradof.Data.Entities.Proposal", b =>
+                {
+                    b.Navigation("ProposalAttachments");
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Specialization", b =>

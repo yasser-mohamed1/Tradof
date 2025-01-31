@@ -13,8 +13,9 @@ namespace Tradof.EntityFramework.Configurations
                       .WithOne()
                       .HasForeignKey<Freelancer>(f => f.UserId);
 
-            builder.HasMany(f => f.Specializations)
-                  .WithMany(s => s.Freelancers);
+            builder.HasOne(f => f.Specialization)
+                  .WithMany(s => s.Freelancers)
+                  .HasForeignKey(f => f.SpecializationId);
 
             builder.HasMany(f => f.Projects)
                   .WithOne(p => p.Freelancer)

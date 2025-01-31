@@ -12,7 +12,6 @@ namespace Tradof.Proposal.Services.Extensions
                 Id = proposal.Id,
                 OfferPrice = proposal.OfferPrice,
                 ProjecDeliveryTime = proposal.ProjecDeliveryTime,
-                ProjecPrice = (double)proposal.Project.Price,
                 Projecttitle = proposal.Project.Name,
                 ProposalStatus = proposal.ProposalStatus,
                 TimePosted = proposal.TimePosted,
@@ -34,16 +33,15 @@ namespace Tradof.Proposal.Services.Extensions
                 OfferPrice = proposalDto.OfferPrice,
             };
         }
-        public static Data.Entities.Proposal ToEntity(this UpdateProposalDto proposalDto)
+        public static void UpdateFromDto(this Data.Entities.Proposal proposal, UpdateProposalDto proposalDto)
         {
-            return new Data.Entities.Proposal
-            {
-                ProjectId = proposalDto.ProjectId,
-                ProposalDescription = proposalDto.ProposalDescription,
-                ProposalStatus = ProposalStatus.Pinding,
-                ProjecDeliveryTime = proposalDto.ProjecDeliveryTime,
-                OfferPrice = proposalDto.OfferPrice,
-            };
+
+            proposal.ProjectId = proposalDto.ProjectId;
+            proposal.ProposalDescription = proposalDto.ProposalDescription;
+            proposal.ProposalStatus = ProposalStatus.Pinding;
+            proposal.ProjecDeliveryTime = proposalDto.ProjecDeliveryTime;
+            proposal.OfferPrice = proposalDto.OfferPrice;
+
         }
     }
 }

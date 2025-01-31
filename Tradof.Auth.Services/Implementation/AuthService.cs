@@ -44,7 +44,7 @@ namespace Tradof.Auth.Services.Implementation
                 roleName: UserType.CompanyAdmin.ToString(),
                 additionalEntityAction: async newUser =>
                 {
-                    var newCompany = dto.ToCompanyEntity(newUser, _context);
+                    var newCompany = dto.ToCompanyEntity(newUser);
                     await _companyRepository.AddAsync(newCompany);
 
                     _backgroundJob.Enqueue(() => SendConfirmationEmailAsync(newUser));
@@ -62,7 +62,7 @@ namespace Tradof.Auth.Services.Implementation
                 roleName: UserType.Freelancer.ToString(),
                 additionalEntityAction: async newUser =>
                 {
-                    var newFreelancer = dto.ToFreelancerEntity(newUser, _context);
+                    var newFreelancer = dto.ToFreelancerEntity(newUser);
                     await _freelancerRepository.AddAsync(newFreelancer);
 
                     var freelancerLanguagePairs = dto.LanguagePairs.Select(lp => lp.ToFreelancerLanguagesPairEntity(newFreelancer));

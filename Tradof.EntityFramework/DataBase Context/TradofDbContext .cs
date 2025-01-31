@@ -9,7 +9,6 @@ namespace Tradof.EntityFramework.DataBase_Context
     {
         public DbSet<ApplicationUser> Users { get; set; }
         public DbSet<Company> Companies { get; set; }
-        public DbSet<CompanyEmployee> CompanyEmployees { get; set; }
         public DbSet<CompanySubscription> CompanySubscriptions { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Tradof.Data.Entities.File> Files { get; set; }
@@ -75,15 +74,7 @@ namespace Tradof.EntityFramework.DataBase_Context
 
             #region ProjectPayment
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProjectPaymentConfiguration).Assembly);
-            #endregion
-
-            #region CompanyEmployee
-            modelBuilder.Entity<CompanyEmployee>()
-            .HasOne(ce => ce.Company)
-            .WithMany(c => c.Employees)
-            .HasForeignKey(ce => ce.CompanyId)
-            .OnDelete(DeleteBehavior.NoAction);
-            #endregion
+            #endregion    
 
             base.OnModelCreating(modelBuilder);
         }
