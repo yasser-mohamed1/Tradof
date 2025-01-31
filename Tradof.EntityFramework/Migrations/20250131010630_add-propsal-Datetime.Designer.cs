@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tradof.EntityFramework.DataBase_Context;
 
@@ -11,9 +12,11 @@ using Tradof.EntityFramework.DataBase_Context;
 namespace Tradof.EntityFramework.Migrations
 {
     [DbContext(typeof(TradofDbContext))]
-    partial class TradofDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250131010630_add-propsal-Datetime")]
+    partial class addpropsalDatetime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace Tradof.EntityFramework.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CompanyLanguage", b =>
-                {
-                    b.Property<long>("CompaniesId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("PreferredLanguagesId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("CompaniesId", "PreferredLanguagesId");
-
-                    b.HasIndex("PreferredLanguagesId");
-
-                    b.ToTable("CompanyPreferredLanguages", (string)null);
-                });
 
             modelBuilder.Entity("CompanySpecialization", b =>
                 {
@@ -50,21 +38,6 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasIndex("SpecializationsId");
 
                     b.ToTable("CompanySpecialization");
-                });
-
-            modelBuilder.Entity("FreelancerSpecialization", b =>
-                {
-                    b.Property<long>("FreelancersId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("SpecializationsId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("FreelancersId", "SpecializationsId");
-
-                    b.HasIndex("SpecializationsId");
-
-                    b.ToTable("FreelancerSpecialization");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -286,9 +259,6 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CompanyName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<long>("CountryId")
                         .HasColumnType("bigint");
 
@@ -328,98 +298,6 @@ namespace Tradof.EntityFramework.Migrations
                         .IsUnique();
 
                     b.ToTable("Companies");
-                });
-
-            modelBuilder.Entity("Tradof.Data.Entities.CompanyEmployee", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CompanyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("CountryId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("GroupName")
-                        .HasColumnType("int");
-
-                    b.Property<string>("JobTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ModifiedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("UserType")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("CountryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CompanyEmployees");
-                });
-
-            modelBuilder.Entity("Tradof.Data.Entities.CompanySocialMedia", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CompanyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Link")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ModifiedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PlatformType")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("CompanySocialMedia");
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.CompanySubscription", b =>
@@ -615,6 +493,9 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long>("SpecializationId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -625,6 +506,8 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CountryId");
+
+                    b.HasIndex("SpecializationId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -771,9 +654,6 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("CompanyId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -793,8 +673,6 @@ namespace Tradof.EntityFramework.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
 
                     b.ToTable("Languages");
                 });
@@ -1128,9 +1006,6 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("OfferPrice")
-                        .HasColumnType("float");
-
                     b.Property<int>("ProjecDeliveryTime")
                         .HasColumnType("int");
 
@@ -1458,41 +1333,11 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
-            modelBuilder.Entity("CompanyLanguage", b =>
-                {
-                    b.HasOne("Tradof.Data.Entities.Company", null)
-                        .WithMany()
-                        .HasForeignKey("CompaniesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tradof.Data.Entities.Language", null)
-                        .WithMany()
-                        .HasForeignKey("PreferredLanguagesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("CompanySpecialization", b =>
                 {
                     b.HasOne("Tradof.Data.Entities.Company", null)
                         .WithMany()
                         .HasForeignKey("CompaniesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tradof.Data.Entities.Specialization", null)
-                        .WithMany()
-                        .HasForeignKey("SpecializationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("FreelancerSpecialization", b =>
-                {
-                    b.HasOne("Tradof.Data.Entities.Freelancer", null)
-                        .WithMany()
-                        .HasForeignKey("FreelancersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1573,44 +1418,6 @@ namespace Tradof.EntityFramework.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Tradof.Data.Entities.CompanyEmployee", b =>
-                {
-                    b.HasOne("Tradof.Data.Entities.Company", "Company")
-                        .WithMany("Employees")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Tradof.Data.Entities.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Tradof.Data.Entities.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-
-                    b.Navigation("Country");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Tradof.Data.Entities.CompanySocialMedia", b =>
-                {
-                    b.HasOne("Tradof.Data.Entities.Company", "Company")
-                        .WithMany("Medias")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-                });
-
             modelBuilder.Entity("Tradof.Data.Entities.CompanySubscription", b =>
                 {
                     b.HasOne("Tradof.Data.Entities.Company", "Company")
@@ -1660,6 +1467,12 @@ namespace Tradof.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Tradof.Data.Entities.Specialization", "Specialization")
+                        .WithMany("Freelancers")
+                        .HasForeignKey("SpecializationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Tradof.Data.Entities.ApplicationUser", "User")
                         .WithOne()
                         .HasForeignKey("Tradof.Data.Entities.Freelancer", "UserId")
@@ -1667,6 +1480,8 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired();
 
                     b.Navigation("Country");
+
+                    b.Navigation("Specialization");
 
                     b.Navigation("User");
                 });
@@ -1726,13 +1541,6 @@ namespace Tradof.EntityFramework.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("ProjectPayment");
-                });
-
-            modelBuilder.Entity("Tradof.Data.Entities.Language", b =>
-                {
-                    b.HasOne("Tradof.Data.Entities.Company", null)
-                        .WithMany("PreferdLanguages")
-                        .HasForeignKey("CompanyId");
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.NotificationReceiver", b =>
@@ -1964,8 +1772,6 @@ namespace Tradof.EntityFramework.Migrations
 
             modelBuilder.Entity("Tradof.Data.Entities.Company", b =>
                 {
-                    b.Navigation("PreferdLanguages");
-
                     b.Navigation("Projects");
 
                     b.Navigation("Subscriptions");
@@ -2028,6 +1834,8 @@ namespace Tradof.EntityFramework.Migrations
 
             modelBuilder.Entity("Tradof.Data.Entities.Specialization", b =>
                 {
+                    b.Navigation("Freelancers");
+
                     b.Navigation("Projects");
                 });
 

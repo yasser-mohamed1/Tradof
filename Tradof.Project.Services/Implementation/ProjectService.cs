@@ -5,7 +5,7 @@ using Tradof.Data.Entities;
 using Tradof.Data.Interfaces;
 using Tradof.Data.SpecificationParams;
 using Tradof.Data.Specifications;
-using Tradof.Project.Helpers;
+using Tradof.EntityFramework.Helpers;
 using Tradof.Project.Services.DTOs;
 using Tradof.Project.Services.Extensions;
 using Tradof.Project.Services.Interfaces;
