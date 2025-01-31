@@ -19,8 +19,6 @@ namespace Tradof.Auth.Services.Validation
                 throw new ValidationException("Company address cannot be empty.");
             if (dto.CountryId <= 0)
                 throw new ValidationException("Invalid Country ID.");
-            if (dto.SpecializationId <= 0)
-                throw new ValidationException("Invalid Specialization ID.");
         }
 
         public static void ValidateRegisterFreelancerDto(RegisterFreelancerDto dto)
@@ -35,8 +33,6 @@ namespace Tradof.Auth.Services.Validation
                 throw new ValidationException("Last name cannot be empty.");
             if (dto.WorkExperience < 0)
                 throw new ValidationException("Work experience cannot be negative.");
-            if (dto.SpecializationId <= 0)
-                throw new ValidationException("Invalid Specialization ID.");
         }
 
         public static void ValidateLoginDto(LoginDto dto)

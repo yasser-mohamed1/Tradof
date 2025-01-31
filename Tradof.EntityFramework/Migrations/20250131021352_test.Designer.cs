@@ -12,8 +12,8 @@ using Tradof.EntityFramework.DataBase_Context;
 namespace Tradof.EntityFramework.Migrations
 {
     [DbContext(typeof(TradofDbContext))]
-    [Migration("20250128123505_RemoveFreelancerGender")]
-    partial class RemoveFreelancerGender
+    [Migration("20250131021352_test")]
+    partial class test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace Tradof.EntityFramework.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("CompanySpecialization", b =>
+                {
+                    b.Property<long>("CompaniesId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("SpecializationsId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("CompaniesId", "SpecializationsId");
+
+                    b.HasIndex("SpecializationsId");
+
+                    b.ToTable("CompanySpecialization");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -268,9 +283,6 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("SpecializationId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -281,8 +293,6 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CountryId");
-
-                    b.HasIndex("SpecializationId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -640,6 +650,13 @@ namespace Tradof.EntityFramework.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("CompanyId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -659,6 +676,8 @@ namespace Tradof.EntityFramework.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("Languages");
                 });
@@ -846,6 +865,9 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Days")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -853,7 +875,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("FreelancerId")
+                    b.Property<long?>("FreelancerId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("LanguageFromId")
@@ -864,6 +886,12 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.Property<long>("LanguageToId")
                         .HasColumnType("bigint");
+
+                    b.Property<double>("MaxPrice")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MinPrice")
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
@@ -876,7 +904,10 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("SpecializationId")
+                    b.Property<double?>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<long?>("SpecializationId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("StartDate")
@@ -980,6 +1011,12 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("OfferPrice")
+                        .HasColumnType("float");
+
+                    b.Property<int>("ProjecDeliveryTime")
+                        .HasColumnType("int");
+
                     b.Property<long>("ProjectId")
                         .HasColumnType("bigint");
 
@@ -989,6 +1026,9 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.Property<int>("ProposalStatus")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("TimePosted")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -1301,6 +1341,21 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
+            modelBuilder.Entity("CompanySpecialization", b =>
+                {
+                    b.HasOne("Tradof.Data.Entities.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompaniesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tradof.Data.Entities.Specialization", null)
+                        .WithMany()
+                        .HasForeignKey("SpecializationsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1360,12 +1415,6 @@ namespace Tradof.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Tradof.Data.Entities.Specialization", "Specialization")
-                        .WithMany("Companies")
-                        .HasForeignKey("SpecializationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Tradof.Data.Entities.ApplicationUser", "User")
                         .WithOne()
                         .HasForeignKey("Tradof.Data.Entities.Company", "UserId")
@@ -1373,8 +1422,6 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired();
 
                     b.Navigation("Country");
-
-                    b.Navigation("Specialization");
 
                     b.Navigation("User");
                 });
@@ -1504,6 +1551,13 @@ namespace Tradof.EntityFramework.Migrations
                     b.Navigation("ProjectPayment");
                 });
 
+            modelBuilder.Entity("Tradof.Data.Entities.Language", b =>
+                {
+                    b.HasOne("Tradof.Data.Entities.Company", null)
+                        .WithMany("PreferdLanguages")
+                        .HasForeignKey("CompanyId");
+                });
+
             modelBuilder.Entity("Tradof.Data.Entities.NotificationReceiver", b =>
                 {
                     b.HasOne("Tradof.Data.Entities.Notification", "Notification")
@@ -1561,8 +1615,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasOne("Tradof.Data.Entities.Freelancer", "Freelancer")
                         .WithMany("Projects")
                         .HasForeignKey("FreelancerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tradof.Data.Entities.Language", "LanguageFrom")
                         .WithMany("ProjectsLanguageFrom")
@@ -1583,8 +1636,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasOne("Tradof.Data.Entities.Specialization", "Specialization")
                         .WithMany("Projects")
                         .HasForeignKey("SpecializationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Company");
 
@@ -1638,7 +1690,7 @@ namespace Tradof.EntityFramework.Migrations
             modelBuilder.Entity("Tradof.Data.Entities.ProposalAttachments", b =>
                 {
                     b.HasOne("Tradof.Data.Entities.Proposal", "Proposal")
-                        .WithMany()
+                        .WithMany("ProposalAttachments")
                         .HasForeignKey("ProposalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1735,6 +1787,8 @@ namespace Tradof.EntityFramework.Migrations
 
             modelBuilder.Entity("Tradof.Data.Entities.Company", b =>
                 {
+                    b.Navigation("PreferdLanguages");
+
                     b.Navigation("Projects");
 
                     b.Navigation("Subscriptions");
@@ -1790,10 +1844,13 @@ namespace Tradof.EntityFramework.Migrations
                     b.Navigation("Ratings");
                 });
 
+            modelBuilder.Entity("Tradof.Data.Entities.Proposal", b =>
+                {
+                    b.Navigation("ProposalAttachments");
+                });
+
             modelBuilder.Entity("Tradof.Data.Entities.Specialization", b =>
                 {
-                    b.Navigation("Companies");
-
                     b.Navigation("Freelancers");
 
                     b.Navigation("Projects");
