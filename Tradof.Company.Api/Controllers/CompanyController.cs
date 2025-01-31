@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Tradof.CompanyModule.Services.DTOs;
 using Tradof.CompanyModule.Services.Interfaces;
 
@@ -16,6 +17,20 @@ namespace Tradof.Company.Api.Controllers
 
             return Ok(company);
         }
+
+        [HttpGet("{id}/subscription")]
+        public async Task<ActionResult<CompanySubscriptionDto>> GetCurrentSubscription(string Id)
+        {
+            var subscription = await _companyService.GetCurrentSubscriptionAsync(Id);
+
+            if (subscription == null)
+            {
+                return NotFound("No current subscription found.");
+            }
+
+            return Ok(subscription);
+        }
+
 
         [HttpGet("{id}/employees")]
         public async Task<IActionResult> GetCompanyEmployees(string id)

@@ -11,14 +11,30 @@ namespace Tradof.CompanyModule.Services.Extensions
                 company.UserId,
                 company.CompanyAddress,
                 company.CompanyName ?? "Unnamed",
+                company.User.FirstName,
+                company.User.LastName,
+                company.User.Email,
+                company.User.PhoneNumber,
+                company.JobTitle,
+                0,
+                0,
+                company.User.ProfileImageUrl,
                 company.CountryId,
                 company.Specializations.Select(s => new SpecializationDto(s.Id, s.Name)).ToList(),
                 company.PreferredLanguages.Select(l => new LanguageDto(l.Id, l.Name, l.Code)).ToList(),
-                company.Medias.Select(m => new SocialMediaDto(m.PlatformType.ToString(), m.Link)).ToList(),
-                company.Subscriptions.FirstOrDefault()?.NetPrice ?? 0,
-                company.Subscriptions.FirstOrDefault()?.StartDate ?? DateTime.MinValue,
-                company.Subscriptions.FirstOrDefault()?.EndDate ?? DateTime.MinValue
+                company.Medias.Select(m => new SocialMediaDto(m.PlatformType.ToString(), m.Link)).ToList()
             );
+
+        public static CompanySubscriptionDto ToDto(this CompanySubscription subscription)
+        {
+            return new CompanySubscriptionDto(
+                subscription.PackageId,
+                subscription.StartDate,
+                subscription.EndDate,
+                subscription.Coupon,
+                subscription.NetPrice
+            );
+        }
 
         public static CompanyEmployee ToEntity(this CreateCompanyEmployeeDto dto) =>
             new()

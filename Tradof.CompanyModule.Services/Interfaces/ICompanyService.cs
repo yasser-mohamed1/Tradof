@@ -6,6 +6,7 @@ namespace Tradof.CompanyModule.Services.Interfaces
     {
         Task<CompanyDto?> GetByIdAsync(string id);
         Task AddEmployeeAsync(CreateCompanyEmployeeDto dto);
+        Task<CompanySubscriptionDto?> GetCurrentSubscriptionAsync(string userId);
         Task<IEnumerable<EmployeeDto>> GetCompanyEmployeesAsync(string companyId);
         Task UpdateCompanyAsync(UpdateCompanyDto dto);
         Task AddLanguageAsync(string companyId, long languageId);

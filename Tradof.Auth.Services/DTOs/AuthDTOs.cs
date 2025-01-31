@@ -20,6 +20,9 @@ namespace Tradof.Auth.Services.DTOs
         string Password,
 
         [Required(ErrorMessage = "First name is required.")]
+        string CompanyName,
+
+        [Required(ErrorMessage = "First name is required.")]
         string FirstName,
 
         [Required(ErrorMessage = "Last name is required.")]

@@ -27,12 +27,30 @@ namespace Tradof.CompanyModule.Services.Implementation
                 .Include(c => c.Specializations)
                 .Include(c => c.PreferredLanguages)
                 .Include(c => c.Medias)
-                .Include(c => c.Subscriptions)
                 .Include(c => c.Employees)
                 .Include(c => c.User)
+                .Include(c => c.Projects)
+                .ThenInclude(p => p.Ratings)
                 .FirstOrDefaultAsync(c => c.UserId == id);
 
             return company?.ToDto();
+        }
+
+        public async Task<CompanySubscriptionDto?> GetCurrentSubscriptionAsync(string userId)
+        {
+            var company = await _context.Companies
+                .Include(c => c.Subscriptions)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (company == null)
+            {
+                return null;
+            }
+
+            var currentSubscription = company.Subscriptions
+                .FirstOrDefault(s => s.StartDate <= DateTime.Now && s.EndDate >= DateTime.Now);
+
+            return currentSubscription?.ToDto();
         }
 
         public async Task ChangeCompanyPasswordAsync(ChangeCompanyPasswordDto dto)

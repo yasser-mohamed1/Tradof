@@ -6,14 +6,28 @@ namespace Tradof.CompanyModule.Services.DTOs
         string Id,
         string CompanyAddress,
         string CompanyName,
+        string FirstName,
+        string LastName,
+        string Email,
+        string Phone,
+        string JobTitle,
+        int RatingSum,
+        int ReviewCount,
+        string ProfileImageUrl,
         long CountryId,
         List<SpecializationDto> Specializations,
         List<LanguageDto> PreferredLanguages,
-        List<SocialMediaDto> SocialMedia,
-        double NetPrice,
-        DateTime SubscriptionStartDate,
-        DateTime SubscriptionEndDate
+        List<SocialMediaDto> SocialMedia
     );
+
+    public record CompanySubscriptionDto(
+        long PackageId,
+        DateTime StartDate,
+        DateTime EndDate,
+        string? Coupon,
+        double NetPrice
+    );
+
 
     public record EmployeeDto(
         string Id,

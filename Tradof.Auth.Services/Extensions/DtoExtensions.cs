@@ -11,6 +11,7 @@ namespace Tradof.Auth.Services.Extensions
         {
             return new Company
             {
+                CompanyName = dto.CompanyName,
                 CompanyAddress = dto.CompanyAddress,
                 JobTitle = dto.JobTitle,
                 CountryId = dto.CountryId,
