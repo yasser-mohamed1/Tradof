@@ -37,7 +37,7 @@ builder.Services.AddPackageServices()
                 .AddSpecializationServices()
                 .AddProjectServices()
                 .AddCompanyServices()
-                .AddFreelancerServices();
+                .AddFreelancerServices()
                 .AddProposalServices();
 
 builder.Services.AddScoped<IBackgroundJobClient, BackgroundJobClient>();
