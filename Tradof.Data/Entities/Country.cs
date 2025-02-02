@@ -6,7 +6,7 @@ namespace Tradof.Data.Entities
     {
         public string Name { get; set; }
 
-        public ICollection<Company> Companies { get; set; } = new List<Company>();
-        public ICollection<Freelancer> Freelancers { get; set; } = new List<Freelancer>();
+        public ICollection<Company> Companies { get; set; } = [];
+        public ICollection<Freelancer> Freelancers { get; set; } = [];
     }
 }

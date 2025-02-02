@@ -4,7 +4,7 @@ using Tradof.Data.SpecificationParams;
 using Tradof.Project.Services.DTOs;
 using Tradof.Project.Services.Interfaces;
 
-namespace Tradof.Admin.Api.Controllers
+namespace Tradof.Project.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

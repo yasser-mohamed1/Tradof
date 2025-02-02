@@ -1,6 +1,6 @@
 ﻿using Tradof.Data.Entities;
 
-namespace Tradof.Project.Helpers
+namespace Tradof.EntityFramework.Helpers
 {
     public interface IUserHelpers
     {

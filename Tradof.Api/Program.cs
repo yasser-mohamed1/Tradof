@@ -2,11 +2,12 @@ using Hangfire;
 using Tradof.Admin.Services;
 using Tradof.Api.Extentions;
 using Tradof.Auth.Services;
+using Tradof.CompanyModule.Services;
 using Tradof.CountryModule.Services;
-using Tradof.EntityFramework.Extentions;
 using Tradof.Language.Services;
 using Tradof.PackageNamespace.Services;
 using Tradof.Project.Services;
+using Tradof.Proposal.Services;
 using Tradof.Repository;
 using Tradof.SpecializationModule.Services;
 using Tradof.CompanyModule.Services;
@@ -37,6 +38,8 @@ builder.Services.AddPackageServices()
                 .AddProjectServices()
                 .AddCompanyServices()
                 .AddFreelancerServices();
+                .AddProposalServices();
+
 builder.Services.AddScoped<IBackgroundJobClient, BackgroundJobClient>();
 
 var app = builder.Build();

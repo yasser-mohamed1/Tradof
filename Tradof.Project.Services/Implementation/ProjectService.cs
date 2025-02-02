@@ -5,11 +5,11 @@ using Tradof.Data.Entities;
 using Tradof.Data.Interfaces;
 using Tradof.Data.SpecificationParams;
 using Tradof.Data.Specifications;
-using Tradof.Project.Helpers;
+using Tradof.EntityFramework.Helpers;
+using Tradof.EntityFramework.RequestHelpers;
 using Tradof.Project.Services.DTOs;
 using Tradof.Project.Services.Extensions;
 using Tradof.Project.Services.Interfaces;
-using Tradof.Project.Services.RequestHelpers;
 using Tradof.Project.Services.Validation;
 using File = Tradof.Data.Entities.File;
 using ProjectEntity = Tradof.Data.Entities.Project;
@@ -34,7 +34,8 @@ namespace Tradof.Project.Services.Implementation
         public async Task<ProjectDto> GetByIdAsync(long id)
         {
             if (id <= 0) throw new ValidationException("Invalid project ID.");
-            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(id);
+            var spec = new ProjectSpecification(id);
+            var project = await _unitOfWork.Repository<ProjectEntity>().GetEntityWithSpecification(spec);
             return project == null ? throw new NotFoundException("project not found") : project.ToDto();
         }
 

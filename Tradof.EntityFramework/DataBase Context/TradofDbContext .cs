@@ -80,11 +80,7 @@ namespace Tradof.EntityFramework.DataBase_Context
             #endregion
 
             #region CompanyEmployee
-            modelBuilder.Entity<CompanyEmployee>()
-            .HasOne(ce => ce.Company)
-            .WithMany(c => c.Employees)
-            .HasForeignKey(ce => ce.CompanyId)
-            .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CompanyEmployeeConfiguration).Assembly);
             #endregion
 
             base.OnModelCreating(modelBuilder);

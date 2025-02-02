@@ -78,6 +78,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Freelancer.Services", "Tradof.Freelancer.Services\Tradof.Freelancer.Services.csproj", "{B38BFF15-FE92-4147-A9F0-02A04CF7EC28}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Freelancer.Api", "Tradof.Freelancer.Api\Tradof.Freelancer.Api.csproj", "{3B51D612-3510-4802-B6B6-F0DC5D1499A6}"
+=======
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tradof.Module.Proposal", "Tradof.Module.Proposal", "{EABCCC02-DF37-412A-87F6-43DB92203E08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Proposal.Api", "Tradof.Proposal.Api\Tradof.Proposal.Api.csproj", "{BD15C7F8-BC07-4A66-B352-2863D5D6A105}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Proposal.Services", "Tradof.Proposal.Services\Tradof.Proposal.Services.csproj", "{DF888CC6-A9E9-4D20-9254-2CE96C5F1F6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -181,6 +187,14 @@ Global
 		{3B51D612-3510-4802-B6B6-F0DC5D1499A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B51D612-3510-4802-B6B6-F0DC5D1499A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B51D612-3510-4802-B6B6-F0DC5D1499A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD15C7F8-BC07-4A66-B352-2863D5D6A105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD15C7F8-BC07-4A66-B352-2863D5D6A105}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD15C7F8-BC07-4A66-B352-2863D5D6A105}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD15C7F8-BC07-4A66-B352-2863D5D6A105}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF888CC6-A9E9-4D20-9254-2CE96C5F1F6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF888CC6-A9E9-4D20-9254-2CE96C5F1F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF888CC6-A9E9-4D20-9254-2CE96C5F1F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF888CC6-A9E9-4D20-9254-2CE96C5F1F6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -219,6 +233,9 @@ Global
 		{02432E8A-6418-4AB4-AB13-91D07CD0FC92} = {105C6636-238F-4B20-A489-71696484FEC6}
 		{B38BFF15-FE92-4147-A9F0-02A04CF7EC28} = {02432E8A-6418-4AB4-AB13-91D07CD0FC92}
 		{3B51D612-3510-4802-B6B6-F0DC5D1499A6} = {02432E8A-6418-4AB4-AB13-91D07CD0FC92}
+		{EABCCC02-DF37-412A-87F6-43DB92203E08} = {105C6636-238F-4B20-A489-71696484FEC6}
+		{BD15C7F8-BC07-4A66-B352-2863D5D6A105} = {EABCCC02-DF37-412A-87F6-43DB92203E08}
+		{DF888CC6-A9E9-4D20-9254-2CE96C5F1F6E} = {EABCCC02-DF37-412A-87F6-43DB92203E08}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {69E087E9-B128-4D9E-8471-F21884B99612}

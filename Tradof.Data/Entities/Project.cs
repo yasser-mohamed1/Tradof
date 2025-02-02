@@ -37,8 +37,8 @@ namespace Tradof.Data.Entities
         [ForeignKey("CompanyId")]
         public Company Company { get; set; }
 
-        public ICollection<File> Files { get; set; } = new List<File>();
-        public ICollection<Rating> Ratings { get; set; } = new List<Rating>();
-        public ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();
+        public ICollection<File> Files { get; set; } = [];
+        public ICollection<Rating> Ratings { get; set; } = [];
+        public ICollection<Proposal> Proposals { get; set; } = [];
     }
 }

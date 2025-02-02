@@ -17,12 +17,12 @@ namespace Tradof.Data.Entities
         [ForeignKey("CountryId")]
         public Country Country { get; set; }
 
-        public ICollection<Specialization> Specializations = [];
-        public ICollection<FreelancerLanguagesPair> FreelancerLanguagesPairs { get; set; } = new List<FreelancerLanguagesPair>();
-        public ICollection<FreelancerSocialMedia> FreelancerSocialMedias { get; set; } = new List<FreelancerSocialMedia>();
-        public ICollection<Project> Projects { get; set; } = new List<Project>();
-        public ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();
-        public ICollection<WorksOn> WorksOns { get; set; } = new List<WorksOn>();
+        public ICollection<Specialization> Specializations { get; set; } = [];
+        public ICollection<FreelancerLanguagesPair> FreelancerLanguagesPairs { get; set; } = [];
+        public ICollection<FreelancerSocialMedia> FreelancerSocialMedias { get; set; } = [];
+        public ICollection<Project> Projects { get; set; } = [];
+        public ICollection<Proposal> Proposals { get; set; } = [];
+        public ICollection<WorksOn> WorksOns { get; set; } = [];
         public ICollection<PaymentMethod> PaymentMethods { get; set; } = [];
     }
 }
