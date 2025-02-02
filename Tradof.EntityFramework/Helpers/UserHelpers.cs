@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Tradof.Data.Entities;
 
-namespace Tradof.Project.Helpers
+namespace Tradof.EntityFramework.Helpers
 {
-    internal class UserHelpers(UserManager<ApplicationUser> _userManager
+    public class UserHelpers(UserManager<ApplicationUser> _userManager
             , IHttpContextAccessor _contextAccessor) : IUserHelpers
     {
 

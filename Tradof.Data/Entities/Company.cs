@@ -19,9 +19,9 @@ namespace Tradof.Data.Entities
 
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
-        public ICollection<Specialization> Specializations = [];
-        public ICollection<CompanySubscription> Subscriptions { get; set; } = new List<CompanySubscription>();
-        public ICollection<Project> Projects { get; set; } = new List<Project>();
+        public ICollection<Specialization> Specializations { get; set; } = [];
+        public ICollection<CompanySubscription> Subscriptions { get; set; } = [];
+        public ICollection<Project> Projects { get; set; } = [];
         public ICollection<Language> PreferredLanguages = [];
         public ICollection<CompanySocialMedia> Medias = [];
         public ICollection<CompanyEmployee> Employees = [];

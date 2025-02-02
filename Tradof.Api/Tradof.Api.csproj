@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -28,6 +28,7 @@
     <ProjectReference Include="..\Tradof.Language.Api\Tradof.Language.Api.csproj" />
     <ProjectReference Include="..\Tradof.Package.Api\Tradof.Package.Api.csproj" />
     <ProjectReference Include="..\Tradof.Project.Api\Tradof.Project.Api.csproj" />
+    <ProjectReference Include="..\Tradof.Proposal.Api\Tradof.Proposal.Api.csproj" />
     <ProjectReference Include="..\Tradof.Repository\Tradof.Repository.csproj" />
     <ProjectReference Include="..\Tradof.Specialization.Api\Tradof.Specialization.Api.csproj" />
   </ItemGroup>

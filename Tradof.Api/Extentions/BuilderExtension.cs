@@ -1,8 +1,7 @@
 ﻿using Hangfire;
-using Tradof.Api;
 using Tradof.Data.Entities;
 
-namespace Tradof.EntityFramework.Extentions
+namespace Tradof.Api.Extentions
 {
     public static class BuilderExtension
     {

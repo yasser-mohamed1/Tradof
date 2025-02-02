@@ -768,7 +768,6 @@ namespace Tradof.EntityFramework.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Code")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
@@ -786,7 +785,6 @@ namespace Tradof.EntityFramework.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -1053,6 +1051,9 @@ namespace Tradof.EntityFramework.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
                     b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1085,9 +1086,6 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<string>("TransactionNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("amount")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -1123,6 +1121,12 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("OfferPrice")
+                        .HasColumnType("float");
+
+                    b.Property<int>("ProjecDeliveryTime")
+                        .HasColumnType("int");
+
                     b.Property<long>("ProjectId")
                         .HasColumnType("bigint");
 
@@ -1132,6 +1136,9 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.Property<int>("ProposalStatus")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("TimePosted")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -1846,7 +1853,7 @@ namespace Tradof.EntityFramework.Migrations
             modelBuilder.Entity("Tradof.Data.Entities.ProposalAttachments", b =>
                 {
                     b.HasOne("Tradof.Data.Entities.Proposal", "Proposal")
-                        .WithMany()
+                        .WithMany("ProposalAttachments")
                         .HasForeignKey("ProposalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2000,6 +2007,11 @@ namespace Tradof.EntityFramework.Migrations
                     b.Navigation("Proposals");
 
                     b.Navigation("Ratings");
+                });
+
+            modelBuilder.Entity("Tradof.Data.Entities.Proposal", b =>
+                {
+                    b.Navigation("ProposalAttachments");
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.Specialization", b =>

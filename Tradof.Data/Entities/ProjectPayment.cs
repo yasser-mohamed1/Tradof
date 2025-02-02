@@ -7,7 +7,7 @@ namespace Tradof.Data.Entities
     public class ProjectPayment : AuditEntity<long>
     {
         public string TransactionNumber { get; set; }
-        public double amount { get; set; }
+        public double Amount { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public DateTime PaymenyDate { get; set; }

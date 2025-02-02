@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tradof.EntityFramework.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class updateProposal : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -80,8 +80,8 @@ namespace Tradof.EntityFramework.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -704,10 +704,10 @@ namespace Tradof.EntityFramework.Migrations
                     Days = table.Column<int>(type: "int", nullable: false),
                     MinPrice = table.Column<double>(type: "float", nullable: false),
                     MaxPrice = table.Column<double>(type: "float", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
-                    FreelancerId = table.Column<long>(type: "bigint", nullable: false),
+                    Price = table.Column<double>(type: "float", nullable: true),
+                    FreelancerId = table.Column<long>(type: "bigint", nullable: true),
                     CompanyId = table.Column<long>(type: "bigint", nullable: false),
-                    SpecializationId = table.Column<long>(type: "bigint", nullable: false),
+                    SpecializationId = table.Column<long>(type: "bigint", nullable: true),
                     LanguageFromId = table.Column<long>(type: "bigint", nullable: false),
                     LanguageToId = table.Column<long>(type: "bigint", nullable: false),
                     LanguageId = table.Column<long>(type: "bigint", nullable: true),
@@ -793,6 +793,9 @@ namespace Tradof.EntityFramework.Migrations
                     FreelancerId = table.Column<long>(type: "bigint", nullable: false),
                     ProposalStatus = table.Column<int>(type: "int", nullable: false),
                     ProposalDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjecDeliveryTime = table.Column<int>(type: "int", nullable: false),
+                    OfferPrice = table.Column<double>(type: "float", nullable: false),
+                    TimePosted = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -973,7 +976,7 @@ namespace Tradof.EntityFramework.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TransactionNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    amount = table.Column<double>(type: "float", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: false),
                     PaymentStatus = table.Column<int>(type: "int", nullable: false),
                     PaymentMethod = table.Column<int>(type: "int", nullable: false),
                     PaymenyDate = table.Column<DateTime>(type: "datetime2", nullable: false),

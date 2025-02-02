@@ -1,6 +1,6 @@
 ﻿using Tradof.Data.SpecificationParams;
+using Tradof.EntityFramework.RequestHelpers;
 using Tradof.Project.Services.DTOs;
-using Tradof.Project.Services.RequestHelpers;
 
 namespace Tradof.Project.Services.Interfaces
 {
