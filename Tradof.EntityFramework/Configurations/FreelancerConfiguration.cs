@@ -28,6 +28,10 @@ namespace Tradof.EntityFramework.Configurations
                   .WithOne(pr => pr.Freelancer)
                   .HasForeignKey(pr => pr.FreelancerId);
 
+            builder.HasMany(f => f.PaymentMethods)
+                .WithOne(p => p.Freelancer)
+                .HasForeignKey(p => p.FreelancerId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

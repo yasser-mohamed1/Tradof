@@ -167,7 +167,6 @@ namespace Tradof.CompanyModule.Services.Implementation
             }
         }
 
-
         public async Task SendConfirmationEmailAsync(ApplicationUser newUser)
         {
             string templatePath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "Templates", "ConfirmEmail.html");

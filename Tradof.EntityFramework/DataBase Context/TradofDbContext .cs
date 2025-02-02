@@ -14,6 +14,7 @@ namespace Tradof.EntityFramework.DataBase_Context
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Tradof.Data.Entities.File> Files { get; set; }
         public DbSet<Freelancer> Freelancers { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<FreelancerLanguagesPair> FreelancerLanguagesPairs { get; set; }
         public DbSet<FreelancerSocialMedia> FreelancerSocialMedias { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
@@ -30,6 +31,7 @@ namespace Tradof.EntityFramework.DataBase_Context
         public DbSet<Country> Countries { get; set; }
         public DbSet<Specialization> Specializations { get; set; }
         public DbSet<Language> Languages { get; set; }
+        public DbSet<CompanySocialMedia> CompanySocialMedias { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

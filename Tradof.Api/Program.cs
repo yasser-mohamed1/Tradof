@@ -10,6 +10,7 @@ using Tradof.Project.Services;
 using Tradof.Repository;
 using Tradof.SpecializationModule.Services;
 using Tradof.CompanyModule.Services;
+using Tradof.FreelancerModule.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +35,8 @@ builder.Services.AddPackageServices()
                 .AddCountryServices()
                 .AddSpecializationServices()
                 .AddProjectServices()
-                .AddCompanyServices();
+                .AddCompanyServices()
+                .AddFreelancerServices();
 builder.Services.AddScoped<IBackgroundJobClient, BackgroundJobClient>();
 
 var app = builder.Build();
