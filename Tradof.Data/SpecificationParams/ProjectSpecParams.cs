@@ -1,10 +1,14 @@
-﻿namespace Tradof.Data.SpecificationParams
+﻿using Tradof.Common.Enums;
+
+namespace Tradof.Data.SpecificationParams
 {
     public class ProjectSpecParams
     {
         private const int MaxPageSize = 50;
         public int PageIndex { get; set; } = 1;
         private int _pageSize = 6;
+        public long? CompanyId { get; set; } = null;
+        public ProjectStatus? Status { get; set; }
 
         public int PageSize
         {

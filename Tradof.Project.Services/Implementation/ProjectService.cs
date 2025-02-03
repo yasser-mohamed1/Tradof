@@ -89,7 +89,7 @@ namespace Tradof.Project.Services.Implementation
             var specialization = await _unitOfWork.Repository<Specialization>().GetByIdAsync(dto.SpecializationId);
             var langFrom = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageFromId);
             var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
-            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(dto.Id) ?? throw new NotFoundException("Package not found");
+            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(dto.Id) ?? throw new NotFoundException("project not found");
 
             await _unitOfWork.Repository<File>().DeleteWithCrateriaAsync(f => f.ProjectId == project.Id);
             project.Files.Clear();
@@ -130,11 +130,31 @@ namespace Tradof.Project.Services.Implementation
         {
             if (id <= 0) throw new ValidationException("Invalid package ID.");
             var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(id) ?? throw new NotFoundException("project not found");
-
+            if (project.Status != ProjectStatus.Pinding) throw new Exception("cant delete a project after starting");
             await _unitOfWork.Repository<ProjectEntity>().DeleteAsync(project.Id);
             await _unitOfWork.Repository<File>().DeleteWithCrateriaAsync(f => f.ProjectId == project.Id);
             return await _unitOfWork.CommitAsync();
 
+        }
+
+        public async Task<int> GetProjectsCountByMonth(long id, int year, int month)
+        {
+            return await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => id == p.CompanyId && p.PublishDate.Year == year && p.PublishDate.Month == month);
+
+        }
+
+        public async Task<bool> SendReviewRequest(long id)
+        {
+            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(id) ?? throw new NotFoundException("project not found");
+            project.Status = ProjectStatus.OnReviewing;
+            return await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<bool> MarkAsFinished(long id)
+        {
+            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(id) ?? throw new NotFoundException("project not found");
+            project.Status = ProjectStatus.Finished;
+            return await _unitOfWork.CommitAsync();
         }
     }
 }

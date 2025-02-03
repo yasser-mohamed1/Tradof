@@ -117,6 +117,11 @@ namespace Tradof.Repository.Repository
             query = spec.ApplyCriteria(query);
             return await query.CountAsync();
         }
+
+        public async Task<int> CountAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _context.Set<T>().Where(expression).CountAsync();
+        }
         #region private methods
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {
@@ -127,6 +132,8 @@ namespace Tradof.Repository.Repository
         {
             return SpecificationEvaluator<T>.GetQuery<T, TResult>(_context.Set<T>().AsQueryable(), spec);
         }
+
+
         #endregion
     }
 }

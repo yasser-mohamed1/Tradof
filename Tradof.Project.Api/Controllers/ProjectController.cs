@@ -23,6 +23,22 @@ namespace Tradof.Project.Api.Controllers
             var project = await _projectService.GetByIdAsync(id);
             return project != null ? Ok(project) : NotFound();
         }
+        [HttpPut("SendReviewRequest")]
+        public async Task<IActionResult> SendReviewRequest(long id)
+        {
+            return Ok(await _projectService.SendReviewRequest(id));
+        }
+        [HttpPut("MarkAsFinished")]
+        public async Task<IActionResult> MarkAsFinished(long id)
+        {
+            return Ok(await _projectService.MarkAsFinished(id));
+
+        }
+        [HttpGet("countByMonth")]
+        public async Task<IActionResult> GetProjectsCountByMonth(long id, int year, int month)
+        {
+            return Ok(await _projectService.GetProjectsCountByMonth(id, year, month));
+        }
 
         [HttpPost]
         [Authorize]

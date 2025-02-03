@@ -11,7 +11,9 @@ namespace Tradof.Data.Specifications
             (specParams.Days == null || specParams.Days.Count == 0 || specParams.Days.Contains(project.Days)) &&
             (!specParams.LanguageFromId.HasValue || project.LanguageFromId == specParams.LanguageFromId) &&
             (!specParams.LanguageToId.HasValue || project.LanguageToId == specParams.LanguageToId) &&
-            (!specParams.Budget.HasValue || (specParams.Budget >= project.MinPrice && specParams.Budget <= project.MaxPrice))
+            (!specParams.Budget.HasValue || (specParams.Budget >= project.MinPrice && specParams.Budget <= project.MaxPrice)) &&
+            (!specParams.CompanyId.HasValue || specParams.CompanyId == project.CompanyId) &&
+            (specParams.Status == null || specParams.Status == project.Status)
         )
         {
             AddInclude(p => p.Files);

@@ -18,5 +18,7 @@ namespace Tradof.Data.Interfaces
         Task<IReadOnlyList<TResult>> ListAsync<TResult>(ISpecification<T, TResult> spec);
         //bool Exists(int id);
         Task<int> CountAsync(ISpecification<T> spec);
+        Task<int> CountAsync(Expression<Func<T, bool>> expression);
+
     }
 }
