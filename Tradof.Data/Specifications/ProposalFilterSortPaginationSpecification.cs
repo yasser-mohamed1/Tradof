@@ -5,7 +5,10 @@ namespace Tradof.Data.Specifications
 {
     public class ProposalFilterSortPaginationSpecification : BaseSpecification<Proposal>
     {
-        public ProposalFilterSortPaginationSpecification(ProposalSpecParams specParams) : base(proposal => specParams.Status == null || specParams.Status == proposal.ProposalStatus)
+        public ProposalFilterSortPaginationSpecification(ProposalSpecParams specParams) : base(proposal =>
+        (specParams.Status == null || specParams.Status == proposal.ProposalStatus) &&
+        (!specParams.ProjectId.HasValue || proposal.ProjectId == specParams.ProjectId)
+        )
         {
             AddInclude(p => p.ProposalAttachments);
             AddInclude(p => p.Freelancer);

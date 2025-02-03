@@ -7,6 +7,8 @@ namespace Tradof.Data.SpecificationParams
         private const int MaxPageSize = 50;
         public int PageIndex { get; set; } = 1;
         private int _pageSize = 6;
+        public long? ProjectId { get; set; }
+
         public int PageSize
         {
             get => _pageSize;
