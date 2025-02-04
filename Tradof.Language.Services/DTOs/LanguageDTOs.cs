@@ -1,23 +1,26 @@
 ﻿namespace Tradof.Language.Services.DTOs
 {
-    public record LanguageDto(
-        long Id,
-        string Name,
-        string Code
-        //DateTime CreationDate,
-        //DateTime? ModificationDate,
-        //string CreatedBy,
-        //string ModifiedBy
-        );
+	public record LanguageDto(
+	  long Id,
+		string LanguageName,
+		string LanguageCode,
+		string CountryName,
+		string CountryCode
+		);
 
-    public record CreateLanguageDto(
-        string Name,
-        string Code);
+	public record CreateLanguageDto(
+		string LanguageName,
+		string LanguageCode,
+		string CountryName,
+		string CountryCode
+		);
 
-    public record UpdateLanguageDto(
-        long Id,
-        string Name,
-        string Code,
-        DateTime? ModificationDate,
-        string ModifiedBy);
+	public record UpdateLanguageDto(
+		long Id,
+		string LanguageName,
+		string LanguageCode,
+	    string CountryName,
+		string CountryCode,
+		DateTime? ModificationDate,
+		string ModifiedBy);
 }

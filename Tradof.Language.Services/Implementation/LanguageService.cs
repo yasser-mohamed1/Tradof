@@ -14,7 +14,8 @@ namespace Tradof.Language.Services.Implementation
         {
             var languages = await _repository.GetAllAsync();
             return languages
-                .Where(l => l != null && !string.IsNullOrWhiteSpace(l.Name) && !string.IsNullOrWhiteSpace(l.Code))
+                .Where(l => l != null && !string.IsNullOrWhiteSpace(l.LanguageName) && !string.IsNullOrWhiteSpace(l.LanguageCode)
+                      /*&& !string.IsNullOrWhiteSpace(l.CountryName) && !string.IsNullOrWhiteSpace(l.CountryCode)*/)
                 .Select(l => l.ToDto());
         }
 
@@ -27,12 +28,13 @@ namespace Tradof.Language.Services.Implementation
 
         public async Task<LanguageDto> CreateAsync(CreateLanguageDto dto)
         {
-
             var language = new LanguageEntity
             {
-                Name = dto.Name,
-                Code = dto.Code,
-                CreatedBy = "System",
+                LanguageName = dto.LanguageName,
+				LanguageCode = dto.LanguageCode,
+				CountryName = dto.CountryName,
+				CountryCode = dto.CountryCode,
+				CreatedBy = "System",
                 CreationDate = DateTime.UtcNow,
                 ModifiedBy = "System"
             };

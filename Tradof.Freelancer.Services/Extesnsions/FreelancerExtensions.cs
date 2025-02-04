@@ -24,9 +24,9 @@ namespace Tradof.FreelancerModule.Services.Extensions
             var langauges = freelancer.FreelancerLanguagesPairs.Select(lp => new FreelancerLanguagePairDTO(
                                 lp.Id,
                                 lp.LanguageFromId,
-                                lp.LanguageFrom?.Name ?? "Unknown",
+                                lp.LanguageFrom?.LanguageName ?? "Unknown",
                                 lp.LanguageToId,
-                                lp.LanguageTo?.Name ?? "Unknown"
+                                lp.LanguageTo?.LanguageName ?? "Unknown"
                             )).ToList();
 
             var socialMedias = freelancer.FreelancerSocialMedias.Select(sm => new FreelancerSocialMediaDTO(

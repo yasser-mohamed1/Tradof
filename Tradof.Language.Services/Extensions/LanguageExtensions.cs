@@ -9,21 +9,21 @@ namespace Tradof.Language.Services.Extensions
         {
             return new LanguageDto(
                 language.Id,
-                language.Name ?? "N/A",
-                language.Code ?? "N/A"
-                //language.CreationDate,
-                //language.ModificationDate,
-                //language.CreatedBy,
-                //language.ModifiedBy
-            );
+                language.LanguageName ?? "N/A",
+                language.LanguageCode ?? "N/A",
+				language.CountryName ?? "N/A",
+				language.CountryCode ?? "N/A"
+			);
         }
 
         public static void UpdateFromDto(this LanguageEntity language, UpdateLanguageDto dto)
         {
-            language.Name = dto.Name;
-            language.Code = dto.Code;
+            language.LanguageName = dto.LanguageName;
+            language.LanguageCode = dto.LanguageCode;
+			language.CountryName = dto.CountryName;
+			language.CountryCode = dto.CountryCode;
 
-            if (dto.ModificationDate.HasValue)
+			if (dto.ModificationDate.HasValue)
             {
                 language.ModificationDate = dto.ModificationDate;
             }

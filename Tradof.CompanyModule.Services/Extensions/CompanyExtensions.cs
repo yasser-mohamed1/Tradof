@@ -21,7 +21,7 @@ namespace Tradof.CompanyModule.Services.Extensions
                 company.User.ProfileImageUrl,
                 company.CountryId,
                 company.Specializations.Select(s => new SpecializationDto(s.Id, s.Name)).ToList(),
-                company.PreferredLanguages.Select(l => new LanguageDto(l.Id, l.Name, l.Code)).ToList(),
+                company.PreferredLanguages.Select(l => new LanguageDto(l.Id, l.LanguageName, l.LanguageCode,l.CountryName,l.CountryCode)).ToList(),
                 company.Medias.Select(m => new SocialMediaDto(m.PlatformType.ToString(), m.Link)).ToList()
             );
 
@@ -61,8 +61,16 @@ namespace Tradof.CompanyModule.Services.Extensions
                     FirstName = dto.FirstName,
                     LastName = dto.LastName
                 };
+		public static Language ToLanguage(this LanguageDto dto) =>
+			   new()
+			   {
+				   LanguageName = dto.LanguageName,
+                   LanguageCode = dto.LanguageCode,
+                   CountryName = dto.CountryName,
+                   CountryCode = dto.CountryCode,
+			   };
 
-        public static CompanyEmployee ToCompanyEmployee(this CreateCompanyEmployeeDto dto, string userId, Company Company) =>
+		public static CompanyEmployee ToCompanyEmployee(this CreateCompanyEmployeeDto dto, string userId, Company Company) =>
             new()
             {
                 JobTitle = dto.JobTitle,

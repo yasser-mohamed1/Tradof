@@ -46,8 +46,10 @@ namespace Tradof.CompanyModule.Services.DTOs
 
     public record LanguageDto(
         long Id,
-        string Name,
-        string Code
+        string LanguageName,
+        string LanguageCode,
+        string CountryName,
+        string CountryCode
     );
 
     public record CreateCompanyEmployeeDto(
