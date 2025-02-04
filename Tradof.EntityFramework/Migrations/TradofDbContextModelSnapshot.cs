@@ -1886,13 +1886,13 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasOne("Tradof.Data.Entities.PaymentProcess", "PaymentProcess")
                         .WithMany()
                         .HasForeignKey("PaymentProcessId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Tradof.Data.Entities.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("PaymentMethod");

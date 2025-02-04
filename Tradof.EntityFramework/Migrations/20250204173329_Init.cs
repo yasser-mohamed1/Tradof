@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Tradof.EntityFramework.Migrations
 {
     /// <inheritdoc />
-    public partial class updateProposal : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -373,6 +373,7 @@ namespace Tradof.EntityFramework.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     WorkExperience = table.Column<int>(type: "int", nullable: false),
                     CountryId = table.Column<long>(type: "bigint", nullable: false),
+                    CVFilePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -522,7 +523,7 @@ namespace Tradof.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompanySocialMedia",
+                name: "CompanySocialMedias",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -537,9 +538,9 @@ namespace Tradof.EntityFramework.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CompanySocialMedia", x => x.Id);
+                    table.PrimaryKey("PK_CompanySocialMedias", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CompanySocialMedia_Companies_CompanyId",
+                        name: "FK_CompanySocialMedias_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
                         principalColumn: "Id",
@@ -691,6 +692,32 @@ namespace Tradof.EntityFramework.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentMethods",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CardNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExpiryDate = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    CVV = table.Column<int>(type: "int", nullable: false),
+                    FreelancerId = table.Column<long>(type: "bigint", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentMethods", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaymentMethods_Freelancers_FreelancerId",
+                        column: x => x.FreelancerId,
+                        principalTable: "Freelancers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Projects",
                 columns: table => new
                 {
@@ -698,6 +725,7 @@ namespace Tradof.EntityFramework.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PublishDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
@@ -978,7 +1006,7 @@ namespace Tradof.EntityFramework.Migrations
                     TransactionNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     PaymentStatus = table.Column<int>(type: "int", nullable: false),
-                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethodId = table.Column<long>(type: "bigint", nullable: false),
                     PaymenyDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ProjectId = table.Column<long>(type: "bigint", nullable: false),
                     PaymentProcessId = table.Column<long>(type: "bigint", nullable: false),
@@ -991,17 +1019,21 @@ namespace Tradof.EntityFramework.Migrations
                 {
                     table.PrimaryKey("PK_ProjectPayment", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_ProjectPayment_PaymentMethods_PaymentMethodId",
+                        column: x => x.PaymentMethodId,
+                        principalTable: "PaymentMethods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_ProjectPayment_PaymentProcess_PaymentProcessId",
                         column: x => x.PaymentProcessId,
                         principalTable: "PaymentProcess",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ProjectPayment_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -1075,8 +1107,8 @@ namespace Tradof.EntityFramework.Migrations
                 column: "PreferredLanguagesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanySocialMedia_CompanyId",
-                table: "CompanySocialMedia",
+                name: "IX_CompanySocialMedias_CompanyId",
+                table: "CompanySocialMedias",
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
@@ -1161,6 +1193,11 @@ namespace Tradof.EntityFramework.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PaymentMethods_FreelancerId",
+                table: "PaymentMethods",
+                column: "FreelancerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PaymentProcess_CompanyId",
                 table: "PaymentProcess",
                 column: "CompanyId");
@@ -1174,6 +1211,11 @@ namespace Tradof.EntityFramework.Migrations
                 name: "IX_PaymentProcess_PaymentId",
                 table: "PaymentProcess",
                 column: "PaymentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProjectPayment_PaymentMethodId",
+                table: "ProjectPayment",
+                column: "PaymentMethodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectPayment_PaymentProcessId",
@@ -1340,6 +1382,10 @@ namespace Tradof.EntityFramework.Migrations
                 table: "ProjectPayment");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_PaymentMethods_Freelancers_FreelancerId",
+                table: "PaymentMethods");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_PaymentProcess_Freelancers_FreelancerId",
                 table: "PaymentProcess");
 
@@ -1369,7 +1415,7 @@ namespace Tradof.EntityFramework.Migrations
                 name: "CompanyPreferredLanguages");
 
             migrationBuilder.DropTable(
-                name: "CompanySocialMedia");
+                name: "CompanySocialMedias");
 
             migrationBuilder.DropTable(
                 name: "CompanySpecialization");
@@ -1451,6 +1497,9 @@ namespace Tradof.EntityFramework.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProjectPayment");
+
+            migrationBuilder.DropTable(
+                name: "PaymentMethods");
 
             migrationBuilder.DropTable(
                 name: "PaymentProcess");

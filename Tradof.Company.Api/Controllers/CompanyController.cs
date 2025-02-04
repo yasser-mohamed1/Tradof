@@ -42,13 +42,13 @@ namespace Tradof.Company.Api.Controllers
         }
 
         [HttpPut("ChangePassword")]
-        public async Task<IActionResult> ChangePassword(ChangeCompanyPasswordDto dto)
+        public async Task<IActionResult> ChangePassword(string CompanyId, ChangeCompanyPasswordDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
-                await _companyService.ChangeCompanyPasswordAsync(dto);
+                await _companyService.ChangeCompanyPasswordAsync(CompanyId, dto);
                 return Ok("Password changed successfully");
             }
             catch (UnauthorizedAccessException ex)
@@ -80,30 +80,30 @@ namespace Tradof.Company.Api.Controllers
         }
 
         [HttpPost("AddLanguage/{companyId}")]
-        public async Task<IActionResult> AddLanguage(string companyId, long languageId)
+        public async Task<IActionResult> AddLanguage(string companyId, IEnumerable<long> languageIds)
         {
-            await _companyService.AddLanguageAsync(companyId, languageId);
+            await _companyService.AddLanguagesAsync(companyId, languageIds);
             return Ok("Language added successfully");
         }
 
         [HttpDelete("RemoveLanguage/{companyId}")]
-        public async Task<IActionResult> RemoveLanguage(string companyId, long languageId)
+        public async Task<IActionResult> RemoveLanguage(string companyId, IEnumerable<long> languageIds)
         {
-            await _companyService.RemoveLanguageAsync(companyId, languageId);
+            await _companyService.RemoveLanguagesAsync(companyId, languageIds);
             return Ok("Language removed successfully");
         }
 
         [HttpPost("AddSpecialization/{companyId}")]
-        public async Task<IActionResult> AddSpecialization(string companyId, long specializationId)
+        public async Task<IActionResult> AddSpecialization(string companyId, IEnumerable<long> specializationIds)
         {
-            await _companyService.AddSpecializationAsync(companyId, specializationId);
+            await _companyService.AddSpecializationsAsync(companyId, specializationIds);
             return Ok("Specialization added successfully");
         }
 
         [HttpDelete("RemoveSpecialization/{companyId}")]
-        public async Task<IActionResult> RemoveSpecialization(string companyId, long specializationId)
+        public async Task<IActionResult> RemoveSpecialization(string companyId, IEnumerable<long> specializationIds)
         {
-            await _companyService.RemoveSpecializationAsync(companyId, specializationId);
+            await _companyService.RemoveSpecializationsAsync(companyId, specializationIds);
             return Ok("Specialization removed successfully");
         }
     }

@@ -11,7 +11,11 @@ namespace Tradof.EntityFramework.Configurations
             builder.HasOne(pp => pp.Project)
                 .WithMany()
                 .HasForeignKey(pp => pp.ProjectId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(pp => pp.PaymentProcess)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

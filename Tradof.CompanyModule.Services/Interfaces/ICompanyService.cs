@@ -9,10 +9,10 @@ namespace Tradof.CompanyModule.Services.Interfaces
         Task<CompanySubscriptionDto?> GetCurrentSubscriptionAsync(string userId);
         Task<IEnumerable<EmployeeDto>> GetCompanyEmployeesAsync(string companyId);
         Task UpdateCompanyAsync(UpdateCompanyDto dto);
-        Task AddLanguageAsync(string companyId, long languageId);
-        Task RemoveLanguageAsync(string companyId, long languageId);
-        Task AddSpecializationAsync(string companyId, long specializationId);
-        Task RemoveSpecializationAsync(string companyId, long specializationId);
-        Task ChangeCompanyPasswordAsync(ChangeCompanyPasswordDto dto);
+        Task AddLanguagesAsync(string companyId, IEnumerable<long> languageIds);
+        Task RemoveLanguagesAsync(string companyId, IEnumerable<long> languageIds);
+        Task AddSpecializationsAsync(string companyId, IEnumerable<long> specializationIds);
+        Task RemoveSpecializationsAsync(string companyId, IEnumerable<long> specializationIds);
+        Task ChangeCompanyPasswordAsync(string Id, ChangeCompanyPasswordDto dto);
     }
 }

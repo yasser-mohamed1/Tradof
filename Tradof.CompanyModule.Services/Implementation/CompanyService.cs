@@ -53,11 +53,13 @@ namespace Tradof.CompanyModule.Services.Implementation
             return currentSubscription?.ToDto();
         }
 
-        public async Task ChangeCompanyPasswordAsync(ChangeCompanyPasswordDto dto)
+        public async Task ChangeCompanyPasswordAsync(string Id, ChangeCompanyPasswordDto dto)
         {
+            if (dto.NewPassword != dto.ConfirmPassword) throw new ArgumentException("New password and confirm password do not match");
+
             var company = await _context.Companies
                 .Include(c => c.User)
-                .FirstOrDefaultAsync(c => c.UserId == dto.CompanyId);
+                .FirstOrDefaultAsync(c => c.UserId == Id);
 
             if (company == null) throw new KeyNotFoundException("Company not found");
 
@@ -193,55 +195,94 @@ namespace Tradof.CompanyModule.Services.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddLanguageAsync(string companyId, long languageId)
+        public async Task AddLanguagesAsync(string companyId, IEnumerable<long> languageIds)
         {
-            var company = await _context.Companies.Include(c => c.PreferredLanguages).FirstOrDefaultAsync(c => c.UserId == companyId);
+            var company = await _context.Companies.Include(c => c.PreferredLanguages)
+                .FirstOrDefaultAsync(c => c.UserId == companyId);
+
             if (company == null) throw new KeyNotFoundException("Company not found");
-            var language = _context.Languages.Find(languageId);
-            if (language is not null)
-                company.PreferredLanguages.Add(language);
-            else
-                throw new KeyNotFoundException("Language not found");
+
+            var languages = await _context.Languages
+                .Where(l => languageIds.Contains(l.Id))
+                .ToListAsync();
+
+            if (!languages.Any()) throw new KeyNotFoundException("No valid languages found");
+
+            foreach (var language in languages)
+            {
+                if (!company.PreferredLanguages.Contains(language))
+                {
+                    company.PreferredLanguages.Add(language);
+                }
+            }
+
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveLanguageAsync(string companyId, long languageId)
+        public async Task RemoveLanguagesAsync(string companyId, IEnumerable<long> languageIds)
         {
-            var company = await _context.Companies.Include(c => c.PreferredLanguages).FirstOrDefaultAsync(c => c.UserId == companyId);
+            var company = await _context.Companies.Include(c => c.PreferredLanguages)
+                .FirstOrDefaultAsync(c => c.UserId == companyId);
+
             if (company == null) throw new KeyNotFoundException("Company not found");
 
-            var language = company.PreferredLanguages.FirstOrDefault(l => l.Id == languageId);
-            if (language != null)
+            var languagesToRemove = company.PreferredLanguages
+                .Where(l => languageIds.Contains(l.Id))
+                .ToList();
+
+            if (!languagesToRemove.Any()) throw new KeyNotFoundException("No matching languages found to remove");
+
+            foreach (var language in languagesToRemove)
             {
                 company.PreferredLanguages.Remove(language);
-                await _context.SaveChangesAsync();
             }
-        }
-
-        public async Task AddSpecializationAsync(string companyId, long specializationId)
-        {
-            var company = await _context.Companies.Include(c => c.Specializations).FirstOrDefaultAsync(c => c.UserId == companyId);
-            if (company == null) throw new KeyNotFoundException("Company not found");
-            var specialization = _context.Specializations.Find(specializationId);
-            if (specialization is not null)
-                company.Specializations.Add(specialization);
-            else
-                throw new KeyNotFoundException("Specialization not found");
 
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveSpecializationAsync(string companyId, long specializationId)
+        public async Task AddSpecializationsAsync(string companyId, IEnumerable<long> specializationIds)
         {
-            var company = await _context.Companies.Include(c => c.Specializations).FirstOrDefaultAsync(c => c.UserId == companyId);
+            var company = await _context.Companies.Include(c => c.Specializations)
+                .FirstOrDefaultAsync(c => c.UserId == companyId);
+
             if (company == null) throw new KeyNotFoundException("Company not found");
 
-            var specialization = company.Specializations.FirstOrDefault(s => s.Id == specializationId);
-            if (specialization != null)
+            var specializations = await _context.Specializations
+                .Where(s => specializationIds.Contains(s.Id))
+                .ToListAsync();
+
+            if (!specializations.Any()) throw new KeyNotFoundException("No valid specializations found");
+
+            foreach (var specialization in specializations)
+            {
+                if (!company.Specializations.Contains(specialization))
+                {
+                    company.Specializations.Add(specialization);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveSpecializationsAsync(string companyId, IEnumerable<long> specializationIds)
+        {
+            var company = await _context.Companies.Include(c => c.Specializations)
+                .FirstOrDefaultAsync(c => c.UserId == companyId);
+
+            if (company == null) throw new KeyNotFoundException("Company not found");
+
+            var specializationsToRemove = company.Specializations
+                .Where(s => specializationIds.Contains(s.Id))
+                .ToList();
+
+            if (!specializationsToRemove.Any()) throw new KeyNotFoundException("No matching specializations found to remove");
+
+            foreach (var specialization in specializationsToRemove)
             {
                 company.Specializations.Remove(specialization);
-                await _context.SaveChangesAsync();
             }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

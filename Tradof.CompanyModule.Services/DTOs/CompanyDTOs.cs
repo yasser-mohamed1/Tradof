@@ -82,8 +82,11 @@ namespace Tradof.CompanyModule.Services.DTOs
     );
 
     public record ChangeCompanyPasswordDto(
-        [Required] string CompanyId,
         [Required] string CurrentPassword,
-        [Required, MinLength(8)] string NewPassword
+        [Required, RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+            ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.")]
+        string NewPassword,
+        [Required]
+        string ConfirmPassword
     );
 }
