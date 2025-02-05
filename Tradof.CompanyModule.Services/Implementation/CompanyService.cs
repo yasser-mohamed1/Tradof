@@ -284,5 +284,54 @@ namespace Tradof.CompanyModule.Services.Implementation
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task AddOrUpdateSocialMediasAsync(string Id, IEnumerable<CreateSocialMediaDto> socialMedias)
+        {
+            if (!socialMedias.Any())
+                return;
+
+            var company = await _context.Set<Company>()
+                .Include(c => c.Medias)
+                .FirstOrDefaultAsync(c => c.UserId == Id);
+
+            if (company == null)
+                throw new ArgumentException("Invalid Company ID.");
+
+            foreach (var dto in socialMedias)
+            {
+                if (!Enum.TryParse<PlatformType>(dto.PlatformType, true, out var platformType))
+                    throw new ArgumentException($"Invalid PlatformType: {dto.PlatformType}");
+
+                var existingMedia = company.Medias.FirstOrDefault(m => m.PlatformType == platformType);
+
+                if (existingMedia != null)
+                {
+                    existingMedia.Link = dto.Link;
+                }
+                else
+                {
+                    var socialMediaEntity = company.ToSocialMedia(dto);
+                    company.Medias.Add(socialMediaEntity);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveSocialMediasAsync(string Id, IEnumerable<long> mediaIds)
+        {
+            if (mediaIds == null || !mediaIds.Any())
+                return;
+
+            var socialMediasToRemove = await _context.Set<CompanySocialMedia>()
+                .Where(m => m.Company.UserId == Id && mediaIds.Contains(m.Id))
+                .ToListAsync();
+
+            if (!socialMediasToRemove.Any())
+                throw new ArgumentException("No matching social media entries found.");
+
+            _context.Set<CompanySocialMedia>().RemoveRange(socialMediasToRemove);
+            await _context.SaveChangesAsync();
+        }
     }
 }

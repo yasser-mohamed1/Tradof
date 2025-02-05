@@ -28,7 +28,6 @@ namespace Tradof.CompanyModule.Services.DTOs
         double NetPrice
     );
 
-
     public record EmployeeDto(
         string Id,
         string FullName,
@@ -75,10 +74,17 @@ namespace Tradof.CompanyModule.Services.DTOs
         [Required, StringLength(50)] string FirstName,
         [Required, StringLength(50)] string LastName,
         [Required, Phone] string PhoneNumber,
-        [Required, EmailAddress] string Email
+        [Url(ErrorMessage = "Invalid profile image URL.")]
+        string ProfileImageUrl
     );
 
     public record SocialMediaDto(
+        long Id,
+        string PlatformType,
+        string Link
+    );
+
+    public record CreateSocialMediaDto(
         [Required] string PlatformType,
         [Required, Url] string Link
     );

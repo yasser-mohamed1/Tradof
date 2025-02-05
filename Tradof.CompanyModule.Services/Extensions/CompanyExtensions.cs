@@ -1,4 +1,5 @@
-﻿using Tradof.Common.Enums;
+﻿using System.Runtime.CompilerServices;
+using Tradof.Common.Enums;
 using Tradof.CompanyModule.Services.DTOs;
 using Tradof.Data.Entities;
 
@@ -21,8 +22,8 @@ namespace Tradof.CompanyModule.Services.Extensions
                 company.User.ProfileImageUrl,
                 company.CountryId,
                 company.Specializations.Select(s => new SpecializationDto(s.Id, s.Name)).ToList(),
-                company.PreferredLanguages.Select(l => new LanguageDto(l.Id, l.LanguageName, l.LanguageCode,l.CountryName,l.CountryCode)).ToList(),
-                company.Medias.Select(m => new SocialMediaDto(m.PlatformType.ToString(), m.Link)).ToList()
+                company.PreferredLanguages.Select(l => new LanguageDto(l.Id, l.LanguageName, l.LanguageCode, l.CountryName, l.CountryCode)).ToList(),
+                company.Medias.Select(m => new SocialMediaDto(m.Id, m.PlatformType.ToString(), m.Link)).ToList()
             );
 
         public static CompanySubscriptionDto ToDto(this CompanySubscription subscription)
@@ -61,16 +62,16 @@ namespace Tradof.CompanyModule.Services.Extensions
                     FirstName = dto.FirstName,
                     LastName = dto.LastName
                 };
-		public static Language ToLanguage(this LanguageDto dto) =>
-			   new()
-			   {
-				   LanguageName = dto.LanguageName,
+        public static Language ToLanguage(this LanguageDto dto) =>
+               new()
+               {
+                   LanguageName = dto.LanguageName,
                    LanguageCode = dto.LanguageCode,
                    CountryName = dto.CountryName,
                    CountryCode = dto.CountryCode,
-			   };
+               };
 
-		public static CompanyEmployee ToCompanyEmployee(this CreateCompanyEmployeeDto dto, string userId, Company Company) =>
+        public static CompanyEmployee ToCompanyEmployee(this CreateCompanyEmployeeDto dto, string userId, Company Company) =>
             new()
             {
                 JobTitle = dto.JobTitle,
@@ -80,10 +81,9 @@ namespace Tradof.CompanyModule.Services.Extensions
                 Company = Company,
                 CreationDate = DateTime.UtcNow,
                 ModificationDate = DateTime.UtcNow,
-                CreatedBy = "System",
-                ModifiedBy = "System"
+                CreatedBy = userId,
+                ModifiedBy = userId
             };
-
 
         public static void UpdateEntity(this UpdateCompanyDto dto, Company company)
         {
@@ -96,8 +96,25 @@ namespace Tradof.CompanyModule.Services.Extensions
                 company.User.FirstName = dto.FirstName;
                 company.User.LastName = dto.LastName;
                 company.User.PhoneNumber = dto.PhoneNumber;
-                company.User.Email = dto.Email;
+                company.User.ProfileImageUrl = dto.ProfileImageUrl;
             }
+        }
+
+        public static CompanySocialMedia ToSocialMedia(this Company company, CreateSocialMediaDto dto)
+        {
+            if (!Enum.TryParse<PlatformType>(dto.PlatformType, true, out var platformType))
+                throw new ArgumentException($"Invalid PlatformType: {dto.PlatformType}");
+
+            return new CompanySocialMedia
+            {
+                PlatformType = platformType,
+                Link = dto.Link,
+                CompanyId = company.Id,
+                CreationDate = DateTime.UtcNow,
+                ModificationDate = DateTime.UtcNow,
+                CreatedBy = company.UserId,
+                ModifiedBy = company.UserId
+            };
         }
     }
 }
