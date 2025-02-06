@@ -35,4 +35,8 @@
     <ProjectReference Include="..\Tradof.Specialization.Api\Tradof.Specialization.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\" />
+  </ItemGroup>
+
 </Project>

@@ -1185,7 +1185,7 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<double>("OfferPrice")
                         .HasColumnType("float");
 
-                    b.Property<int>("ProjecDeliveryTime")
+                    b.Property<int>("ProjectDeliveryTime")
                         .HasColumnType("int");
 
                     b.Property<long>("ProjectId")

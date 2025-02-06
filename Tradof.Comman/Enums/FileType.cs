@@ -2,8 +2,11 @@
 {
 	public enum FileType
 	{
-		Word,
 		Pdf,
-		Excel
+		Excel,
+		Docx,
+		Png,
+		Jpeg,
+		Jpg
 	}
 }

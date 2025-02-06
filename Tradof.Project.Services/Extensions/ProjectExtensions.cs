@@ -35,7 +35,7 @@ namespace Tradof.Project.Services.Extensions
                 Description = projectDto.Description,
                 Name = projectDto.Name,
                 MaxPrice = projectDto.MaxPrice,
-                Status = Common.Enums.ProjectStatus.Pinding,
+                Status = Common.Enums.ProjectStatus.Pending,
             };
         }
         public static void UpdateFromDto(this Data.Entities.Project project, UpdateProjectDto projectDto)

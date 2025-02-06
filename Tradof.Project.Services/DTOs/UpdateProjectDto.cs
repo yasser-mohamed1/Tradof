@@ -1,4 +1,6 @@
-﻿namespace Tradof.Project.Services.DTOs
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Tradof.Project.Services.DTOs
 {
     public class UpdateProjectDto
     {
@@ -11,6 +13,6 @@
         public double MinPrice { get; set; }
         public double MaxPrice { get; set; }
         public long SpecializationId { get; set; }
-        public List<string>? Urls { get; set; }
+        public List<IFormFile>? Files { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 {
     public enum ProjectStatus
     {
-        Pinding,
+        Pending,
         OnReviewing,
         Finished
     }

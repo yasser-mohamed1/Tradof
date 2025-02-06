@@ -41,7 +41,7 @@ namespace Tradof.Project.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Create(CreateProjectDto projectDto)
         {
             return Ok(await _projectService.CreateAsync(projectDto));
@@ -51,7 +51,6 @@ namespace Tradof.Project.Api.Controllers
         public async Task<IActionResult> Update(UpdateProjectDto projectDto)
         {
             return Ok(await _projectService.UpdateAsync(projectDto));
-
         }
 
         [HttpDelete("{id}")]

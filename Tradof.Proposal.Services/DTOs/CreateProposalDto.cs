@@ -5,7 +5,7 @@
         public double OfferPrice { get; set; }
         public long ProjectId { get; set; }
         public string ProposalDescription { get; set; }
-        public int ProjecDeliveryTime { get; set; }
+        public DateTime ProjectDeliveryTime { get; set; }
         public List<string> ProposalAttachments { get; set; } = [];
     }
 }

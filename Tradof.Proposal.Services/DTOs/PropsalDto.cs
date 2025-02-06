@@ -9,7 +9,7 @@ namespace Tradof.Proposal.Services.DTOs
         public long FreelancerId { get; set; }
         public ProposalStatus ProposalStatus { get; set; }
         public string ProposalDescription { get; set; }
-        public int ProjecDeliveryTime { get; set; }
+        public DateTime ProjectDeliveryTime { get; set; }
         public string? FreelancerName { get; set; }
         public double OfferPrice { get; set; }
         public string? FreelancerImageUrl { get; set; }
