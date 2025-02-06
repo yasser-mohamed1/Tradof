@@ -53,32 +53,15 @@ namespace Tradof.CompanyModule.Services.Implementation
             return currentSubscription?.ToDto();
         }
 
-        public async Task ChangeCompanyPasswordAsync(string Id, ChangeCompanyPasswordDto dto)
+        public async Task<bool> ChangeCompanyPasswordAsync(string Id, ChangeCompanyPasswordDto dto)
         {
-            if (dto.NewPassword != dto.ConfirmPassword) throw new ArgumentException("New password and confirm password do not match");
+            if (dto.NewPassword != dto.ConfirmPassword) return false;
 
-            var company = await _context.Companies
-                .Include(c => c.User)
-                .FirstOrDefaultAsync(c => c.UserId == Id);
+            var user = await _userManager.FindByIdAsync(Id);
+            if (user == null) return false;
 
-            if (company == null) throw new KeyNotFoundException("Company not found");
-
-            if (company.User.PasswordHash != HashPassword(dto.CurrentPassword))
-            {
-                throw new UnauthorizedAccessException("Current password is incorrect");
-            }
-
-            company.User.PasswordHash = HashPassword(dto.NewPassword);
-
-            _context.Update(company);
-            await _context.SaveChangesAsync();
-        }
-
-        private static string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(bytes);
+            var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+            return result.Succeeded;
         }
 
         public async Task AddEmployeeAsync(CreateCompanyEmployeeDto dto)
