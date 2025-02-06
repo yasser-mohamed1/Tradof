@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Tradof.CompanyModule.Services.DTOs;
 using Tradof.CompanyModule.Services.Interfaces;
+using Tradof.Data.Entities;
 
 namespace Tradof.Company.Api.Controllers
 {
@@ -46,19 +47,10 @@ namespace Tradof.Company.Api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            try
-            {
-                await _companyService.ChangeCompanyPasswordAsync(CompanyId, dto);
-                return Ok("Password changed successfully");
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            var result = await _companyService.ChangeCompanyPasswordAsync(CompanyId, dto);
+            if (!result) return BadRequest("Failed to change password.");
+
+            return NoContent();
         }
 
         [HttpPost("AddEmployee")]
