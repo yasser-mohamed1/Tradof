@@ -12,9 +12,8 @@ namespace Tradof.FreelancerModule.Services.Interfaces
         Task<bool> ChangePasswordAsync(string userId, ChangePasswordDTO dto);
         Task<bool> AddPaymentMethodAsync(string Id, PaymentMethodDTO dto);
         Task<bool> RemovePaymentMethodAsync(long Id);
-        Task<bool> AddFreelancerSocialMediaAsync(string Id, AddFreelancerSocialMediaDTO dto);
-        Task<bool> UpdateFreelancerSocialMediaAsync(long socialMediaId, UpdateFreelancerSocialMediaDTO dto);
-        Task<bool> AddFreelancerLanguagePairAsync(string Id, AddFreelancerLanguagePairDTO dto);
-        Task<bool> RemoveFreelancerLanguagePairAsync(long Id);
+        Task<bool> AddFreelancerLanguagePairsAsync(string id, IEnumerable<AddFreelancerLanguagePairDTO> dtos);
+        Task<bool> RemoveFreelancerLanguagePairsAsync(string id, IEnumerable<long> ids);
+        Task AddOrUpdateOrRemoveFreelancerSocialMediasAsync(string id, IEnumerable<AddFreelancerSocialMediaDTO> socialMedias);
     }
 }

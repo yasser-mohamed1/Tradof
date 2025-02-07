@@ -99,7 +99,7 @@ namespace Tradof.Company.Api.Controllers
             return Ok("Specialization removed successfully");
         }
 
-        [HttpPost("{companyId}/social-medias/add-or-update")]
+        [HttpPost("{companyId}/social-medias/add-or-update-or-remove")]
         public async Task<IActionResult> AddOrUpdateSocialMedias(string companyId, [FromBody] IEnumerable<CreateSocialMediaDto> socialMedias)
         {
             if (socialMedias == null || !socialMedias.Any())
@@ -107,25 +107,8 @@ namespace Tradof.Company.Api.Controllers
 
             try
             {
-                await _companyService.AddOrUpdateSocialMediasAsync(companyId, socialMedias);
+                await _companyService.AddOrUpdateOrRemoveSocialMediasAsync(companyId, socialMedias);
                 return Ok("Social media entries have been successfully added or updated.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpDelete("{companyId}/social-medias/remove")]
-        public async Task<IActionResult> RemoveSocialMedias(string companyId, [FromBody] IEnumerable<long> mediaIds)
-        {
-            if (mediaIds == null || !mediaIds.Any())
-                return BadRequest("No media IDs provided.");
-
-            try
-            {
-                await _companyService.RemoveSocialMediasAsync(companyId, mediaIds);
-                return Ok("Selected social media entries have been removed.");
             }
             catch (Exception ex)
             {

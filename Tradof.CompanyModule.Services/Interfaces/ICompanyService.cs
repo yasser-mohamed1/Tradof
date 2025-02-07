@@ -14,7 +14,6 @@ namespace Tradof.CompanyModule.Services.Interfaces
         Task AddSpecializationsAsync(string companyId, IEnumerable<long> specializationIds);
         Task RemoveSpecializationsAsync(string companyId, IEnumerable<long> specializationIds);
         Task<bool> ChangeCompanyPasswordAsync(string Id, ChangeCompanyPasswordDto dto);
-        Task AddOrUpdateSocialMediasAsync(string Id, IEnumerable<CreateSocialMediaDto> socialMedias);
-        Task RemoveSocialMediasAsync(string companyId, IEnumerable<long> mediaIds);
+        Task AddOrUpdateOrRemoveSocialMediasAsync(string id, IEnumerable<CreateSocialMediaDto> socialMedias);
     }
 }

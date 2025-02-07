@@ -36,11 +36,7 @@ namespace Tradof.FreelancerModule.Services.DTOs
         string ProfileImageUrl,
 
         [Phone(ErrorMessage = "Invalid phone number format.")]
-        string PhoneNumber,
-
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email address.")]
-        string Email
+        string PhoneNumber
     );
 
     public record ChangePasswordDTO(
@@ -67,7 +63,6 @@ namespace Tradof.FreelancerModule.Services.DTOs
         [Required(ErrorMessage = "Platform type is required.")]
         string PlatformType,
 
-        [Required(ErrorMessage = "Link is required.")]
         [Url(ErrorMessage = "Invalid URL format.")]
         string Link
     );
