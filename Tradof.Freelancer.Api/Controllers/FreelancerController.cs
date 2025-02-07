@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tradof.FreelancerModule.Services.DTOs;
 using Tradof.FreelancerModule.Services.Interfaces;
@@ -37,43 +37,44 @@ public class FreelancerController(IFreelancerService _freelancerService) : Contr
         return Ok(new { CvUrl = result });
     }
 
-    [HttpPost("{freelancerId}/social-medias")]
-    public async Task<IActionResult> AddFreelancerSocialMedia(string freelancerId, [FromBody] AddFreelancerSocialMediaDTO dto)
+    [HttpPost("{freelancerId}/social-medias/add-or-update-or-remove")]
+    public async Task<IActionResult> AddOrUpdateOrRemoveFreelancerSocialMediasAsync(string freelancerId, [FromBody] IEnumerable<AddFreelancerSocialMediaDTO> socialMedias)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        if (socialMedias == null || !socialMedias.Any())
+        {
+            return BadRequest("Social media list cannot be empty.");
+        }
 
-        var result = await _freelancerService.AddFreelancerSocialMediaAsync(freelancerId, dto);
-        if (!result) return BadRequest("Failed to add social media.");
-
-        return CreatedAtAction(nameof(GetFreelancerData), new { freelancerId }, dto);
-    }
-
-    [HttpPut("social-medias/{socialMediaId:long}")]
-    public async Task<IActionResult> UpdateFreelancerSocialMedia(long socialMediaId, [FromBody] UpdateFreelancerSocialMediaDTO dto)
-    {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        var result = await _freelancerService.UpdateFreelancerSocialMediaAsync(socialMediaId, dto);
-        if (!result) return NotFound("Social media not found.");
-
-        return NoContent();
+        try
+        {
+            await _freelancerService.AddOrUpdateOrRemoveFreelancerSocialMediasAsync(freelancerId, socialMedias);
+            return Ok("Freelancer social media list updated successfully.");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An unexpected error occurred.");
+        }
     }
 
     [HttpPost("{freelancerId}/language-pairs")]
-    public async Task<IActionResult> AddFreelancerLanguagePair(string freelancerId, [FromBody] AddFreelancerLanguagePairDTO dto)
+    public async Task<IActionResult> AddFreelancerLanguagePair(string freelancerId, [FromBody] IEnumerable<AddFreelancerLanguagePairDTO> dtos)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var result = await _freelancerService.AddFreelancerLanguagePairAsync(freelancerId, dto);
+        var result = await _freelancerService.AddFreelancerLanguagePairsAsync(freelancerId, dtos);
         if (!result) return BadRequest("Failed to add the language pair or it already exists.");
 
-        return CreatedAtAction(nameof(AddFreelancerLanguagePair), new { freelancerId }, dto);
+        return CreatedAtAction(nameof(AddFreelancerLanguagePair), new { freelancerId }, dtos);
     }
 
-    [HttpDelete("language-pairs/{languagePairId:long}")]
-    public async Task<IActionResult> RemoveFreelancerLanguagePair(long languagePairId)
+    [HttpDelete("{freelancerId}/language-pairs")]
+    public async Task<IActionResult> RemoveFreelancerLanguagePair(string freelancerId, IEnumerable<long> languagePairIds)
     {
-        var result = await _freelancerService.RemoveFreelancerLanguagePairAsync(languagePairId);
+        var result = await _freelancerService.RemoveFreelancerLanguagePairsAsync(freelancerId,languagePairIds);
         if (!result) return NotFound("Language pair not found.");
 
         return NoContent();
