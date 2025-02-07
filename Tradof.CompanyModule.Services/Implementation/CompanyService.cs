@@ -268,22 +268,34 @@ namespace Tradof.CompanyModule.Services.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public async Task AddOrUpdateSocialMediasAsync(string Id, IEnumerable<CreateSocialMediaDto> socialMedias)
+        public async Task AddOrUpdateOrRemoveSocialMediasAsync(string id, IEnumerable<CreateSocialMediaDto> socialMedias)
         {
-            if (!socialMedias.Any())
-                return;
-
             var company = await _context.Set<Company>()
                 .Include(c => c.Medias)
-                .FirstOrDefaultAsync(c => c.UserId == Id);
+                .FirstOrDefaultAsync(c => c.UserId == id);
 
             if (company == null)
                 throw new ArgumentException("Invalid Company ID.");
 
+            var mediaPlatformTypes = socialMedias.Select(sm => sm.PlatformType.ToLower()).ToList();
+
+            // Remove medias with empty links
+            var mediasToRemove = company.Medias
+                .Where(m => socialMedias.Any(dto => dto.PlatformType.Equals(m.PlatformType.ToString(), StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(dto.Link)))
+                .ToList();
+
+            if (mediasToRemove.Any())
+            {
+                _context.RemoveRange(mediasToRemove);
+            }
+
+            // Update existing or add new medias
             foreach (var dto in socialMedias)
             {
                 if (!Enum.TryParse<PlatformType>(dto.PlatformType, true, out var platformType))
                     throw new ArgumentException($"Invalid PlatformType: {dto.PlatformType}");
+
+                if (string.IsNullOrWhiteSpace(dto.Link)) continue;
 
                 var existingMedia = company.Medias.FirstOrDefault(m => m.PlatformType == platformType);
 
@@ -301,20 +313,5 @@ namespace Tradof.CompanyModule.Services.Implementation
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveSocialMediasAsync(string Id, IEnumerable<long> mediaIds)
-        {
-            if (mediaIds == null || !mediaIds.Any())
-                return;
-
-            var socialMediasToRemove = await _context.Set<CompanySocialMedia>()
-                .Where(m => m.Company.UserId == Id && mediaIds.Contains(m.Id))
-                .ToListAsync();
-
-            if (!socialMediasToRemove.Any())
-                throw new ArgumentException("No matching social media entries found.");
-
-            _context.Set<CompanySocialMedia>().RemoveRange(socialMediasToRemove);
-            await _context.SaveChangesAsync();
-        }
     }
 }

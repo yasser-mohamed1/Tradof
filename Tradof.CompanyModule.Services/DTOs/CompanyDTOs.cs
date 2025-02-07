@@ -86,7 +86,7 @@ namespace Tradof.CompanyModule.Services.DTOs
 
     public record CreateSocialMediaDto(
         [Required] string PlatformType,
-        [Required, Url] string Link
+        [Url] string Link
     );
 
     public record ChangeCompanyPasswordDto(

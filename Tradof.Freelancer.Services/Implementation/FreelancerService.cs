@@ -3,6 +3,7 @@ using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Tradof.Common.Enums;
 using Tradof.Data.Entities;
 using Tradof.EntityFramework.DataBase_Context;
 using Tradof.FreelancerModule.Services.DTOs;
@@ -71,29 +72,49 @@ namespace Tradof.FreelancerModule.Services.Implementation
             return true;
         }
 
-        public async Task<bool> AddFreelancerSocialMediaAsync(string Id, AddFreelancerSocialMediaDTO dto)
+        public async Task AddOrUpdateOrRemoveFreelancerSocialMediasAsync(string id, IEnumerable<AddFreelancerSocialMediaDTO> socialMedias)
         {
             var freelancer = await _context.Freelancers
-                .FirstOrDefaultAsync(f => f.UserId == Id);
+                .Include(f => f.FreelancerSocialMedias)
+                .FirstOrDefaultAsync(f => f.UserId == id);
+
             if (freelancer == null)
-                return false;
+                throw new ArgumentException("Invalid Freelancer ID.");
 
-            var socialMediaEntity = dto.ToFreelancerSocialMediaEntity(freelancer.Id);
-            _context.FreelancerSocialMedias.Add(socialMediaEntity);
+            var mediaPlatformTypes = socialMedias.Select(sm => sm.PlatformType.ToLower()).ToList();
+
+            // Remove medias with empty links
+            var mediasToRemove = freelancer.FreelancerSocialMedias
+                .Where(m => socialMedias.Any(dto => dto.PlatformType.Equals(m.PlatformType.ToString(), StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(dto.Link)))
+                .ToList();
+
+            if (mediasToRemove.Any())
+            {
+                _context.RemoveRange(mediasToRemove);
+            }
+
+            // Update existing or add new medias
+            foreach (var dto in socialMedias)
+            {
+                if (!Enum.TryParse<PlatformType>(dto.PlatformType, true, out var platformType))
+                    throw new ArgumentException($"Invalid PlatformType: {dto.PlatformType}");
+
+                if (string.IsNullOrWhiteSpace(dto.Link)) continue;
+
+                var existingMedia = freelancer.FreelancerSocialMedias.FirstOrDefault(m => m.PlatformType == platformType);
+
+                if (existingMedia != null)
+                {
+                    existingMedia.Link = dto.Link;
+                }
+                else
+                {
+                    var socialMediaEntity = dto.ToFreelancerSocialMediaEntity(freelancer.Id);
+                    freelancer.FreelancerSocialMedias.Add(socialMediaEntity);
+                }
+            }
+
             await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> UpdateFreelancerSocialMediaAsync(long socialMediaId, UpdateFreelancerSocialMediaDTO dto)
-        {
-            var socialMedia = await _context.FreelancerSocialMedias.FirstOrDefaultAsync(sm => sm.Id == socialMediaId);
-
-            if (socialMedia == null) return false;
-
-            socialMedia.Link = dto.Link;
-            await _context.SaveChangesAsync();
-
-            return true;
         }
 
         public async Task<bool> ChangePasswordAsync(string userId, ChangePasswordDTO dto)
@@ -130,31 +151,45 @@ namespace Tradof.FreelancerModule.Services.Implementation
             return true;
         }
 
-        public async Task<bool> AddFreelancerLanguagePairAsync(string Id, AddFreelancerLanguagePairDTO dto)
+        public async Task<bool> AddFreelancerLanguagePairsAsync(string id, IEnumerable<AddFreelancerLanguagePairDTO> dtos)
         {
-            var freelancer = await _context.Freelancers.FirstOrDefaultAsync(f => f.UserId == Id);
+            var freelancer = await _context.Freelancers.FirstOrDefaultAsync(f => f.UserId == id);
             if (freelancer == null) return false;
 
-            var existingPair = await _context.FreelancerLanguagesPairs
-                .FirstOrDefaultAsync(lp => lp.FreelancerId == freelancer.Id &&
-                                            lp.LanguageFromId == dto.LanguageFromId &&
-                                            lp.LanguageToId == dto.LanguageToId);
+            var newLanguagePairs = new List<FreelancerLanguagesPair>();
 
-            if (existingPair != null) return false;
+            foreach (var dto in dtos)
+            {
+                var existingPair = await _context.FreelancerLanguagesPairs
+                    .FirstOrDefaultAsync(lp => lp.FreelancerId == freelancer.Id &&
+                                                lp.LanguageFromId == dto.LanguageFromId &&
+                                                lp.LanguageToId == dto.LanguageToId);
+                if (existingPair == null)
+                {
+                    var languagePair = dto.ToFreelancerLanguagePair(freelancer.Id);
+                    newLanguagePairs.Add(languagePair);
+                }
+            }
 
-            var languagePair = dto.ToFreelancerLanguagePair(freelancer.Id);
+            if (!newLanguagePairs.Any()) return false;
 
-            await _context.FreelancerLanguagesPairs.AddAsync(languagePair);
+            await _context.FreelancerLanguagesPairs.AddRangeAsync(newLanguagePairs);
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<bool> RemoveFreelancerLanguagePairAsync(long Id)
+        public async Task<bool> RemoveFreelancerLanguagePairsAsync(string id, IEnumerable<long> ids)
         {
-            var languagePair = await _context.FreelancerLanguagesPairs.FindAsync(Id);
-            if (languagePair == null) return false;
+            var freelancer = await _context.Freelancers.FirstOrDefaultAsync(f => f.UserId == id);
+            if (freelancer == null) return false;
 
-            _context.FreelancerLanguagesPairs.Remove(languagePair);
+            var languagePairs = await _context.FreelancerLanguagesPairs
+                .Where(lp => lp.FreelancerId == freelancer.Id && ids.Contains(lp.Id))
+                .ToListAsync();
+
+            if (!languagePairs.Any()) return false;
+
+            _context.FreelancerLanguagesPairs.RemoveRange(languagePairs);
             await _context.SaveChangesAsync();
             return true;
         }

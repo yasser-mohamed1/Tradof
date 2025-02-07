@@ -63,7 +63,6 @@ namespace Tradof.FreelancerModule.Services.Extensions
             user.LastName = dto.LastName;
             user.ProfileImageUrl = dto.ProfileImageUrl;
             user.PhoneNumber = dto.PhoneNumber;
-            user.Email = dto.Email;
         }
 
         public static FreelancerSocialMedia ToFreelancerSocialMediaEntity(this AddFreelancerSocialMediaDTO dto, long Id)
