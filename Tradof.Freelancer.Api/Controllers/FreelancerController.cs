@@ -71,7 +71,7 @@ public class FreelancerController(IFreelancerService _freelancerService) : Contr
         return CreatedAtAction(nameof(AddFreelancerLanguagePair), new { freelancerId }, dtos);
     }
 
-    [HttpDelete("language-pairs/{languagePairId:long}")]
+    [HttpDelete("{freelancerId}/language-pairs")]
     public async Task<IActionResult> RemoveFreelancerLanguagePair(string freelancerId, IEnumerable<long> languagePairIds)
     {
         var result = await _freelancerService.RemoveFreelancerLanguagePairsAsync(freelancerId,languagePairIds);
