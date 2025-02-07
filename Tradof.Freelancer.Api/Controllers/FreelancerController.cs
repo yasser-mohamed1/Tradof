@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tradof.FreelancerModule.Services.DTOs;
 using Tradof.FreelancerModule.Services.Interfaces;
