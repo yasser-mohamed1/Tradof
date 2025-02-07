@@ -47,7 +47,7 @@ public class FreelancerController(IFreelancerService _freelancerService) : Contr
 
         try
         {
-            await AddOrUpdateOrRemoveFreelancerSocialMediasAsync(freelancerId, socialMedias);
+            await _freelancerService.AddOrUpdateOrRemoveFreelancerSocialMediasAsync(freelancerId, socialMedias);
             return Ok("Freelancer social media list updated successfully.");
         }
         catch (ArgumentException ex)
@@ -72,7 +72,7 @@ public class FreelancerController(IFreelancerService _freelancerService) : Contr
     }
 
     [HttpDelete("language-pairs/{languagePairId:long}")]
-    public async Task<IActionResult> RemoveFreelancerLanguagePair(string freelancerId,IEnumerable<long> languagePairIds)
+    public async Task<IActionResult> RemoveFreelancerLanguagePair(string freelancerId, IEnumerable<long> languagePairIds)
     {
         var result = await _freelancerService.RemoveFreelancerLanguagePairsAsync(freelancerId,languagePairIds);
         if (!result) return NotFound("Language pair not found.");

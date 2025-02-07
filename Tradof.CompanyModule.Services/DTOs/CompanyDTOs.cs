@@ -86,7 +86,8 @@ namespace Tradof.CompanyModule.Services.DTOs
 
     public record CreateSocialMediaDto(
         [Required] string PlatformType,
-        [Url] string Link
+        [OptionalUrl(ErrorMessage = "Invalid URL format.")]
+        string? Link
     );
 
     public record ChangeCompanyPasswordDto(

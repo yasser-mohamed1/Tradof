@@ -63,7 +63,7 @@ namespace Tradof.FreelancerModule.Services.DTOs
         [Required(ErrorMessage = "Platform type is required.")]
         string PlatformType,
 
-        [Url(ErrorMessage = "Invalid URL format.")]
+        [OptionalUrl(ErrorMessage = "Invalid URL format.")]
         string Link
     );
 
