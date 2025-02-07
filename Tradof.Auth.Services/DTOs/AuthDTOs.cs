@@ -19,7 +19,7 @@ namespace Tradof.Auth.Services.DTOs
             ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.")]
         string Password,
 
-        [Required(ErrorMessage = "First name is required.")]
+        [Required(ErrorMessage = "Company name is required.")]
         string CompanyName,
 
         [Required(ErrorMessage = "First name is required.")]

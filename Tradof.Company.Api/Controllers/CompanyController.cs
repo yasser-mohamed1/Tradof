@@ -100,7 +100,7 @@ namespace Tradof.Company.Api.Controllers
         }
 
         [HttpPost("{companyId}/social-medias/add-or-update-or-remove")]
-        public async Task<IActionResult> AddOrUpdateSocialMedias(string companyId, [FromBody] IEnumerable<CreateSocialMediaDto> socialMedias)
+        public async Task<IActionResult> AddOrUpdateOrRemoveSocialMedias(string companyId, [FromBody] IEnumerable<CreateSocialMediaDto> socialMedias)
         {
             if (socialMedias == null || !socialMedias.Any())
                 return BadRequest("No social media data provided.");
@@ -108,7 +108,7 @@ namespace Tradof.Company.Api.Controllers
             try
             {
                 await _companyService.AddOrUpdateOrRemoveSocialMediasAsync(companyId, socialMedias);
-                return Ok("Social media entries have been successfully added or updated.");
+                return Ok("Company social media list updated successfully.");
             }
             catch (Exception ex)
             {
