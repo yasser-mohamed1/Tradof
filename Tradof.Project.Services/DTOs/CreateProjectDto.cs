@@ -9,7 +9,7 @@ namespace Tradof.Project.Services.DTOs
         public int Days { get; set; }
         public long LanguageFromId { get; set; }
         public long LanguageToId { get; set; }
-        public double MinPrice { get; set; }
+		public double MinPrice { get; set; }
         public double MaxPrice { get; set; }
         public long SpecializationId { get; set; }
         public List<IFormFile>? Files { get; set; }

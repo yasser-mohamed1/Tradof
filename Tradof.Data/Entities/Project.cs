@@ -17,7 +17,6 @@ namespace Tradof.Data.Entities
         public double MinPrice { get; set; }
         public double MaxPrice { get; set; }
         public double? Price { get; set; }
-
         public long? FreelancerId { get; set; }
         public long CompanyId { get; set; }
         public long? SpecializationId { get; set; }

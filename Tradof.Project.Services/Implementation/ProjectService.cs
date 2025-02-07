@@ -72,8 +72,7 @@ namespace Tradof.Project.Services.Implementation
 						if (!Enum.TryParse(typeof(FileType), fileExtension, true, out var fileType))
 							throw new Exception($"Unsupported file type: {fileExtension}");
 
-						var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-						var filePath = Path.Combine("wwwroot/uploads", fileName);
+						var filePath = Path.Combine("wwwroot/uploads", file.FileName);
 
 						using (var stream = new FileStream(filePath, FileMode.Create))
 						{
@@ -142,8 +141,7 @@ namespace Tradof.Project.Services.Implementation
 						if (!Enum.TryParse(typeof(FileType), fileExtension, true, out var fileType))
 							throw new Exception($"Unsupported file type: {fileExtension}");
 
-						var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-						var filePath = Path.Combine("wwwroot/uploads", fileName);
+						var filePath = Path.Combine("wwwroot/uploads", file.FileName);
 
 						using (var stream = new FileStream(filePath, FileMode.Create))
 						{

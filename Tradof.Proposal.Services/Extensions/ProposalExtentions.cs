@@ -28,7 +28,7 @@ namespace Tradof.Proposal.Services.Extensions
             {
                 ProjectId = proposalDto.ProjectId,
                 ProposalDescription = proposalDto.ProposalDescription,
-                ProposalStatus = ProposalStatus.Pinding,
+                ProposalStatus = ProposalStatus.Pending,
                 ProjectDeliveryTime = proposalDto.ProjectDeliveryTime,
                 OfferPrice = proposalDto.OfferPrice,
             };
@@ -38,7 +38,7 @@ namespace Tradof.Proposal.Services.Extensions
 
             proposal.ProjectId = proposalDto.ProjectId;
             proposal.ProposalDescription = proposalDto.ProposalDescription;
-            proposal.ProposalStatus = ProposalStatus.Pinding;
+            proposal.ProposalStatus = ProposalStatus.Pending;
             proposal.ProjectDeliveryTime = proposalDto.ProjectDeliveryTime;
             proposal.OfferPrice = proposalDto.OfferPrice;
 

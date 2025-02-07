@@ -2,7 +2,7 @@
 {
     public enum ProposalStatus
     {
-        Pinding,
+        Pending,
         Completed,
         Declined,
         InProgress,
