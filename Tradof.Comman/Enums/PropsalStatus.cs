@@ -3,9 +3,8 @@
     public enum ProposalStatus
     {
         Pending,
-        Completed,
+        Accepted,
         Declined,
-        InProgress,
         Canceled
     }
 }
