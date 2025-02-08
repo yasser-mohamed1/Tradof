@@ -171,7 +171,11 @@ namespace Tradof.Auth.Services.Implementation
         public async Task ForgetPasswordAsync(ForgetPasswordDto dto)
         {
             ValidationHelper.ValidateForgetPasswordDto(dto);
-
+            var existingUser = await _userManager.FindByEmailAsync(dto.Email);
+            if (existingUser is null)
+            {
+                throw new ValidationException("Email is not registered.");
+            }
             var otp = GenerateOtp();
             await _otpRepository.SaveOtpAsync(dto.Email, otp, TimeSpan.FromMinutes(10));
             await _emailService.SendEmailAsync(dto.Email, "Reset Your Password", $"Your OTP is: {otp}");
