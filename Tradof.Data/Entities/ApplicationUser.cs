@@ -9,11 +9,8 @@ namespace Tradof.Data.Entities
         public string LastName { get; set; }
         public string ProfileImageUrl { get; set; }
         public UserType UserType { get; set; }
-
         public bool IsEmailConfirmed { get; set; }
         public string EmailConfirmationToken { get; set; }
-
-
         public ICollection<NotificationReceiver> NotificationReceivers { get; set; } = [];
         public ICollection<Feedback> Feedbacks { get; set; } = [];
         public ICollection<TechnicalSupport> TechnicalSupports { get; set; } = [];

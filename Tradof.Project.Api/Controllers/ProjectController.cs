@@ -39,7 +39,17 @@ namespace Tradof.Project.Api.Controllers
         {
             return Ok(await _projectService.GetProjectsCountByMonth(id, year, month));
         }
-
+        [HttpGet("statistics")]
+        public async Task<IActionResult> GetProjectsStatistics(long id)
+        {
+            Tuple<int, int, int> statistics = await _projectService.ProjectsStatistics(id);
+            return Ok(new
+            {
+                active = statistics.Item1,
+                inProgress = statistics.Item2,
+                accepted = statistics.Item3
+            });
+        }
         [HttpPost]
         //[Authorize]
         public async Task<IActionResult> Create(CreateProjectDto projectDto)

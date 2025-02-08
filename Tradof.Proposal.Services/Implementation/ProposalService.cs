@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
 using Tradof.Data.Entities;
 using Tradof.Data.Interfaces;
@@ -14,12 +15,47 @@ namespace Tradof.Proposal.Services.Implementation
 {
     public class ProposalService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers) : IProposalService
     {
+        public async Task<bool> AcceptProposal(long projectId, long proposalId)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
+            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == projectId) ?? throw new Exception("project not found");
+            if (currentUser.Id != project.Company.UserId)
+                throw new Exception("not authorized to accept this");
+
+            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId) ?? throw new NotFoundException("proposal not found");
+            proposal.ProposalStatus = ProposalStatus.Accepted;
+            project.FreelancerId = proposal.FreelancerId;
+
+            return await _unitOfWork.CommitAsync();
+        }
+        public async Task<bool> DenyProposal(long projectId, long proposalId)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
+            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == projectId) ?? throw new Exception("project not found");
+            if (currentUser.Id != project.Company.UserId)
+                throw new Exception("not authorized to deny this");
+
+            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId) ?? throw new NotFoundException("proposal not found");
+            proposal.ProposalStatus = ProposalStatus.Declined;
+            return await _unitOfWork.CommitAsync();
+        }
+        public async Task<bool> CancelProposal(long proposalId)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
+            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId) ?? throw new NotFoundException("proposal not found");
+            if (currentUser.Id != proposal.Freelancer.UserId)
+                throw new Exception("not cancel to accept this");
+
+            proposal.ProposalStatus = ProposalStatus.Canceled;
+            return await _unitOfWork.CommitAsync();
+        }
         public async Task<ProposalDto> CreateAsync(CreateProposalDto dto)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
             var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id);
             var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == dto.ProjectId);
-
+            if (project.Status != ProjectStatus.Pending)
+                throw new Exception("cant send proposal for this project");
             var proposal = dto.ToEntity();
             proposal.Project = project;
             proposal.Freelancer = freelancer;
@@ -54,6 +90,8 @@ namespace Tradof.Proposal.Services.Implementation
             await _unitOfWork.Repository<ProposalAttachments>().DeleteWithCrateriaAsync(p => p.ProposalId == proposal.Id);
             return await _unitOfWork.CommitAsync();
         }
+
+
 
         public async Task<Pagination<ProposalDto>> GetAllAsync(ProposalSpecParams specParams)
         {
@@ -97,6 +135,13 @@ namespace Tradof.Proposal.Services.Implementation
                 return proposal.ToDto();
             else
                 throw new Exception("failed to update");
+        }
+
+        public async Task<int> GetProposalsCountByMonth(int year, int month, ProposalStatus status)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
+            return await _unitOfWork.Repository<Data.Entities.Proposal>().CountAsync(p => p.Freelancer.UserId == currentUser.Id && p.ProposalStatus == status &&
+                                                                                        p.TimePosted.Year == year && p.TimePosted.Month == month);
         }
     }
 }
