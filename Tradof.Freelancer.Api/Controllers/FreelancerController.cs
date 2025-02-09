@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tradof.FreelancerModule.Services.DTOs;
@@ -7,6 +8,7 @@ namespace Tradof.Freelancer.Api.Controllers;
 
 [ApiController]
 [Route("api/freelancers")]
+[Authorize(Roles = RoleNames.Freelancer)]
 public class FreelancerController(IFreelancerService _freelancerService) : ControllerBase
 {
     [HttpGet("{freelancerId}")]

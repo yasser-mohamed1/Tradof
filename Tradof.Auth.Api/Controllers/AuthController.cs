@@ -160,5 +160,16 @@ namespace Tradof.Auth.Api.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("current-user")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var (id, role) = await _authService.GetCurrentUserAsync();
+            return Ok(new
+            {
+                Id = id,
+                Role = role
+            });
+        }
     }
 }

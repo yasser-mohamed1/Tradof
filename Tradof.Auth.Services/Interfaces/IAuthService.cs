@@ -12,5 +12,6 @@ namespace Tradof.Auth.Services.Interfaces
         Task VerifyOtpAsync(OtpVerificationDto dto);
         Task ChangePasswordWithTokenAsync(ChangePasswordDto dto);
         Task<string> GeneratePasswordResetTokenAsync(string email);
+        Task<(string Id, string Role)> GetCurrentUserAsync(); 
     }
 }

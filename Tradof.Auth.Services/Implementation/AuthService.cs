@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
@@ -26,9 +27,9 @@ namespace Tradof.Auth.Services.Implementation
         IOtpRepository _otpRepository,
         IFreelancerLanguagesPairRepository _freelancerLanguagesPairRepository,
         TradofDbContext _context,
-        IBackgroundJobClient _backgroundJob) : IAuthService
+        IBackgroundJobClient _backgroundJob,
+        IHttpContextAccessor _httpContextAccessor) : IAuthService
     {
-
 
         private readonly string _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new Exception("JWT_SECRET is not set.");
         private readonly int _jwtExpiryInMinutes = int.Parse(Environment.GetEnvironmentVariable("JWT_EXPIRY") ?? throw new Exception("JWT_EXPIRY is not set."));
@@ -249,5 +250,20 @@ namespace Tradof.Auth.Services.Implementation
             return await _userManager.GeneratePasswordResetTokenAsync(user);
         }
 
+        public Task<(string Id, string Role)> GetCurrentUserAsync()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+
+            if (user == null || !user.Identity.IsAuthenticated)
+            {
+                return Task.FromResult<(string, string)>(("N/A", "N/A"));
+            }
+
+            var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userName = user.FindFirstValue(ClaimTypes.Name);
+            var userRole = user.FindFirstValue(ClaimTypes.Role) ?? "No role assigned";
+
+            return Task.FromResult((userId, userRole));
+        }
     }
 }
