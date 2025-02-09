@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using Tradof.Auth.Services.DTOs;
 using Tradof.Auth.Services.Extensions;
 using Tradof.Auth.Services.Interfaces;
@@ -144,7 +145,7 @@ namespace Tradof.Auth.Services.Implementation
             return true;
         }
 
-        public async Task<(string Token, string UserId, string Role)> LoginAsync(LoginDto dto)
+        public async Task<(string Token, string RefreshToken, string UserId, string Role)> LoginAsync(LoginDto dto)
         {
             ValidationHelper.ValidateLoginDto(dto);
 
@@ -166,7 +167,62 @@ namespace Tradof.Auth.Services.Implementation
             }
 
             var token = GenerateJwtToken(user);
-            return (Token: token, UserId: user.Id, Role: role);
+            var refreshToken = GenerateRefreshToken();
+
+            await _userRepository.SaveRefreshTokenAsync(user.Id, refreshToken, DateTime.UtcNow.AddDays(7));
+
+            return (Token: token, RefreshToken: refreshToken, UserId: user.Id, Role: role);
+        }
+
+        private string GenerateJwtToken(ApplicationUser user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = System.Text.Encoding.ASCII.GetBytes(_jwtSecret);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.UserType.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(_jwtExpiryInMinutes),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+            }
+            return Convert.ToBase64String(randomNumber);
+        }
+
+        public async Task<(string Token, string RefreshToken)> RefreshTokenAsync(string refreshToken)
+        {
+            var user = await _userRepository.GetByRefreshTokenAsync(refreshToken);
+
+            if (user == null || user.RefreshTokenExpiry <= DateTime.UtcNow)
+            {
+                return (null, null);
+            }
+
+            var newAccessToken = GenerateJwtToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+
+            // Save new refresh token (optional)
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+            await _userRepository.UpdateAsync(user);
+
+            return (newAccessToken, newRefreshToken);
         }
 
         public async Task ForgetPasswordAsync(ForgetPasswordDto dto)
@@ -191,27 +247,6 @@ namespace Tradof.Auth.Services.Implementation
             {
                 throw new ValidationException("Invalid or expired OTP.");
             }
-        }
-
-        private string GenerateJwtToken(ApplicationUser user)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = System.Text.Encoding.ASCII.GetBytes(_jwtSecret);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(
-                [
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.UserType.ToString())
-                ]),
-                Expires = DateTime.UtcNow.AddMinutes(_jwtExpiryInMinutes),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
         }
 
         private static string GenerateOtp()

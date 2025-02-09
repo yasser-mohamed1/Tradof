@@ -146,4 +146,6 @@ namespace Tradof.Auth.Services.DTOs
         [Compare("NewPassword", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
     }
+
+    public record RefreshTokenRequest(string RefreshToken);
 }

@@ -66,9 +66,9 @@ namespace Tradof.Auth.Api.Controllers
 
             try
             {
-                var (token, userId, role) = await _authService.LoginAsync(dto);
+                var (token, refreshToken, userId, role) = await _authService.LoginAsync(dto);
 
-                return Ok(new { UserId = userId, Role = role, Token = token });
+                return Ok(new { UserId = userId, Role = role, Token = token, RefreshToken = refreshToken });
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -78,6 +78,17 @@ namespace Tradof.Auth.Api.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequest request)
+        {
+            var (accessToken, refreshToken) = await _authService.RefreshTokenAsync(request.RefreshToken);
+            if (accessToken is null)
+            {
+                return Unauthorized("Invalid or expired refresh token.");
+            }
+            return Ok(new { AccessToken  = accessToken , RefreshToken  = refreshToken });
         }
 
         [HttpGet("confirm-email")]
