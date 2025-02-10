@@ -39,7 +39,7 @@ namespace Tradof.Project.Services.Implementation
 			return project == null ? throw new NotFoundException("project not found") : project.ToDto();
 		}
 
-		public async Task<ProjectDto> CreateAsync(CreateProjectDto dto)
+		public async Task<ProjectDto> CreateAsync(long companyId, CreateProjectDto dto)
 		{
 			if (dto == null)
 				throw new ArgumentNullException(nameof(dto), "Project data cannot be null.");
@@ -49,14 +49,15 @@ namespace Tradof.Project.Services.Implementation
 			var specialization = await _unitOfWork.Repository<Specialization>().GetByIdAsync(dto.SpecializationId);
 			var langFrom = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageFromId);
 			var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
-			var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
-				?? throw new Exception("Current user not found.");
+			var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.Id == companyId)
+				?? throw new Exception("Company not found.");
 
 			var project = dto.ToEntity();
 			project.Company = company;
 			project.LanguageFrom = langFrom;
 			project.LanguageTo = langTo;
 			project.Specialization = specialization;
+			project.CompanyId = companyId;
 
 			if (dto.Files != null && dto.Files.Any())
 			{
@@ -109,7 +110,7 @@ namespace Tradof.Project.Services.Implementation
 		}
 
 
-		public async Task<ProjectDto> UpdateAsync(UpdateProjectDto dto)
+		public async Task<ProjectDto> UpdateAsync(long companyId, UpdateProjectDto dto)
 		{
 			ValidationHelper.ValidateUpdateProjectDto(dto);
 
@@ -119,7 +120,8 @@ namespace Tradof.Project.Services.Implementation
 			var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
 			var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(dto.Id)
 				?? throw new NotFoundException("project not found");
-			var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id); 
+			var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.Id == companyId)
+	            ?? throw new Exception("Company not found.");
 
 			await _unitOfWork.Repository<File>().DeleteWithCrateriaAsync(f => f.ProjectId == project.Id);
 			project.Files.Clear();
