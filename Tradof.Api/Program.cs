@@ -46,6 +46,9 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
     app.UseSwaggerConfiguration();
 
+app.UseAuthentication();//Check JWT token
+app.UseAuthorization();
+
 app.UseCustomMiddlewares();
 
 app.Run();

@@ -52,15 +52,15 @@ namespace Tradof.Project.Api.Controllers
         }
         [HttpPost]
         //[Authorize]
-        public async Task<IActionResult> Create(CreateProjectDto projectDto)
+        public async Task<IActionResult> Create(long companyId,CreateProjectDto projectDto)
         {
-            return Ok(await _projectService.CreateAsync(projectDto));
+            return Ok(await _projectService.CreateAsync(companyId,projectDto));
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateProjectDto projectDto)
+        public async Task<IActionResult> Update(long companyId ,UpdateProjectDto projectDto)
         {
-            return Ok(await _projectService.UpdateAsync(projectDto));
+            return Ok(await _projectService.UpdateAsync(companyId,projectDto));
         }
 
         [HttpDelete("{id}")]
