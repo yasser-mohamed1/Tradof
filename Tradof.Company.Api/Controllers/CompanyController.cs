@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Tradof.Common.Enums;
 using Tradof.CompanyModule.Services.DTOs;
 using Tradof.CompanyModule.Services.Interfaces;
 using Tradof.Data.Entities;
@@ -8,6 +10,7 @@ namespace Tradof.Company.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = RoleNames.CompanyAdmin)]
     public class CompanyController(ICompanyService _companyService) : ControllerBase
     {
         [HttpGet("{id}")]

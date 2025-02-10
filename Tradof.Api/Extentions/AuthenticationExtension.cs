@@ -18,18 +18,15 @@ namespace Tradof.Api.Extentions
            {
                options.SaveToken = true;
                options.RequireHttpsMetadata = false;
-
-               var validIssuers = configuration.GetSection("JWT:Issuer").Get<string[]>();
-               var validAudiences = configuration.GetSection("JWT:Audience").Get<string[]>();
+               var key = Encoding.UTF8.GetBytes(configuration["JWT:Secret"]);
+               var signingKey = new SymmetricSecurityKey(key);
 
                options.TokenValidationParameters = new TokenValidationParameters
                {
+                   ValidateIssuerSigningKey = true,
                    ValidateIssuer = false,
-                   //ValidIssuer = configuration["JWT:ValidIssur"],
-                   //ValidIssuers = validIssuers,
                    ValidateAudience = false,
-                   //ValidAudiences = validAudiences,
-                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!))
+                   IssuerSigningKey = signingKey
                };
            });
         }

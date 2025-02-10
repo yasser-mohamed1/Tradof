@@ -4,14 +4,13 @@ using Tradof.Api.Extentions;
 using Tradof.Auth.Services;
 using Tradof.CompanyModule.Services;
 using Tradof.CountryModule.Services;
+using Tradof.FreelancerModule.Services;
 using Tradof.Language.Services;
 using Tradof.PackageNamespace.Services;
 using Tradof.Project.Services;
 using Tradof.Proposal.Services;
 using Tradof.Repository;
 using Tradof.SpecializationModule.Services;
-using Tradof.CompanyModule.Services;
-using Tradof.FreelancerModule.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
