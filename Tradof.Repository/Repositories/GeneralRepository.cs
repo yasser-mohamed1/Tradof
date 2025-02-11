@@ -41,6 +41,21 @@ namespace Tradof.Repository.Repository
 
             return await query.FirstOrDefaultAsync(e => EF.Property<long>(e, "Id") == id);
         }
+        
+        public async Task<T?> GetByIdAsync(string id, List<Expression<Func<T, object>>>? includes = null)
+        {
+            IQueryable<T> query = _context.Set<T>();
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            return await query.FirstOrDefaultAsync(e => EF.Property<string>(e, "Id") == id);
+        }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
             => await _context.Set<T>().Where(predicate).ToListAsync();

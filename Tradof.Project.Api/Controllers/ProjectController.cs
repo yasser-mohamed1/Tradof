@@ -52,7 +52,7 @@ namespace Tradof.Project.Api.Controllers
         }
         [HttpPost]
         //[Authorize]
-        public async Task<IActionResult> Create(long companyId,CreateProjectDto projectDto)
+        public async Task<IActionResult> Create(string companyId,CreateProjectDto projectDto)
         {
             return Ok(await _projectService.CreateAsync(companyId,projectDto));
         }

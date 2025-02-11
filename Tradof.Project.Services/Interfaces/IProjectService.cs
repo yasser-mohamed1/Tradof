@@ -8,7 +8,7 @@ namespace Tradof.Project.Services.Interfaces
     {
         Task<Pagination<ProjectDto>> GetAllAsync(ProjectSpecParams specParams);
         Task<ProjectDto> GetByIdAsync(long id);
-        Task<ProjectDto> CreateAsync(long companyId, CreateProjectDto dto);
+        Task<ProjectDto> CreateAsync(string id, CreateProjectDto dto);
         Task<ProjectDto> UpdateAsync(long companyId, UpdateProjectDto dto);
         Task<int> GetProjectsCountByMonth(long id, int year, int month);
         Task<bool> DeleteAsync(long id);

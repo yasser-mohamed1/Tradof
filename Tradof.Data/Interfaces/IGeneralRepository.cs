@@ -6,6 +6,7 @@ namespace Tradof.Data.Interfaces
     {
         Task<IReadOnlyList<T>> GetAllAsync(Expression<Func<T, object>> orderBy = null, string direction = null, List<Expression<Func<T, object>>> includes = null);
         Task<T?> GetByIdAsync(long id, List<Expression<Func<T, object>>>? includes = null);
+        Task<T?> GetByIdAsync(string id, List<Expression<Func<T, object>>>? includes = null);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);

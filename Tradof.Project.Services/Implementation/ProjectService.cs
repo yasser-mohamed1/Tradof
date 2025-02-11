@@ -39,17 +39,17 @@ namespace Tradof.Project.Services.Implementation
             return project == null ? throw new NotFoundException("project not found") : project.ToDto();
         }
 
-		public async Task<ProjectDto> CreateAsync(long companyId, CreateProjectDto dto)
+		public async Task<ProjectDto> CreateAsync(string id, CreateProjectDto dto)
 		{
 			if (dto == null)
 				throw new ArgumentNullException(nameof(dto), "Project data cannot be null.");
 
 			ValidationHelper.ValidateCreateProjectDto(dto);
-			var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found.");
+            var currentUser = await _unitOfWork.Repository<ApplicationUser>().GetByIdAsync(id);
 			var specialization = await _unitOfWork.Repository<Specialization>().GetByIdAsync(dto.SpecializationId);
 			var langFrom = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageFromId);
 			var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
-			var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.Id == companyId)
+			var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == id)
 				?? throw new Exception("Company not found.");
 
 			var project = dto.ToEntity();
@@ -57,7 +57,7 @@ namespace Tradof.Project.Services.Implementation
 			project.LanguageFrom = langFrom;
 			project.LanguageTo = langTo;
 			project.Specialization = specialization;
-			project.CompanyId = companyId;
+			project.CompanyId = company.Id;
 
             if (dto.Files != null && dto.Files.Any())
             {
@@ -75,7 +75,7 @@ namespace Tradof.Project.Services.Implementation
 
                         var filePath = Path.Combine("wwwroot/uploads", file.FileName);
 
-                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        using (var stream = new FileStream(filePath, FileMode.OpenOrCreate))
                         {
                             await file.CopyToAsync(stream);
                         }
