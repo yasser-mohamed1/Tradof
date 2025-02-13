@@ -1047,9 +1047,6 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<long>("LanguageFromId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("LanguageId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("LanguageToId")
                         .HasColumnType("bigint");
 
@@ -1092,8 +1089,6 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasIndex("FreelancerId");
 
                     b.HasIndex("LanguageFromId");
-
-                    b.HasIndex("LanguageId");
 
                     b.HasIndex("LanguageToId");
 
@@ -1858,9 +1853,6 @@ namespace Tradof.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Tradof.Data.Entities.Language", null)
-                        .WithMany("ProjectsLanguageTo")
-                        .HasForeignKey("LanguageId");
 
                     b.HasOne("Tradof.Data.Entities.Language", "LanguageTo")
                         .WithMany()

@@ -24,7 +24,7 @@ builder.Services.ConfigureDbContext(builder.Configuration);
 
 builder.Services.ConfigureIdentity();
 
-builder.Services.ConfigureAuthentication(builder.Configuration);
+//builder.Services.ConfigureAuthentication(builder.Configuration);
 
 builder.Services.ConfigureSwagger();
 
@@ -45,9 +45,6 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
     app.UseSwaggerConfiguration();
-
-app.UseAuthentication();//Check JWT token
-app.UseAuthorization();
 
 app.UseCustomMiddlewares();
 
