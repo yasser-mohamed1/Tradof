@@ -13,6 +13,7 @@ namespace Tradof.Admin.Services
             service.AddAutoMapper(typeof(MappingProfile));
             service.AddTransient<IAuthenticationService, AuthenticationService>();
             service.AddTransient<IHelperService, HelperService>();
+            service.AddScoped<IAdminService, AdminService>();
             return service;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Tradof.Admin.Services;
 using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
 using Tradof.Admin.Services.Helpers;
 using Tradof.Admin.Services.Interfaces;
@@ -8,7 +9,9 @@ namespace Tradof.Admin.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountController(IAuthenticationService _authenticationService, IHelperService _helperService) : ApiControllerBase
+    public class AdminController(IAuthenticationService _authenticationService,
+        IHelperService _helperServic,
+        IAdminService _adminService) : ApiControllerBase
     {
         #region AddAdmin
         [Route("AddAdmin")]
@@ -37,5 +40,33 @@ namespace Tradof.Admin.Api.Controllers
             return StatusCode(response.StatusCode, response);
         }
         #endregion
+
+        [HttpGet("GetDashboardStatistics")]
+        public async Task<IActionResult> GetDashboardStatistics()
+        {
+            var statistics = await _adminService.GetDashboardStatisticsAsync();
+            return Ok(statistics);
+        }
+
+        [HttpGet("GetStatistics")]
+        public async Task<IActionResult> GetStatistics()
+        {
+            var statistics = await _adminService.GetStatisticsAsync();
+            return Ok(statistics);
+        }
+
+        [HttpGet("GetFreelancersAndCompanies")]
+        public async Task<IActionResult> GetFreelancersAndCompanies()
+        {
+            var users = await _adminService.GetFreelancersAndCompaniesAsync();
+            return Ok(users);
+        }
+
+        [HttpPost("ToggleBlockStatus")]
+        public async Task<IActionResult> ToggleBlockStatus(string userId, bool isBlocked)
+        {
+            var response = await _adminService.ToggleBlockStatusAsync(userId, isBlocked);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }
