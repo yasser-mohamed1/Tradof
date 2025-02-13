@@ -12,8 +12,8 @@ using Tradof.EntityFramework.DataBase_Context;
 namespace Tradof.EntityFramework.Migrations
 {
     [DbContext(typeof(TradofDbContext))]
-    [Migration("20250209134017_AddRefreshTokenFields")]
-    partial class AddRefreshTokenFields
+    [Migration("20250212015635_RemoveLanguageId")]
+    partial class RemoveLanguageId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1047,9 +1047,6 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<long>("LanguageFromId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("LanguageId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("LanguageToId")
                         .HasColumnType("bigint");
 
@@ -1092,8 +1089,6 @@ namespace Tradof.EntityFramework.Migrations
                     b.HasIndex("FreelancerId");
 
                     b.HasIndex("LanguageFromId");
-
-                    b.HasIndex("LanguageId");
 
                     b.HasIndex("LanguageToId");
 
@@ -1864,10 +1859,6 @@ namespace Tradof.EntityFramework.Migrations
                         .HasForeignKey("LanguageFromId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Tradof.Data.Entities.Language", null)
-                        .WithMany("ProjectsLanguageTo")
-                        .HasForeignKey("LanguageId");
 
                     b.HasOne("Tradof.Data.Entities.Language", "LanguageTo")
                         .WithMany()

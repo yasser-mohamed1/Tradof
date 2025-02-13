@@ -3,7 +3,7 @@
 	public enum FileType
 	{
 		Pdf,
-		Excel,
+		Xlsx,
 		Docx,
 		Png,
 		Jpeg,
