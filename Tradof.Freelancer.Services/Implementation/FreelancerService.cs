@@ -30,6 +30,7 @@ namespace Tradof.FreelancerModule.Services.Implementation
                 .Include(f => f.FreelancerLanguagesPairs)
                 .ThenInclude(lp => lp.LanguageTo)
                 .Include(f => f.FreelancerSocialMedias)
+                .Include(f => f.Specializations)
                 .FirstOrDefaultAsync(f => f.UserId == userId);
 
             return freelancer is null ? throw new ArgumentNullException("No Freelancer with this Id.") : freelancer.ToFreelancerDTO();

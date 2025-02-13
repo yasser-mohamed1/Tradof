@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Tradof.Common.Enums;
+﻿using Tradof.Common.Enums;
 using Tradof.Data.Entities;
 using Tradof.FreelancerModule.Services.DTOs;
 
@@ -25,8 +24,12 @@ namespace Tradof.FreelancerModule.Services.Extensions
                                 lp.Id,
                                 lp.LanguageFromId,
                                 lp.LanguageFrom?.LanguageName ?? "Unknown",
+                                lp.LanguageFrom?.LanguageCode ?? "Unknown",
+                                lp.LanguageFrom?.CountryCode ?? "Unknown",
                                 lp.LanguageToId,
-                                lp.LanguageTo?.LanguageName ?? "Unknown"
+                                lp.LanguageTo?.LanguageName ?? "Unknown",
+                                lp.LanguageTo?.LanguageCode ?? "Unknown",
+                                lp.LanguageTo?.CountryCode ?? "Unknown"
                             )).ToList();
 
             var socialMedias = freelancer.FreelancerSocialMedias.Select(sm => new FreelancerSocialMediaDTO(
@@ -34,6 +37,8 @@ namespace Tradof.FreelancerModule.Services.Extensions
                                    sm.PlatformType.ToString(),
                                    sm.Link
                                ));
+
+            var specializations = freelancer.Specializations.Select(s => new SpecializationDto(s.Id, s.Name)).ToList();
 
             return new FreelancerDTO(
                 freelancer.UserId,
@@ -49,7 +54,8 @@ namespace Tradof.FreelancerModule.Services.Extensions
                 ratingData.RatingSum,
                 ratingData.ReviewCount,
                 langauges,
-                socialMedias
+                socialMedias,
+                specializations
             );
         }
 

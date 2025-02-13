@@ -16,7 +16,8 @@ namespace Tradof.FreelancerModule.Services.DTOs
         double RatingSum,
         int ReviewCount,
         IEnumerable<FreelancerLanguagePairDTO> FreelancerLanguagePairs,
-        IEnumerable<FreelancerSocialMediaDTO> FreelancerSocialMedias
+        IEnumerable<FreelancerSocialMediaDTO> FreelancerSocialMedias,
+        IEnumerable<SpecializationDto> FreelancerSpecializations
     );
 
     public record UpdateFreelancerDTO(
@@ -83,8 +84,12 @@ namespace Tradof.FreelancerModule.Services.DTOs
         long Id,
         long LanguageFromId,
         string LanguageFromName,
+        string LanguageFromCode,
+        string CountryFromCode,
         long LanguageToId,
-        string LanguageToName
+        string LanguageToName,
+        string LanguageToCode,
+        string CountryToCode
     );
 
     public record AddFreelancerLanguagePairDTO(
@@ -101,5 +106,10 @@ namespace Tradof.FreelancerModule.Services.DTOs
 
         [Required(ErrorMessage = "LanguageToId is required.")]
         long LanguageToId
+    );
+
+    public record SpecializationDto(
+        long Id,
+        string Name
     );
 }
