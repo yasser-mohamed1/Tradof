@@ -40,6 +40,7 @@ namespace Tradof.Project.Services.Implementation
 			var dtos = items.Select(p => p.ToDto()).ToList();
 			return dtos;
 		}
+
 		public async Task<List<ProjectDto>> GetInComingProjectsAsync()
 		{
 			var currentUser = await _userHelpers.GetCurrentUserAsync()
@@ -51,7 +52,6 @@ namespace Tradof.Project.Services.Implementation
 			var dtos = items.Select(p => p.ToDto()).ToList();
 			return dtos;
 		}
-
 
 		public async Task<ProjectDto> GetByIdAsync(long id)
 		{
@@ -80,6 +80,7 @@ namespace Tradof.Project.Services.Implementation
 			project.LanguageFrom = langFrom;
 			project.LanguageTo = langTo;
 			project.Specialization = specialization;
+			project.Status = ProjectStatus.Pending;
 			project.CompanyId = company.Id;
 
 			if (dto.Files != null && dto.Files.Any())

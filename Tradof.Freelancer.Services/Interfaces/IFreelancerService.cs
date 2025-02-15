@@ -15,5 +15,7 @@ namespace Tradof.FreelancerModule.Services.Interfaces
         Task<bool> AddFreelancerLanguagePairsAsync(string id, IEnumerable<AddFreelancerLanguagePairDTO> dtos);
         Task<bool> RemoveFreelancerLanguagePairsAsync(string id, IEnumerable<long> ids);
         Task AddOrUpdateOrRemoveFreelancerSocialMediasAsync(string id, IEnumerable<AddFreelancerSocialMediaDTO> socialMedias);
+        Task AddSpecializationsAsync(string Id, IEnumerable<long> specializationIds);
+        Task RemoveSpecializationsAsync(string Id, IEnumerable<long> specializationIds);
     }
 }

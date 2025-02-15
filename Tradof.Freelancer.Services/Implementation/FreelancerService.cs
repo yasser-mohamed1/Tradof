@@ -211,5 +211,50 @@ namespace Tradof.FreelancerModule.Services.Implementation
 
             return true;
         }
+
+        public async Task AddSpecializationsAsync(string Id, IEnumerable<long> specializationIds)
+        {
+            var freelancer = await _context.Freelancers.Include(c => c.Specializations)
+                .FirstOrDefaultAsync(c => c.UserId == Id);
+
+            if (freelancer == null) throw new KeyNotFoundException("Freelancer not found");
+
+            var specializations = await _context.Specializations
+                .Where(s => specializationIds.Contains(s.Id))
+                .ToListAsync();
+
+            if (!specializations.Any()) throw new KeyNotFoundException("No valid specializations found");
+
+            foreach (var specialization in specializations)
+            {
+                if (!freelancer.Specializations.Contains(specialization))
+                {
+                    freelancer.Specializations.Add(specialization);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveSpecializationsAsync(string Id, IEnumerable<long> specializationIds)
+        {
+            var freelancer = await _context.Freelancers.Include(c => c.Specializations)
+                .FirstOrDefaultAsync(c => c.UserId == Id);
+
+            if (freelancer == null) throw new KeyNotFoundException("Freelancer not found");
+
+            var specializationsToRemove = freelancer.Specializations
+                .Where(s => specializationIds.Contains(s.Id))
+                .ToList();
+
+            if (!specializationsToRemove.Any()) throw new KeyNotFoundException("No matching specializations found to remove");
+
+            foreach (var specialization in specializationsToRemove)
+            {
+                freelancer.Specializations.Remove(specialization);
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

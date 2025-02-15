@@ -112,4 +112,18 @@ public class FreelancerController(IFreelancerService _freelancerService) : Contr
 
         return NoContent();
     }
+
+    [HttpPost("AddSpecialization/{freelancerId}")]
+    public async Task<IActionResult> AddSpecialization(string freelancerId, IEnumerable<long> specializationIds)
+    {
+        await _freelancerService.AddSpecializationsAsync(freelancerId, specializationIds);
+        return Ok("Specialization added successfully");
+    }
+
+    [HttpDelete("RemoveSpecialization/{freelancerId}")]
+    public async Task<IActionResult> RemoveSpecialization(string freelancerId, IEnumerable<long> specializationIds)
+    {
+        await _freelancerService.RemoveSpecializationsAsync(freelancerId, specializationIds);
+        return Ok("Specialization removed successfully");
+    }
 }
