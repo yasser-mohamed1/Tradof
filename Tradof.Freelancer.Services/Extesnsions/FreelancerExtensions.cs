@@ -26,10 +26,12 @@ namespace Tradof.FreelancerModule.Services.Extensions
                                 lp.LanguageFrom?.LanguageName ?? "Unknown",
                                 lp.LanguageFrom?.LanguageCode ?? "Unknown",
                                 lp.LanguageFrom?.CountryCode ?? "Unknown",
+                                lp.LanguageFrom?.CountryName ?? "Unknown",
                                 lp.LanguageToId,
                                 lp.LanguageTo?.LanguageName ?? "Unknown",
                                 lp.LanguageTo?.LanguageCode ?? "Unknown",
-                                lp.LanguageTo?.CountryCode ?? "Unknown"
+                                lp.LanguageTo?.CountryCode ?? "Unknown",
+                                lp.LanguageTo?.CountryName ?? "Unknown"
                             )).ToList();
 
             var socialMedias = freelancer.FreelancerSocialMedias.Select(sm => new FreelancerSocialMediaDTO(

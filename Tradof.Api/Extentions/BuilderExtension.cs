@@ -14,6 +14,8 @@ namespace Tradof.Api.Extentions
         {
             app.UseHttpsRedirection();
 
+            app.UseStaticFiles();
+
             app.UseCors("AllowAllOrigins");
 
             app.UseAuthentication();

@@ -86,10 +86,12 @@ namespace Tradof.FreelancerModule.Services.DTOs
         string LanguageFromName,
         string LanguageFromCode,
         string CountryFromCode,
+        string CountryFromName,
         long LanguageToId,
         string LanguageToName,
         string LanguageToCode,
-        string CountryToCode
+        string CountryToCode,
+        string CountryToName
     );
 
     public record AddFreelancerLanguagePairDTO(
