@@ -84,4 +84,10 @@ public class ProjectController(IProjectService _projectService) : ControllerBase
 	{
 		return Ok(await _projectService.DeleteAsync(id));
 	}
+
+	[HttpGet("GetProjectCardData")]
+    public async Task<IActionResult> GetProjectCardData(long projectId)
+    {
+        return Ok(await _projectService.GetProjectCardData(projectId));
+    }
 }

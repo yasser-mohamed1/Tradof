@@ -49,6 +49,31 @@ namespace Tradof.Project.Services.Extensions
             project.MaxPrice = projectDto.MaxPrice;
 
         }
-    }
 
+        public static ProjectCardDto ToProjectCardDto(this Data.Entities.Project project)
+        {
+            string ownerName = project.Company.User.FirstName + " " + project.Company.User.LastName;
+            string ownerEmail = project.Company.User.Email ?? "N/A";
+            string companyName = project.Company.CompanyName ?? "N/A";
+            var budget = new Budget
+            {
+                MinPrice = project.MinPrice,
+                MaxPrice = project.MaxPrice
+            };
+            return new ProjectCardDto
+            {
+                ProjectState = project.Status.ToString(),
+                ProjectStartDate = project.StartDate,
+                Budget = budget,
+                Duration = project.Days,
+                NumberOfOffers = project.Proposals.Count,
+                OwnerName = ownerName,
+                OwnerEmail = ownerEmail,
+                CompanyName = companyName,
+                RegisteredAt = project.Company.CreationDate,
+                TotalProjects = project.Company.Projects.Count,
+                OpenProjects = project.Company.Projects.Count(p => p.Status != Common.Enums.ProjectStatus.Finished)
+            };
+        }
+    }
 }

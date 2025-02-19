@@ -17,5 +17,6 @@ namespace Tradof.Project.Services.Interfaces
         Task<bool> SendReviewRequest(long id);
         Task<bool> MarkAsFinished(long id);
         Task<Tuple<int, int, int>> ProjectsStatistics(long UserId);
+        Task<ProjectCardDto> GetProjectCardData(long projectId);
     }
 }

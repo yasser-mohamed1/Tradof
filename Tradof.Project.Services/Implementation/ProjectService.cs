@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
 using Tradof.Data.Entities;
@@ -256,5 +257,18 @@ namespace Tradof.Project.Services.Implementation
 
 			return new Tuple<int, int, int>(active, inProgress, accepted);
 		}
-	}
+
+        public async Task<ProjectCardDto> GetProjectCardData(long projectId)
+        {
+			var includes = new List<Expression<Func<ProjectEntity, object>>>
+			{
+				p => p.Company,
+				p => p.Company.User
+			};
+			var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(projectId, includes) ?? throw new NotFoundException("project not found");
+			var projectCard = project.ToProjectCardDto();
+
+			return projectCard;
+        }
+    }
 }
