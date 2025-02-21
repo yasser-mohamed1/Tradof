@@ -42,8 +42,8 @@ namespace Tradof.FreelancerModule.Services.DTOs
 
     public record ChangePasswordDTO(
         [Required] string CurrentPassword,
-        [Required, RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
-            ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.")]
+        [Required, RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$",
+            ErrorMessage = "Password must be at least 6 characters long, and contain at least one uppercase letter, one lowercase letter, one number, and one special character.")]
         string NewPassword,
         [Required]
         string ConfirmPassword

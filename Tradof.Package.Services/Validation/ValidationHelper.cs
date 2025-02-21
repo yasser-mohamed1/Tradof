@@ -11,8 +11,8 @@ namespace Tradof.PackageNamespace.Services.Validation
                 throw new ValidationException("Name cannot be empty.");
             if (string.IsNullOrWhiteSpace(dto.Description))
                 throw new ValidationException("Description cannot be empty.");
-            if (dto.Price <= 0)
-                throw new ValidationException("Price must be greater than 0.");
+            if (dto.Price < 0)
+                throw new ValidationException("Price must be greater than -1.");
             if (dto.DurationInMonths <= 0)
                 throw new ValidationException("Duration must be greater than 0.");
         }
