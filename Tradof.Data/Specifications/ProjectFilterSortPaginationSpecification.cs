@@ -18,9 +18,9 @@ namespace Tradof.Data.Specifications
         {
             AddInclude(p => p.Files);
             //AddInclude(p => p.Proposals);
-            //AddInclude(p => p.Specialization);
-            //AddInclude(p => p.LanguageFrom);
-            //AddInclude(p => p.LanguageTo);
+            AddInclude(p => p.Specialization);
+            AddInclude(p => p.LanguageFrom);
+            AddInclude(p => p.LanguageTo);
             //AddInclude(p => p.Company);
             //AddInclude(p => p.Freelancer);
             //AddInclude(p => p.Ratings);

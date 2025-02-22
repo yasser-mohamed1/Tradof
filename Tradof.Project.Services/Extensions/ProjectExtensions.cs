@@ -7,23 +7,52 @@ namespace Tradof.Project.Services.Extensions
     {
         public static ProjectDto ToDto(this Data.Entities.Project project)
         {
+            var specialization = project.Specialization == null
+            ? null
+            : new SpecializationDto(
+                project.SpecializationId ?? 0,
+                project.Specialization.Name
+            );
+
+            var languageFrom = new LanguageDto(
+                project.LanguageFromId,
+                project.LanguageFrom.LanguageName,
+                project.LanguageFrom.LanguageCode,
+                project.LanguageFrom.CountryCode,
+                project.LanguageFrom.CountryName
+            );
+
+            var languageTo = new LanguageDto(
+
+                project.LanguageToId,
+                project.LanguageTo.LanguageName,
+                project.LanguageTo.LanguageCode,
+                project.LanguageTo.CountryCode,
+                project.LanguageTo.CountryName
+            );
+
+            var status = new ProjectStatusDto(
+                (int)project.Status,
+                project.Status.ToString()
+            );
+
             return new ProjectDto
             {
                 Id = project.Id,
                 Name = project.Name,
                 Days = project.Days,
                 Description = project.Description,
-                LanguageFromId = project.LanguageFromId,
-                LanguageToId = project.LanguageToId,
+                LanguageFrom = languageFrom,
+                LanguageTo = languageTo,
                 MaxPrice = project.MaxPrice,
                 MinPrice = project.MinPrice,
                 NumberOfOffers = project.Proposals.Count,
-                SpecializationId = project.SpecializationId,
+                Specialization = specialization,
                 Files = project.Files.Select(f => f.ToDto()).ToList(),
                 Price = project.Price,
                 StartDate = project.StartDate,
                 EndDate = project.EndDate,
-                Status = project.Status,
+                Status = status,
             };
         }
         public static Data.Entities.Project ToEntity(this CreateProjectDto projectDto)
