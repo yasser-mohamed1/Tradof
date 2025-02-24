@@ -45,7 +45,7 @@ namespace Tradof.Company.Api.Controllers
             return Ok(employees);
         }
 
-        [HttpPut("ChangePassword")]
+        [HttpPost("{CompanyId}/ChangePassword")]
         public async Task<IActionResult> ChangePassword(string CompanyId, ChangeCompanyPasswordDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
