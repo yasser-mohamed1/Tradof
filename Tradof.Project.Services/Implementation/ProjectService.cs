@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.Design;
 using System.Linq.Expressions;
 using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
@@ -30,31 +31,30 @@ namespace Tradof.Project.Services.Implementation
 
 			return pagination;
 		}
-		public async Task<List<ProjectDto>> GetStartedProjectsAsync()
-		{
-			var currentUser = await _userHelpers.GetCurrentUserAsync()
-				?? throw new Exception("Current user not found.");
-			var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
-				?? throw new Exception("Company not found.");
-			var items = await _unitOfWork.Repository<ProjectEntity>().FindAsync(p => p.Status == ProjectStatus.InProgress
-			    && p.CompanyId == company.Id);
-			var dtos = items.Select(p => p.ToDto()).ToList();
-			return dtos;
-		}
 
-		public async Task<List<ProjectDto>> GetInComingProjectsAsync()
+		public async Task<List<ProjectDto>> GetStartedProjectsAsync(string companyId)
 		{
-			var currentUser = await _userHelpers.GetCurrentUserAsync()
-				?? throw new Exception("Current user not found.");
-			var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
-				?? throw new Exception("Company not found.");
-			var items = await _unitOfWork.Repository<ProjectEntity>().FindAsync(p => p.Status == ProjectStatus.Pending
-			    && p.CompanyId == company.Id);
-			var dtos = items.Select(p => p.ToDto()).ToList();
-			return dtos;
-		}
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
+                ?? throw new Exception("Company not found.");
 
-		public async Task<ProjectDto> GetByIdAsync(long id)
+            var spec = new StartedProjectsByCompanySpecification(company.Id);
+            var items = await _unitOfWork.Repository<ProjectEntity>().GetListWithSpecificationAsync(spec);
+
+            return items.Select(p => p.ToDto()).ToList();
+        }
+
+        public async Task<List<ProjectDto>> GetInComingProjectsAsync(string companyId)
+        {
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
+                ?? throw new Exception("Company not found.");
+
+            var spec = new PendingProjectsByCompanySpecification(company.Id);
+			var items = await _unitOfWork.Repository<ProjectEntity>().GetListWithSpecificationAsync(spec);
+
+            return items.Select(p => p.ToDto()).ToList();
+        }
+
+        public async Task<ProjectDto> GetByIdAsync(long id)
 		{
 			if (id <= 0) throw new ValidationException("Invalid project ID.");
 			var spec = new ProjectSpecification(id);

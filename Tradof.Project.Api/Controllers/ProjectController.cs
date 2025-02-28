@@ -16,15 +16,29 @@ public class ProjectController(IProjectService _projectService) : ControllerBase
 	}
 
 	[HttpGet("AllStartedProjects")] // Corrected typo
-	public async Task<IActionResult> GetStartedProjectsAsync()
+	public async Task<IActionResult> GetStartedProjectsAsync(string companyId)
 	{
-		return Ok(await _projectService.GetStartedProjectsAsync());
+		try
+		{ 
+			return Ok(await _projectService.GetStartedProjectsAsync(companyId));
+		}
+		catch(Exception ex)
+		{
+			return BadRequest(ex.Message);
+		}
 	}
 
 	[HttpGet("AllInComingProjects")] // Corrected case
-	public async Task<IActionResult> GetInComingProjectsAsync()
+	public async Task<IActionResult> GetInComingProjectsAsync(string companyId)
 	{
-		return Ok(await _projectService.GetInComingProjectsAsync());
+		try
+        {
+            return Ok(await _projectService.GetInComingProjectsAsync(companyId));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
 	}
 
 	[HttpGet("{id}")]
@@ -68,7 +82,14 @@ public class ProjectController(IProjectService _projectService) : ControllerBase
 	//[Authorize]
 	public async Task<IActionResult> Create(string companyId, CreateProjectDto projectDto)
 	{
-		return Ok(await _projectService.CreateAsync(companyId, projectDto));
+		try
+        {
+            return Ok(await _projectService.CreateAsync(companyId, projectDto));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
 	}
 
 	[HttpPut]

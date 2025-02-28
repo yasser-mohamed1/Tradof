@@ -137,6 +137,22 @@ namespace Tradof.Repository.Repository
         {
             return await _context.Set<T>().Where(expression).CountAsync();
         }
+
+        public async Task<List<T>> GetListWithSpecificationAsync(ISpecification<T> spec)
+        {
+            IQueryable<T> query = _context.Set<T>();
+
+            if (spec.Criteria != null)
+                query = query.Where(spec.Criteria);
+
+            if (spec.OrderBy != null)
+                query = query.OrderBy(spec.OrderBy);
+
+            query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
+
+            return await query.ToListAsync();
+        }
+
         #region private methods
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {

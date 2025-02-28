@@ -20,6 +20,6 @@ namespace Tradof.Data.Interfaces
         //bool Exists(int id);
         Task<int> CountAsync(ISpecification<T> spec);
         Task<int> CountAsync(Expression<Func<T, bool>> expression);
-
+        Task<List<T>> GetListWithSpecificationAsync(ISpecification<T> spec);
     }
 }
