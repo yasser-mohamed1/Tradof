@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.Design;
 using System.Linq.Expressions;
 using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
@@ -133,7 +132,6 @@ namespace Tradof.Project.Services.Implementation
 			else
 				throw new Exception("failed to create");
 		}
-
 
 		public async Task<ProjectDto> UpdateAsync(string id, UpdateProjectDto dto)
 		{

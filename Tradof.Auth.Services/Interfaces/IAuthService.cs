@@ -14,5 +14,6 @@ namespace Tradof.Auth.Services.Interfaces
         Task<string> GeneratePasswordResetTokenAsync(string email);
         Task<(string Id, string Role)> GetCurrentUserAsync();
         Task<(string Token, string RefreshToken)> RefreshTokenAsync(string refreshToken);
+        Task ResendOtpAsync(string email);
     }
 }

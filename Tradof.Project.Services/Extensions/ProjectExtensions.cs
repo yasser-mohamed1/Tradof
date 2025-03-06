@@ -18,8 +18,8 @@ namespace Tradof.Project.Services.Extensions
                 project.LanguageFromId,
                 project.LanguageFrom.LanguageName,
                 project.LanguageFrom.LanguageCode,
-                project.LanguageFrom.CountryCode,
-                project.LanguageFrom.CountryName
+                project.LanguageFrom.CountryName,
+                project.LanguageFrom.CountryCode
             );
 
             var languageTo = new LanguageDto(
@@ -27,8 +27,8 @@ namespace Tradof.Project.Services.Extensions
                 project.LanguageToId,
                 project.LanguageTo.LanguageName,
                 project.LanguageTo.LanguageCode,
-                project.LanguageTo.CountryCode,
-                project.LanguageTo.CountryName
+                project.LanguageTo.CountryName,
+                project.LanguageTo.CountryCode
             );
 
             var status = new ProjectStatusDto(
@@ -53,8 +53,14 @@ namespace Tradof.Project.Services.Extensions
                 StartDate = project.StartDate,
                 EndDate = project.EndDate,
                 Status = status,
+                CompanyId = project.Company.UserId,
+                FirstName = project.Company.User.FirstName,
+                LastName = project.Company.User.LastName,
+                JopTitle = project.Company.JobTitle,
+                ProfileImageUrl = project.Company.User.ProfileImageUrl
             };
         }
+
         public static Data.Entities.Project ToEntity(this CreateProjectDto projectDto)
         {
             return new Data.Entities.Project
@@ -67,6 +73,7 @@ namespace Tradof.Project.Services.Extensions
                 Status = Common.Enums.ProjectStatus.Pending,
             };
         }
+
         public static void UpdateFromDto(this Data.Entities.Project project, UpdateProjectDto projectDto)
         {
             if (project == null) throw new ArgumentNullException(nameof(project));

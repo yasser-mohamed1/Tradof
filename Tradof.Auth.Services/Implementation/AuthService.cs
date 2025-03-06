@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using Tradof.Auth.Services.DTOs;
 using Tradof.Auth.Services.Extensions;
 using Tradof.Auth.Services.Interfaces;
@@ -299,6 +300,29 @@ namespace Tradof.Auth.Services.Implementation
             var userRole = user.FindFirstValue(ClaimTypes.Role) ?? "No role assigned";
 
             return Task.FromResult((userId, userRole));
+        }
+
+        public async Task ResendOtpAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
+            {
+                throw new ValidationException("Invalid email address.");
+            }
+
+            var existingUser = await _userManager.FindByEmailAsync(email);
+            if (existingUser is null)
+            {
+                throw new ValidationException("Email is not registered.");
+            }
+
+            var otp = GenerateOtp();
+            await _otpRepository.SaveOtpAsync(email, otp, TimeSpan.FromMinutes(10));
+            await _emailService.SendEmailAsync(email, "Resend OTP", $"Your OTP is: {otp}");
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
         }
     }
 }

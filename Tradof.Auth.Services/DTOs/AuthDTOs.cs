@@ -148,4 +148,8 @@ namespace Tradof.Auth.Services.DTOs
     }
 
     public record RefreshTokenRequest(string RefreshToken);
+
+    public record ResendOtpDto(
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
+        string Email);
 }
