@@ -6,7 +6,7 @@ namespace Tradof.Data.Entities
 	public class ProposalAttachments : AuditEntity<long>
     {
 		public long ProposalId { get; set; }
-		public string Attachment { get; set; }
+		public string AttachmentUrl { get; set; }
 
 		[ForeignKey("ProposalId")]
 		public Proposal Proposal { get; set; }

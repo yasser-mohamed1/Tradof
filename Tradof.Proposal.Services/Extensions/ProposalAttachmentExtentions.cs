@@ -9,7 +9,7 @@ namespace Tradof.Proposal.Services.Extensions
         {
             return new ProposalAttachmentDto
             {
-                Attachment = attachment.Attachment,
+                AttachmentUrl = attachment.AttachmentUrl,
                 ProposalId = attachment.ProposalId
             };
         }

@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
 using Tradof.Data.Entities;
@@ -15,6 +18,8 @@ namespace Tradof.Proposal.Services.Implementation
 {
     public class ProposalService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers) : IProposalService
     {
+        Cloudinary _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+
         public async Task<bool> AcceptProposal(long projectId, long proposalId)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
@@ -28,6 +33,7 @@ namespace Tradof.Proposal.Services.Implementation
 
             return await _unitOfWork.CommitAsync();
         }
+
         public async Task<bool> DenyProposal(long projectId, long proposalId)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
@@ -39,6 +45,7 @@ namespace Tradof.Proposal.Services.Implementation
             proposal.ProposalStatus = ProposalStatus.Declined;
             return await _unitOfWork.CommitAsync();
         }
+
         public async Task<bool> CancelProposal(long proposalId)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
@@ -49,37 +56,63 @@ namespace Tradof.Proposal.Services.Implementation
             proposal.ProposalStatus = ProposalStatus.Canceled;
             return await _unitOfWork.CommitAsync();
         }
+
+        private async Task<string> UploadToCloudinaryAsync(IFormFile file)
+        {
+            await using var stream = file.OpenReadStream();
+            var uploadParams = new RawUploadParams
+            {
+                File = new FileDescription(file.FileName, stream),
+                Folder = "proposal_attachments"
+            };
+
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+            if (uploadResult.Error != null)
+                throw new Exception($"Cloudinary upload error: {uploadResult.Error.Message}");
+
+            return uploadResult.SecureUrl.AbsoluteUri;
+        }
+
         public async Task<ProposalDto> CreateAsync(CreateProposalDto dto)
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
             var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id);
             var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == dto.ProjectId);
+
             if (project.Status != ProjectStatus.Pending)
-                throw new Exception("cant send proposal for this project");
+                throw new Exception("Cannot send proposal for this project");
+
             var proposal = dto.ToEntity();
             proposal.Project = project;
             proposal.Freelancer = freelancer;
-            foreach (var attachment in dto.ProposalAttachments)
+
+            foreach (var file in dto.ProposalAttachments)
             {
+                var uploadedUrl = await UploadToCloudinaryAsync(file);
+
                 proposal.ProposalAttachments.Add(new ProposalAttachments
                 {
-                    Attachment = attachment,
+                    AttachmentUrl = uploadedUrl,
                     Proposal = proposal,
                     CreatedBy = currentUser.FirstName,
                     CreationDate = DateTime.UtcNow,
                     ModificationDate = DateTime.UtcNow,
-                    ModifiedBy = currentUser.FirstName,
+                    ModifiedBy = currentUser.FirstName
                 });
             }
+
             proposal.CreatedBy = currentUser.FirstName;
             proposal.CreationDate = DateTime.UtcNow;
             proposal.ModificationDate = DateTime.UtcNow;
             proposal.ModifiedBy = currentUser.FirstName;
+
             await _unitOfWork.Repository<Data.Entities.Proposal>().AddAsync(proposal);
+
             if (await _unitOfWork.CommitAsync())
                 return proposal.ToDto();
-            else
-                throw new Exception("failed to create");
+
+            throw new Exception("Failed to create proposal");
         }
 
         public async Task<bool> DeleteAsync(long id)
@@ -90,8 +123,6 @@ namespace Tradof.Proposal.Services.Implementation
             await _unitOfWork.Repository<ProposalAttachments>().DeleteWithCrateriaAsync(p => p.ProposalId == proposal.Id);
             return await _unitOfWork.CommitAsync();
         }
-
-
 
         public async Task<Pagination<ProposalDto>> GetAllAsync(ProposalSpecParams specParams)
         {
@@ -113,16 +144,21 @@ namespace Tradof.Proposal.Services.Implementation
 
         public async Task<ProposalDto> UpdateAsync(UpdateProposalDto dto)
         {
-            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(dto.Id, includes: [p => p.Freelancer, p => p.Project]) ?? throw new NotFoundException("proposal not found");
+            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(dto.Id, includes: [p => p.Freelancer, p => p.Project]) ?? throw new NotFoundException("Proposal not found");
+
             await _unitOfWork.Repository<ProposalAttachments>().DeleteWithCrateriaAsync(p => p.ProposalId == proposal.Id);
             proposal.ProposalAttachments.Clear();
             await _unitOfWork.CommitAsync();
+
             proposal.UpdateFromDto(dto);
-            foreach (var attachment in dto.ProposalAttachments)
+
+            foreach (var file in dto.ProposalAttachments)
             {
+                var uploadedUrl = await UploadToCloudinaryAsync(file);
+
                 proposal.ProposalAttachments.Add(new ProposalAttachments
                 {
-                    Attachment = attachment,
+                    AttachmentUrl = uploadedUrl,
                     Proposal = proposal,
                     CreatedBy = proposal.FreelancerId.ToString(),
                     CreationDate = DateTime.UtcNow,
@@ -130,11 +166,13 @@ namespace Tradof.Proposal.Services.Implementation
                     ModifiedBy = proposal.FreelancerId.ToString()
                 });
             }
+
             await _unitOfWork.Repository<Data.Entities.Proposal>().UpdateAsync(proposal);
+
             if (await _unitOfWork.CommitAsync())
                 return proposal.ToDto();
-            else
-                throw new Exception("failed to update");
+
+            throw new Exception("Failed to update proposal");
         }
 
         public async Task<int> GetProposalsCountByMonth(int year, int month, ProposalStatus status)

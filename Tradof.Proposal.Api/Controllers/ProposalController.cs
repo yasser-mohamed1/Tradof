@@ -10,7 +10,7 @@ namespace Tradof.Proposal.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PropsalController(IProposalService _proposalService) : ControllerBase
+    public class ProposalController(IProposalService _proposalService) : ControllerBase
     {
         [Authorize]
         [HttpGet]
@@ -34,28 +34,32 @@ namespace Tradof.Proposal.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Create(CreateProposalDto projectDto)
         {
-            return Ok(await _proposalService.CreateAsync(projectDto));
+            try
+            {
+                return Ok(await _proposalService.CreateAsync(projectDto));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(UpdateProposalDto projectDto)
         {
             return Ok(await _proposalService.UpdateAsync(projectDto));
-
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
             return Ok(await _proposalService.DeleteAsync(id));
-
         }
 
         [HttpPost("accept")]
         public async Task<IActionResult> Accept(long projectId, long ProposalId)
         {
             return Ok(await _proposalService.AcceptProposal(projectId, ProposalId));
-
         }
 
         [HttpPost("deny")]

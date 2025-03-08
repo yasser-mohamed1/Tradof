@@ -6,6 +6,6 @@ namespace Tradof.Proposal.Services.DTOs
     {
         public long ProposalId { get; set; }
         [Required]
-        public string Attachment { get; set; }
+        public string AttachmentUrl { get; set; }
     }
 }
