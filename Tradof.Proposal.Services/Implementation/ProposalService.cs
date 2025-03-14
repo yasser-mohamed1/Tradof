@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
@@ -180,6 +181,16 @@ namespace Tradof.Proposal.Services.Implementation
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
             return await _unitOfWork.Repository<Data.Entities.Proposal>().CountAsync(p => p.Freelancer.UserId == currentUser.Id && p.ProposalStatus == status &&
                                                                                         p.TimePosted.Year == year && p.TimePosted.Month == month);
+        }
+
+        public async Task<Pagination<ProposalDto>> GetFreelancerProposalsAsync(FreelancerProposalsSpecParams specParams)
+        {
+            var specification = new FreelancerProposalsFilterSortPaginationSpecification(specParams);
+            var items = await _unitOfWork.Repository<Data.Entities.Proposal>().ListAsync(specification);
+            var count = await _unitOfWork.Repository<Data.Entities.Proposal>().CountAsync(specification);
+            var dtos = items.Select(p => p.ToDto()).ToList();
+            var pagination = new Pagination<ProposalDto>(specParams.PageIndex, specParams.PageSize, count, dtos);
+            return pagination;
         }
     }
 }
