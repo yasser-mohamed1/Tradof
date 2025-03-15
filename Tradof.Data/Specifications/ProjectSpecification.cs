@@ -7,7 +7,7 @@ namespace Tradof.Data.Specifications
         public ProjectSpecification(long id) : base(p => p.Id == id)
         {
             AddInclude(p => p.Files);
-            //AddInclude(p => p.Proposals);
+            AddInclude(p => p.Proposals);
             AddInclude(p => p.Specialization);
             AddInclude(p => p.LanguageFrom);
             AddInclude(p => p.LanguageTo);

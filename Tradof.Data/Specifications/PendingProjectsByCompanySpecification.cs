@@ -14,6 +14,7 @@ namespace Tradof.Data.Specifications
             AddInclude(p => p.LanguageTo);
             AddInclude(p => p.Company);
             AddInclude(p => p.Company.User);
+            AddInclude(p => p.Proposals);
         }
     }
 }
