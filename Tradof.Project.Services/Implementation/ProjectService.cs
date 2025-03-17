@@ -204,7 +204,6 @@ namespace Tradof.Project.Services.Implementation
 				throw new Exception("failed to update");
 		}
 
-
 		public async Task<bool> DeleteAsync(long id)
 		{
 			if (id <= 0) throw new ValidationException("Invalid project ID.");
@@ -225,7 +224,6 @@ namespace Tradof.Project.Services.Implementation
 
 			return await _unitOfWork.CommitAsync();
 		}
-
 
 		public async Task<int> GetProjectsCountByMonth(long id, int year, int month)
 		{

@@ -75,5 +75,13 @@ namespace Tradof.Proposal.Api.Controllers
             return Ok(await _proposalService.CancelProposal(ProposalId));
 
         }
+
+        [Authorize(Roles = RoleNames.Freelancer)]
+        [HttpGet("freelancer-proposals")]
+        public async Task<IActionResult> GetProposalsByFreelancer([FromQuery] FreelancerProposalsSpecParams specParams)
+        {
+            var result = await _proposalService.GetFreelancerProposalsAsync(specParams);
+            return Ok(result);
+        }
     }
 }
