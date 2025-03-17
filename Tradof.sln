@@ -78,12 +78,18 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Freelancer.Services", "Tradof.Freelancer.Services\Tradof.Freelancer.Services.csproj", "{B38BFF15-FE92-4147-A9F0-02A04CF7EC28}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Freelancer.Api", "Tradof.Freelancer.Api\Tradof.Freelancer.Api.csproj", "{3B51D612-3510-4802-B6B6-F0DC5D1499A6}"
-=======
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tradof.Module.Proposal", "Tradof.Module.Proposal", "{EABCCC02-DF37-412A-87F6-43DB92203E08}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Proposal.Api", "Tradof.Proposal.Api\Tradof.Proposal.Api.csproj", "{BD15C7F8-BC07-4A66-B352-2863D5D6A105}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Proposal.Services", "Tradof.Proposal.Services\Tradof.Proposal.Services.csproj", "{DF888CC6-A9E9-4D20-9254-2CE96C5F1F6E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tradof.Module.Payment", "Tradof.Module.Payment", "{B4B9D3A2-5A16-446C-9AF0-F9CCA4E68F37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Payment.Api", "Tradof.Payment.Api\Tradof.Payment.Api.csproj", "{72039015-E4A7-4575-986D-15E31BC7F664}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradof.Payment.Service", "Tradof.Payment.Service\Tradof.Payment.Service.csproj", "{F674C5AF-F65B-4828-BDC1-4B9E05EF5251}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -195,6 +201,14 @@ Global
 		{DF888CC6-A9E9-4D20-9254-2CE96C5F1F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF888CC6-A9E9-4D20-9254-2CE96C5F1F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF888CC6-A9E9-4D20-9254-2CE96C5F1F6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72039015-E4A7-4575-986D-15E31BC7F664}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72039015-E4A7-4575-986D-15E31BC7F664}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72039015-E4A7-4575-986D-15E31BC7F664}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72039015-E4A7-4575-986D-15E31BC7F664}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F674C5AF-F65B-4828-BDC1-4B9E05EF5251}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F674C5AF-F65B-4828-BDC1-4B9E05EF5251}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F674C5AF-F65B-4828-BDC1-4B9E05EF5251}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F674C5AF-F65B-4828-BDC1-4B9E05EF5251}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -236,6 +250,9 @@ Global
 		{EABCCC02-DF37-412A-87F6-43DB92203E08} = {105C6636-238F-4B20-A489-71696484FEC6}
 		{BD15C7F8-BC07-4A66-B352-2863D5D6A105} = {EABCCC02-DF37-412A-87F6-43DB92203E08}
 		{DF888CC6-A9E9-4D20-9254-2CE96C5F1F6E} = {EABCCC02-DF37-412A-87F6-43DB92203E08}
+		{B4B9D3A2-5A16-446C-9AF0-F9CCA4E68F37} = {105C6636-238F-4B20-A489-71696484FEC6}
+		{72039015-E4A7-4575-986D-15E31BC7F664} = {B4B9D3A2-5A16-446C-9AF0-F9CCA4E68F37}
+		{F674C5AF-F65B-4828-BDC1-4B9E05EF5251} = {B4B9D3A2-5A16-446C-9AF0-F9CCA4E68F37}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {69E087E9-B128-4D9E-8471-F21884B99612}
