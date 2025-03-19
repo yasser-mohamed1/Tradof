@@ -19,4 +19,8 @@
 	  <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Tradof.Payment.Service\Tradof.Payment.Service.csproj" />
+  </ItemGroup>
+
 </Project>

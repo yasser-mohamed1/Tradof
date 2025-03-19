@@ -11,10 +11,22 @@ namespace Tradof.Data.Entities
         public DateTime EndDate { get; set; }
         public string? Coupon { get; set; }
         public double NetPrice { get; set; }
+        public SubscriptionStatus Status { get; set; }
+        public string? TransactionReference { get; set; }
+        public DateTime PaymentDate { get; set; }
 
         [ForeignKey("CompanyId")]
         public Company Company { get; set; }
+
         [ForeignKey("PackageId")]
         public Package Package { get; set; }
+    }
+
+    public enum SubscriptionStatus
+    {
+        Pending,
+        Active,
+        Expired,
+        Canceled
     }
 }

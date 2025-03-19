@@ -12,8 +12,8 @@ using Tradof.EntityFramework.DataBase_Context;
 namespace Tradof.EntityFramework.Migrations
 {
     [DbContext(typeof(TradofDbContext))]
-    [Migration("20250204200517_updates")]
-    partial class updates
+    [Migration("20250319031646_plansUpdate")]
+    partial class plansUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -462,8 +462,17 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<long>("PackageId")
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TransactionReference")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -570,8 +579,8 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FileSize")
-                        .HasColumnType("int");
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("FileType")
                         .HasColumnType("int");
@@ -964,6 +973,10 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PaymobToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FreelancerId");
@@ -1047,6 +1060,9 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<long>("LanguageFromId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("LanguageId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("LanguageToId")
                         .HasColumnType("bigint");
 
@@ -1090,6 +1106,8 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.HasIndex("LanguageFromId");
 
+                    b.HasIndex("LanguageId");
+
                     b.HasIndex("LanguageToId");
 
                     b.HasIndex("SpecializationId");
@@ -1122,8 +1140,11 @@ namespace Tradof.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("PaymentMethodId")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
 
                     b.Property<long>("PaymentProcessId")
                         .HasColumnType("bigint");
@@ -1131,8 +1152,21 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("PaymenyDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("PaymobOrderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymobPaymentKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymobResponse")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymobTransactionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("ProjectId")
                         .HasColumnType("bigint");
@@ -1142,8 +1176,6 @@ namespace Tradof.EntityFramework.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("PaymentProcessId");
 
@@ -1167,6 +1199,9 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Days")
+                        .HasColumnType("int");
+
                     b.Property<long>("FreelancerId")
                         .HasColumnType("bigint");
 
@@ -1179,9 +1214,6 @@ namespace Tradof.EntityFramework.Migrations
 
                     b.Property<double>("OfferPrice")
                         .HasColumnType("float");
-
-                    b.Property<int>("ProjectDeliveryTime")
-                        .HasColumnType("int");
 
                     b.Property<long>("ProjectId")
                         .HasColumnType("bigint");
@@ -1213,7 +1245,7 @@ namespace Tradof.EntityFramework.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Attachment")
+                    b.Property<string>("AttachmentUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1500,6 +1532,13 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<string>("ProfileImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RefreshTokenExpiry")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserType")
                         .HasColumnType("int");
@@ -1853,6 +1892,9 @@ namespace Tradof.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Tradof.Data.Entities.Language", null)
+                        .WithMany("ProjectsLanguageTo")
+                        .HasForeignKey("LanguageId");
 
                     b.HasOne("Tradof.Data.Entities.Language", "LanguageTo")
                         .WithMany()
@@ -1878,12 +1920,6 @@ namespace Tradof.EntityFramework.Migrations
 
             modelBuilder.Entity("Tradof.Data.Entities.ProjectPayment", b =>
                 {
-                    b.HasOne("Tradof.Data.Entities.PaymentMethod", "PaymentMethod")
-                        .WithMany()
-                        .HasForeignKey("PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Tradof.Data.Entities.PaymentProcess", "PaymentProcess")
                         .WithMany()
                         .HasForeignKey("PaymentProcessId")
@@ -1895,8 +1931,6 @@ namespace Tradof.EntityFramework.Migrations
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("PaymentMethod");
 
                     b.Navigation("PaymentProcess");
 

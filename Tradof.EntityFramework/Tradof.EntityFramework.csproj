@@ -21,8 +21,4 @@
     <ProjectReference Include="..\Tradof.Data\Tradof.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>
