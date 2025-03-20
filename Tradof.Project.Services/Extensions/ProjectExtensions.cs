@@ -106,6 +106,7 @@ namespace Tradof.Project.Services.Extensions
                 OwnerName = ownerName,
                 OwnerEmail = ownerEmail,
                 CompanyName = companyName,
+                projectOwnerImage = project.Company.User.ProfileImageUrl,
                 RegisteredAt = project.Company.CreationDate,
                 TotalProjects = project.Company.Projects.Count,
                 OpenProjects = project.Company.Projects.Count(p => p.Status != Common.Enums.ProjectStatus.Finished)

@@ -14,6 +14,7 @@
         public DateTime RegisteredAt { get; set; }
         public int TotalProjects { get; set; }
         public int OpenProjects { get; set; }
+        public string projectOwnerImage { get; set; } = string.Empty;
 
     }
 
