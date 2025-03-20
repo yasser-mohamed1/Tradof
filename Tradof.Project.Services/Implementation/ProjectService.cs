@@ -31,7 +31,7 @@ namespace Tradof.Project.Services.Implementation
             return pagination;
         }
 
-        public async Task<List<ProjectDto>> GetStartedProjectsAsync(string companyId)
+        public async Task<List<StartedProjectDto>> GetStartedProjectsAsync(string companyId)
         {
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
                 ?? throw new Exception("Company not found.");
@@ -39,7 +39,7 @@ namespace Tradof.Project.Services.Implementation
             var spec = new StartedProjectsByCompanySpecification(company.Id);
             var items = await _unitOfWork.Repository<ProjectEntity>().GetListWithSpecificationAsync(spec);
 
-            return items.Select(p => p.ToDto()).ToList();
+            return [.. items.Select(p => p.ToStartedDto())];
         }
 
         public async Task<List<ProjectDto>> GetInComingProjectsAsync(string companyId)

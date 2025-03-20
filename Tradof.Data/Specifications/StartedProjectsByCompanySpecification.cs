@@ -5,7 +5,7 @@ namespace Tradof.Data.Specifications
 {
     public class StartedProjectsByCompanySpecification : BaseSpecification<Project>
     {
-        public StartedProjectsByCompanySpecification(long companyId) 
+        public StartedProjectsByCompanySpecification(long companyId)
             : base(p => p.Status == ProjectStatus.InProgress && p.CompanyId == companyId)
         {
             AddInclude(p => p.Files);
@@ -15,6 +15,9 @@ namespace Tradof.Data.Specifications
             AddInclude(p => p.Company);
             AddInclude(p => p.Company.User);
             AddInclude(p => p.Proposals);
+            AddInclude(p => p.Freelancer);
+            AddInclude(p => p.Freelancer.User);
+
         }
     }
 }
