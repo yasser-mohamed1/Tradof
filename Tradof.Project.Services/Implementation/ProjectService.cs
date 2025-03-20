@@ -33,8 +33,14 @@ namespace Tradof.Project.Services.Implementation
 
         public async Task<List<StartedProjectDto>> GetStartedProjectsAsync(string companyId)
         {
+
+            var currentUser = await _userHelpers.GetCurrentUserAsync();
+
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
                 ?? throw new Exception("Company not found.");
+
+            if (currentUser.Id != company.UserId) throw new Exception("not authorized .");
+
 
             var spec = new StartedProjectsByCompanySpecification(company.Id);
             var items = await _unitOfWork.Repository<ProjectEntity>().GetListWithSpecificationAsync(spec);
