@@ -16,6 +16,8 @@ namespace Tradof.Proposal.Services.Extensions
                 ProposalStatus = proposal.ProposalStatus,
                 TimePosted = proposal.TimePosted,
                 FreelancerId = proposal.FreelancerId,
+                FreelancerImageUrl = proposal.Freelancer.User.ProfileImageUrl,
+                FreelancerName = proposal.Freelancer.User.FirstName + " " + proposal.Freelancer.User.LastName,
                 ProposalAttachments = proposal.ProposalAttachments.Select(p => p.ToDto()).ToList(),
                 ProposalDescription = proposal.ProposalDescription,
                 ProjectId = proposal.Project.Id,

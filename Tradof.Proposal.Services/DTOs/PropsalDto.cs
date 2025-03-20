@@ -13,7 +13,6 @@ namespace Tradof.Proposal.Services.DTOs
         public string? FreelancerName { get; set; }
         public double OfferPrice { get; set; }
         public string? FreelancerImageUrl { get; set; }
-        public string? FreelancerJobtitle { get; set; }
         public string? Projecttitle { get; set; }
         public DateTime TimePosted { get; set; }
         public ICollection<ProposalAttachmentDto> ProposalAttachments { get; set; } = [];

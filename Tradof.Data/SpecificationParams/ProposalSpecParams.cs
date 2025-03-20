@@ -1,6 +1,4 @@
-﻿using Tradof.Common.Enums;
-
-namespace Tradof.Data.SpecificationParams
+﻿namespace Tradof.Data.SpecificationParams
 {
     public class ProposalSpecParams
     {
@@ -14,7 +12,8 @@ namespace Tradof.Data.SpecificationParams
             get => _pageSize;
             set => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
         }
-        public ProposalStatus? Status { get; set; }
+        public int? Days { get; set; }
+        public double? OfferPrice { get; set; }
         public string? SortBy { get; set; }
     }
 }

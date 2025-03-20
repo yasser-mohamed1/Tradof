@@ -8,6 +8,7 @@ namespace Tradof.Data.Specifications
         {
             AddInclude(p => p.ProposalAttachments);
             AddInclude(p => p.Freelancer);
+            AddInclude(p => p.Freelancer.User);
             AddInclude(p => p.Project);
         }
     }

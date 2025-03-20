@@ -1,8 +1,4 @@
-﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
 using Tradof.Data.Entities;
@@ -19,7 +15,7 @@ namespace Tradof.Proposal.Services.Implementation
 {
     public class ProposalService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers) : IProposalService
     {
-        Cloudinary _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+        //Cloudinary _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
 
         public async Task<bool> AcceptProposal(long projectId, long proposalId)
         {
@@ -58,22 +54,22 @@ namespace Tradof.Proposal.Services.Implementation
             return await _unitOfWork.CommitAsync();
         }
 
-        private async Task<string> UploadToCloudinaryAsync(IFormFile file)
-        {
-            await using var stream = file.OpenReadStream();
-            var uploadParams = new RawUploadParams
-            {
-                File = new FileDescription(file.FileName, stream),
-                Folder = "proposal_attachments"
-            };
+        //private async Task<string> UploadToCloudinaryAsync(IFormFile file)
+        //{
+        //    await using var stream = file.OpenReadStream();
+        //    var uploadParams = new RawUploadParams
+        //    {
+        //        File = new FileDescription(file.FileName, stream),
+        //        Folder = "proposal_attachments"
+        //    };
 
-            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+        //    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-            if (uploadResult.Error != null)
-                throw new Exception($"Cloudinary upload error: {uploadResult.Error.Message}");
+        //    if (uploadResult.Error != null)
+        //        throw new Exception($"Cloudinary upload error: {uploadResult.Error.Message}");
 
-            return uploadResult.SecureUrl.AbsoluteUri;
-        }
+        //    return uploadResult.SecureUrl.AbsoluteUri;
+        //}
 
         public async Task<ProposalDto> CreateAsync(CreateProposalDto dto)
         {
@@ -84,17 +80,20 @@ namespace Tradof.Proposal.Services.Implementation
             if (project.Status != ProjectStatus.Pending)
                 throw new Exception("Cannot send proposal for this project");
 
+            var existingProposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.FreelancerId == freelancer.Id && p.ProjectId == project.Id);
+            if (existingProposal != null) throw new Exception("already sent a proposal for this project");
+
             var proposal = dto.ToEntity();
             proposal.Project = project;
             proposal.Freelancer = freelancer;
 
             foreach (var file in dto.ProposalAttachments)
             {
-                var uploadedUrl = await UploadToCloudinaryAsync(file);
+                //var uploadedUrl = await UploadToCloudinaryAsync(file);
 
                 proposal.ProposalAttachments.Add(new ProposalAttachments
                 {
-                    AttachmentUrl = uploadedUrl,
+                    AttachmentUrl = " h",
                     Proposal = proposal,
                     CreatedBy = currentUser.FirstName,
                     CreationDate = DateTime.UtcNow,
@@ -155,11 +154,11 @@ namespace Tradof.Proposal.Services.Implementation
 
             foreach (var file in dto.ProposalAttachments)
             {
-                var uploadedUrl = await UploadToCloudinaryAsync(file);
+                //var uploadedUrl = await UploadToCloudinaryAsync(file);
 
                 proposal.ProposalAttachments.Add(new ProposalAttachments
                 {
-                    AttachmentUrl = uploadedUrl,
+                    AttachmentUrl = "h ",
                     Proposal = proposal,
                     CreatedBy = proposal.FreelancerId.ToString(),
                     CreationDate = DateTime.UtcNow,
