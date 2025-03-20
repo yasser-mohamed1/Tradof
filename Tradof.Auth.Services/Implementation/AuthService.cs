@@ -1,11 +1,13 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using Tradof.Auth.Services.DTOs;
 using Tradof.Auth.Services.Extensions;
@@ -19,6 +21,7 @@ using SystemFile = System.IO.File;
 namespace Tradof.Auth.Services.Implementation
 {
     public class AuthService(
+        IConfiguration _configuration,
         IEmailService _emailService,
         IUserRepository _userRepository,
         IRoleRepository _roleRepository,
@@ -33,8 +36,10 @@ namespace Tradof.Auth.Services.Implementation
         IHttpContextAccessor _httpContextAccessor) : IAuthService
     {
 
-        private readonly string _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new Exception("JWT_SECRET is not set.");
-        private readonly int _jwtExpiryInMinutes = int.Parse(Environment.GetEnvironmentVariable("JWT_EXPIRY") ?? throw new Exception("JWT_EXPIRY is not set."));
+        private readonly string _jwtSecret = _configuration["JWT:Secret"] ?? Environment.GetEnvironmentVariable("JWT_SECRET")
+            ?? throw new Exception("JWT_SECRET is not set.");
+        private readonly int _jwtExpiryInMinutes = int.Parse(_configuration["JWT:Expiry"] ?? Environment.GetEnvironmentVariable("JWT_EXPIRY")
+            ?? throw new Exception("JWT_EXPIRY is not set."));
 
         public async Task RegisterCompanyAsync(RegisterCompanyDto dto)
         {
@@ -169,25 +174,24 @@ namespace Tradof.Auth.Services.Implementation
 
             var token = GenerateJwtToken(user);
             var refreshToken = GenerateRefreshToken();
-
             await _userRepository.SaveRefreshTokenAsync(user.Id, refreshToken, DateTime.UtcNow.AddDays(7));
 
-            return (Token: token, RefreshToken: refreshToken, UserId: user.Id, Role: role);
+            return (token, refreshToken, user.Id, role);
         }
 
         private string GenerateJwtToken(ApplicationUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = System.Text.Encoding.ASCII.GetBytes(_jwtSecret);
+            var key = Encoding.UTF8.GetBytes(_jwtSecret);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.UserType.ToString())
-                }),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.UserType.ToString())
+            }),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtExpiryInMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

@@ -8,9 +8,9 @@ namespace Tradof.Api.Extentions
     {
         public static void ConfigureIdentity(this IServiceCollection services)
         {
-            services.AddIdentityApiEndpoints<ApplicationUser>().AddRoles<IdentityRole>()
-                    .AddEntityFrameworkStores<TradofDbContext>()
-                    .AddDefaultTokenProviders();
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<TradofDbContext>()
+                .AddDefaultTokenProviders();
         }
     }
 }

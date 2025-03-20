@@ -1,5 +1,4 @@
 ﻿using Hangfire;
-using Tradof.Data.Entities;
 
 namespace Tradof.Api.Extentions
 {
@@ -28,7 +27,7 @@ namespace Tradof.Api.Extentions
 
             app.MapControllers();
 
-            app.MapGroup("api/auth").MapIdentityApi<ApplicationUser>();
+            //app.MapGroup("api/auth").MapIdentityApi<ApplicationUser>();
         }
     }
 }

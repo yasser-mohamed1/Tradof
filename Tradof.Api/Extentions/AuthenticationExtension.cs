@@ -6,29 +6,35 @@ namespace Tradof.Api.Extentions
 {
     public static class AuthenticationExtension
     {
-        public static void ConfigureAuthentication(this IServiceCollection service, IConfiguration configuration)
+        public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            service.AddAuthentication(option =>
+            var secretKey = configuration["JWT:Secret"] ?? Environment.GetEnvironmentVariable("JWT_SECRET");
+            if (string.IsNullOrEmpty(secretKey))
             {
-                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-           .AddJwtBearer(options =>
-           {
-               options.SaveToken = true;
-               options.RequireHttpsMetadata = false;
-               var key = Encoding.UTF8.GetBytes(configuration["JWT:Secret"]);
-               var signingKey = new SymmetricSecurityKey(key);
+                throw new Exception("JWT Secret is not set properly.");
+            }
 
-               options.TokenValidationParameters = new TokenValidationParameters
-               {
-                   ValidateIssuerSigningKey = true,
-                   ValidateIssuer = false,
-                   ValidateAudience = false,
-                   IssuerSigningKey = signingKey
-               };
-           });
+            var key = Encoding.UTF8.GetBytes(secretKey);
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true
+                };
+            });
         }
     }
 }

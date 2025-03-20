@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using Tradof.Auth.Services.DTOs;
 using Tradof.Auth.Services.Interfaces;
@@ -9,6 +11,28 @@ namespace Tradof.Auth.Api.Controllers
     [Route("api/[controller]")]
     public class AuthController(IAuthService _authService) : ControllerBase
     {
+
+        [Authorize]
+        [HttpGet("token")]
+        public async Task<IActionResult> GetToken()
+        {
+            var user = HttpContext.User;
+
+            if (user == null || !user.Identity.IsAuthenticated)
+            {
+                return Unauthorized(new { Message = "User is not authenticated" });
+            }
+
+            var token = await HttpContext.GetTokenAsync("Bearer", "access_token");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized(new { Message = "Token not found in context" });
+            }
+
+            return Ok(new { Token = token });
+        }
+
 
         [HttpPost("register-company")]
         public async Task<IActionResult> RegisterCompany([FromBody] RegisterCompanyDto dto)
@@ -88,7 +112,7 @@ namespace Tradof.Auth.Api.Controllers
             {
                 return Unauthorized("Invalid or expired refresh token.");
             }
-            return Ok(new { AccessToken  = accessToken , RefreshToken  = refreshToken });
+            return Ok(new { AccessToken = accessToken, RefreshToken = refreshToken });
         }
 
         [HttpGet("confirm-email")]
