@@ -1,6 +1,7 @@
 using Hangfire;
 using Tradof.Admin.Services;
 using Tradof.Api.Extentions;
+using Tradof.Api.Services;
 using Tradof.Auth.Services;
 using Tradof.CompanyModule.Services;
 using Tradof.CountryModule.Services;
@@ -18,6 +19,8 @@ using Tradof.SpecializationModule.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
+builder.Services.AddGrpc();
 
 builder.Services.ConfigureCors();
 
@@ -71,6 +74,8 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
     app.UseSwaggerConfiguration();
+
+app.MapGrpcService<AuthService>();
 
 app.UseCustomMiddlewares();
 
