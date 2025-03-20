@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Tradof.Auth.Services.DTOs;
 using Tradof.Auth.Services.Interfaces;
 
@@ -13,7 +14,7 @@ namespace Tradof.Auth.Api.Controllers
     {
 
         [Authorize]
-        [HttpGet("token")]
+        [HttpGet("user-data-with-token")]
         public async Task<IActionResult> GetToken()
         {
             var user = HttpContext.User;
@@ -29,8 +30,24 @@ namespace Tradof.Auth.Api.Controllers
             {
                 return Unauthorized(new { Message = "Token not found in context" });
             }
+            var email = user.FindFirst(ClaimTypes.Email)?.Value;
+            var id = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var role = user.FindFirst(ClaimTypes.Role)?.Value;
+            var firstName = user.FindFirst("firstName")?.Value;
+            var lastName = user.FindFirst("lastName")?.Value;
+            var profileImageUrl = user.FindFirst("profileImageUrl")?.Value;
+            var userType = user.FindFirst("userType")?.Value;
 
-            return Ok(new { Token = token });
+            return Ok(new
+            {
+                id,
+                email,
+                role,
+                firstName,
+                lastName,
+                profileImageUrl,
+                userType
+            });
         }
 
 

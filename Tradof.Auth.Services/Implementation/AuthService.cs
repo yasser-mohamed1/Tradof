@@ -190,7 +190,11 @@ namespace Tradof.Auth.Services.Implementation
                 {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.UserType.ToString())
+                new Claim(ClaimTypes.Role, user.UserType.ToString()),
+                new Claim("firstName", user.FirstName),
+                new Claim("lastName", user.LastName),
+                new Claim("profileImageUrl", user.ProfileImageUrl ?? ""),
+                new Claim("userType", user.UserType.ToString()),
             }),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtExpiryInMinutes),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
