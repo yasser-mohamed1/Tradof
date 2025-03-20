@@ -21,7 +21,9 @@ namespace Tradof.Proposal.Services.Implementation
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
             var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == projectId) ?? throw new Exception("project not found");
-            if (currentUser.Id != project.Company.UserId)
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new NotFoundException("company not found");
+
+            if (company.Id != project.CompanyId)
                 throw new Exception("not authorized to accept this");
 
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId) ?? throw new NotFoundException("proposal not found");
@@ -35,7 +37,9 @@ namespace Tradof.Proposal.Services.Implementation
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
             var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == projectId) ?? throw new Exception("project not found");
-            if (currentUser.Id != project.Company.UserId)
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new NotFoundException("company not found");
+
+            if (company.Id != project.CompanyId)
                 throw new Exception("not authorized to deny this");
 
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId) ?? throw new NotFoundException("proposal not found");
@@ -47,8 +51,10 @@ namespace Tradof.Proposal.Services.Implementation
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId) ?? throw new NotFoundException("proposal not found");
-            if (currentUser.Id != proposal.Freelancer.UserId)
-                throw new Exception("not cancel to accept this");
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new NotFoundException("freelancer not found");
+
+            if (freelancer.Id != proposal.FreelancerId)
+                throw new Exception("not authorized to accept this");
 
             proposal.ProposalStatus = ProposalStatus.Canceled;
             return await _unitOfWork.CommitAsync();
