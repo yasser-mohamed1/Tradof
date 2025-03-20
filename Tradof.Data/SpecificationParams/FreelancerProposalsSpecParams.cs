@@ -2,8 +2,8 @@
 {
     public class FreelancerProposalsSpecParams
     {
-        private string _freelancerId = string.Empty;
-        public string FreelancerId
+        private long _freelancerId;
+        public long FreelancerId
         {
             get => _freelancerId;
             set => _freelancerId = value;
@@ -20,5 +20,8 @@
             get => _pageSize;
             set => _pageSize = value;
         }
+        public int? Days { get; set; }
+        public double? OfferPrice { get; set; }
+        public string? SortBy { get; set; }
     }
 }

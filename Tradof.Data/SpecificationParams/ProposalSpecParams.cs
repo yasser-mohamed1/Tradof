@@ -6,7 +6,6 @@
         public int PageIndex { get; set; } = 1;
         private int _pageSize = 6;
         public long? ProjectId { get; set; }
-        public long? FreelancerId { get; set; }
 
 
         public int PageSize

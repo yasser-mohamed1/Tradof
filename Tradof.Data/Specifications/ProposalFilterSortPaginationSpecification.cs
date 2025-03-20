@@ -7,7 +7,6 @@ namespace Tradof.Data.Specifications
     {
         public ProposalFilterSortPaginationSpecification(ProposalSpecParams specParams) : base(proposal =>
         (specParams.Days == null || proposal.Days <= specParams.Days) &&
-        (specParams.FreelancerId == null || proposal.FreelancerId == specParams.FreelancerId) &&
         (specParams.OfferPrice == null || proposal.OfferPrice <= specParams.OfferPrice) &&
         (!specParams.ProjectId.HasValue || proposal.ProjectId == specParams.ProjectId)
         )
