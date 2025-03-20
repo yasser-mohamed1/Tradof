@@ -18,9 +18,14 @@ namespace Tradof.Proposal.Services.Extensions
                 FreelancerId = proposal.FreelancerId,
                 FreelancerImageUrl = proposal.Freelancer.User.ProfileImageUrl,
                 FreelancerName = proposal.Freelancer.User.FirstName + " " + proposal.Freelancer.User.LastName,
-                ProposalAttachments = proposal.ProposalAttachments.Select(p => p.ToDto()).ToList(),
+                ProposalAttachments = [.. proposal.ProposalAttachments.Select(p => p.ToDto())],
                 ProposalDescription = proposal.ProposalDescription,
                 ProjectId = proposal.Project.Id,
+                CompanyEmail = proposal.Project.Company.User.Email,
+                CompanyId = proposal.Project.CompanyId,
+                CompanyFirstName = proposal.Project.Company.User.FirstName,
+                CompanyLastName = proposal.Project.Company.User.LastName,
+                CompanyImage = proposal.Project.Company.User.ProfileImageUrl
             };
         }
 
