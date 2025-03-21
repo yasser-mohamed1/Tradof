@@ -246,5 +246,15 @@ namespace Tradof.Auth.Api.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("user/{id}")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            var user = await _authService.GetUserById(id);
+            if (user == null)
+                return NotFound(new { message = "User not found" });
+
+            return Ok(user);
+        }
     }
 }

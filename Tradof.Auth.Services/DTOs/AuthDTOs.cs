@@ -152,4 +152,11 @@ namespace Tradof.Auth.Services.DTOs
     public record ResendOtpDto(
         [EmailAddress(ErrorMessage = "Invalid email format.")]
         string Email);
+
+    public record UserDto(
+        string Email,
+        string FirstName,
+        string LastName,
+        string Role
+    );
 }
