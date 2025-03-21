@@ -13,6 +13,8 @@ namespace Tradof.Data.Specifications
             (!specParams.LanguageToId.HasValue || project.LanguageToId == specParams.LanguageToId) &&
             (!specParams.Budget.HasValue || (specParams.Budget >= project.MinPrice && specParams.Budget <= project.MaxPrice)) &&
             (!specParams.CompanyId.HasValue || specParams.CompanyId == project.CompanyId) &&
+            (!specParams.FreelancerId.HasValue || specParams.FreelancerId == project.FreelancerId) &&
+
             (specParams.Status == null || specParams.Status == project.Status)
         )
         {

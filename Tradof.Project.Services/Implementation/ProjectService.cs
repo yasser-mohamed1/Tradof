@@ -22,6 +22,20 @@ namespace Tradof.Project.Services.Implementation
 
         public async Task<Pagination<ProjectDto>> GetAllAsync(ProjectSpecParams specParams)
         {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id);
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id);
+
+            if (specParams.CompanyId != null && company != null)
+            {
+                if (company.Id != specParams.CompanyId)
+                    throw new Exception("not authorized");
+            }
+            if (specParams.FreelancerId != null && freelancer != null)
+            {
+                if (freelancer.Id != specParams.FreelancerId)
+                    throw new Exception("not authorized");
+            }
             var specification = new ProjectFilterSortPaginationSpecification(specParams);
             var items = await _unitOfWork.Repository<ProjectEntity>().ListAsync(specification);
             var count = await _unitOfWork.Repository<ProjectEntity>().CountAsync(specification);
@@ -31,15 +45,21 @@ namespace Tradof.Project.Services.Implementation
             return pagination;
         }
 
-        public async Task<List<ProjectDto>> GetStartedProjectsAsync(string companyId)
+        public async Task<List<StartedProjectDto>> GetStartedProjectsAsync(string companyId)
         {
+
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
                 ?? throw new Exception("Company not found.");
+
+            if (currentUser.Id != company.UserId) throw new Exception("not authorized .");
+
 
             var spec = new StartedProjectsByCompanySpecification(company.Id);
             var items = await _unitOfWork.Repository<ProjectEntity>().GetListWithSpecificationAsync(spec);
 
-            return items.Select(p => p.ToDto()).ToList();
+            return [.. items.Select(p => p.ToStartedDto())];
         }
 
         public async Task<List<ProjectDto>> GetInComingProjectsAsync(string companyId)
