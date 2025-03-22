@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
@@ -19,6 +22,7 @@ namespace Tradof.Project.Services.Implementation
 {
     public class ProjectService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers) : IProjectService
     {
+        Cloudinary _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
 
         public async Task<Pagination<ProjectDto>> GetAllAsync(ProjectSpecParams specParams)
         {
@@ -110,23 +114,17 @@ namespace Tradof.Project.Services.Implementation
                     if (file.Length > 0)
                     {
                         var fileExtension = Path.GetExtension(file.FileName)?.TrimStart('.').ToLower();
-
                         if (string.IsNullOrEmpty(fileExtension))
                             throw new Exception("Invalid file type.");
 
                         if (!Enum.TryParse(typeof(FileType), fileExtension, true, out var fileType))
                             throw new Exception($"Unsupported file type: {fileExtension}");
 
-                        var filePath = Path.Combine("wwwroot/uploads", file.FileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.OpenOrCreate))
-                        {
-                            await file.CopyToAsync(stream);
-                        }
+                        var cloudinaryUrl = await UploadToCloudinaryAsync(file);
 
                         project.Files.Add(new Data.Entities.File
                         {
-                            FilePath = filePath,
+                            FilePath = cloudinaryUrl,
                             Project = project,
                             FileName = file.FileName,
                             FileType = (FileType)fileType,
@@ -139,6 +137,7 @@ namespace Tradof.Project.Services.Implementation
                     }
                 }
             }
+
 
             project.CreatedBy = company.User.UserName;
             project.CreationDate = DateTime.UtcNow;
@@ -180,23 +179,17 @@ namespace Tradof.Project.Services.Implementation
                     if (file.Length > 0)
                     {
                         var fileExtension = Path.GetExtension(file.FileName)?.TrimStart('.').ToLower();
-
                         if (string.IsNullOrEmpty(fileExtension))
                             throw new Exception("Invalid file type");
 
                         if (!Enum.TryParse(typeof(FileType), fileExtension, true, out var fileType))
                             throw new Exception($"Unsupported file type: {fileExtension}");
 
-                        var filePath = Path.Combine("wwwroot/uploads", file.FileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await file.CopyToAsync(stream);
-                        }
+                        var cloudinaryUrl = await UploadToCloudinaryAsync(file);
 
                         project.Files.Add(new Data.Entities.File
                         {
-                            FilePath = filePath,
+                            FilePath = cloudinaryUrl,
                             Project = project,
                             FileName = file.FileName,
                             FileType = (FileType)fileType,
@@ -209,6 +202,7 @@ namespace Tradof.Project.Services.Implementation
                     }
                 }
             }
+
 
             project.LanguageFrom = langFrom;
             project.LanguageTo = langTo;
@@ -285,6 +279,22 @@ namespace Tradof.Project.Services.Implementation
             var projectCard = project.ToProjectCardDto();
 
             return projectCard;
+        }
+
+        private async Task<string> UploadToCloudinaryAsync(IFormFile file)
+        {
+            using (var stream = file.OpenReadStream())
+            {
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(file.FileName, stream),
+                    PublicId = $"projects/{Guid.NewGuid()}_{file.FileName}",
+                    Overwrite = true
+                };
+
+                var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                return uploadResult.SecureUrl.AbsoluteUri;
+            }
         }
     }
 }
