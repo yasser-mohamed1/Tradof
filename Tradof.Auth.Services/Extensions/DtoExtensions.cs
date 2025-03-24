@@ -94,5 +94,16 @@ namespace Tradof.Auth.Services.Extensions
                 ModifiedBy = "System"
             };
         }
+
+        public static UserDto ToUserDto(this ApplicationUser user)
+        {
+            string userRole = user.UserType == UserType.CompanyAdmin ? RoleNames.CompanyAdmin : RoleNames.Freelancer;
+
+            return new UserDto(
+                user.Email,
+                user.FirstName,
+                user.LastName,
+                userRole);
+        }
     }
 }

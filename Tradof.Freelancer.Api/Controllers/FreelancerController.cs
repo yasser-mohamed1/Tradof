@@ -8,7 +8,7 @@ namespace Tradof.Freelancer.Api.Controllers;
 
 [ApiController]
 [Route("api/freelancers")]
-[Authorize(Roles = RoleNames.Freelancer)]
+[Authorize]
 public class FreelancerController(IFreelancerService _freelancerService) : ControllerBase
 {
     [HttpGet("{freelancerId}")]

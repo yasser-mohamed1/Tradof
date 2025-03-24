@@ -15,5 +15,6 @@ namespace Tradof.Auth.Services.Interfaces
         Task<(string Id, string Role)> GetCurrentUserAsync();
         Task<(string Token, string RefreshToken)> RefreshTokenAsync(string refreshToken);
         Task ResendOtpAsync(string email);
+        Task<UserDto?> GetUserById(string id);
     }
 }

@@ -332,5 +332,11 @@ namespace Tradof.Auth.Services.Implementation
         {
             return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
         }
+
+        public async Task<UserDto?> GetUserById(string id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            return user?.ToUserDto();
+        }
     }
 }
