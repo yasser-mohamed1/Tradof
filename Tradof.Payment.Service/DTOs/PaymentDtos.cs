@@ -4,12 +4,7 @@ namespace Tradof.Payment.Service.DTOs
 {
     public class InitiatePaymentRequest
     {
-        public long CompanyId { get; set; }
         public long PackageId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
     }
 
     public class PaymentResponse

@@ -6,40 +6,37 @@ using System.Text;
 using System.Text.Json;
 using Tradof.Data.Entities;
 using Tradof.Data.Interfaces;
+using Tradof.EntityFramework.Helpers;
 using Tradof.Payment.Service.DTOs;
 using Tradof.Payment.Service.Interfaces;
 using Tradof.Payment.Service.Paymob;
 
 namespace Tradof.Payment.Service.implemintation
 {
-    public class PaymentService : IPaymentService
+    public class PaymentService(
+        PaymobClient paymobClient,
+        IOptions<PaymobConfig> config,
+        IUnitOfWork unitOfWork,
+        ILogger<PaymentService> logger,
+         IUserHelpers userHelpers) : IPaymentService
     {
-        private readonly PaymobClient _paymobClient;
-        private readonly PaymobConfig _config;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<PaymentService> _logger;
-
-        public PaymentService(
-            PaymobClient paymobClient,
-            IOptions<PaymobConfig> config,
-            IUnitOfWork unitOfWork,
-            ILogger<PaymentService> logger)
-        {
-            _paymobClient = paymobClient;
-            _config = config.Value;
-            _unitOfWork = unitOfWork;
-            _logger = logger;
-        }
+        private readonly PaymobClient _paymobClient = paymobClient;
+        private readonly PaymobConfig _config = config.Value;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly ILogger<PaymentService> _logger = logger;
+        private readonly IUserHelpers _userHelpers = userHelpers;
 
         public async Task<PaymentResponse> InitiateSubscriptionPayment(InitiatePaymentRequest request)
         {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id);
+
+            if (company == null)
+            {
+                throw new Exception("company not found");
+            }
             try
             {
-                _logger.LogInformation("Initiating payment for company {CompanyId}", request.CompanyId);
-
-                var company = await _unitOfWork.Repository<Company>().GetByIdAsync(request.CompanyId)
-                    ?? throw new ArgumentException("Company not found");
-
                 var package = await _unitOfWork.Repository<Package>().GetByIdAsync(request.PackageId)
                     ?? throw new ArgumentException("Package not found");
 
@@ -69,10 +66,10 @@ namespace Tradof.Payment.Service.implemintation
                 await _unitOfWork.CommitAsync();
 
                 var customer = new PaymobClient.Customer(
-    first_name: request.FirstName,
-    last_name: request.LastName,
-    email: request.Email,
-    phone_number: FormatPhoneNumber(request.Phone),
+    first_name: currentUser.FirstName,
+    last_name: currentUser.LastName,
+    email: currentUser.Email,
+    phone_number: FormatPhoneNumber(currentUser.PhoneNumber),
     street: "123 Main St",         // Get from user or use default
     city: "Cairo",
     country: "EGY",
