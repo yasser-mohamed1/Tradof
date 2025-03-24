@@ -30,10 +30,20 @@ namespace Tradof.Payment.Service.implemintation
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id);
+            var subscriptions = await _unitOfWork.Repository<CompanySubscription>().FindAsync(f => f.CompanyId == company.Id);
+
 
             if (company == null)
             {
                 throw new Exception("company not found");
+            }
+            if (subscriptions != null)
+            {
+                foreach (var subscription in subscriptions)
+                {
+                    if (DateTime.UtcNow < subscription.EndDate)
+                        throw new Exception("you already subscriped to a plan");
+                }
             }
             try
             {
@@ -66,19 +76,19 @@ namespace Tradof.Payment.Service.implemintation
                 await _unitOfWork.CommitAsync();
 
                 var customer = new PaymobClient.Customer(
-    first_name: currentUser.FirstName,
-    last_name: currentUser.LastName,
-    email: currentUser.Email,
-    phone_number: FormatPhoneNumber(currentUser.PhoneNumber),
-    street: "123 Main St",         // Get from user or use default
-    city: "Cairo",
-    country: "EGY",
-    apartment: "N/A",              // Explicitly provide defaults
-    floor: "0",
-    building: "N/A",
-    postal_code: "12345",
-    state: "Cairo"
-);
+                    first_name: currentUser.FirstName,
+                    last_name: currentUser.LastName,
+                    email: currentUser.Email,
+                    phone_number: FormatPhoneNumber(currentUser.PhoneNumber),
+                    street: "123 Main St",
+                    city: "Cairo",
+                    country: "EGY",
+                    apartment: "N/A",
+                    floor: "0",
+                    building: "N/A",
+                    postal_code: "12345",
+                    state: "Cairo"
+                );
 
                 var paymentKey = await _paymobClient.GeneratePaymentKeyAsync(
                     authToken,
@@ -86,8 +96,6 @@ namespace Tradof.Payment.Service.implemintation
                     order.id.ToString(),
                     customer
                 );
-
-                _logger.LogInformation("Payment initiated for subscription {SubscriptionId}", subscription.Id);
 
                 return new PaymentResponse
                 {
