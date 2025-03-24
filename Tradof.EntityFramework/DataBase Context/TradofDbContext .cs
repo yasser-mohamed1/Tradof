@@ -32,6 +32,8 @@ namespace Tradof.EntityFramework.DataBase_Context
         public DbSet<Specialization> Specializations { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<CompanySocialMedia> CompanySocialMedias { get; set; }
+        public DbSet<PendingSubscription> PendingSubscriptions { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

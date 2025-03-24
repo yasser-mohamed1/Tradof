@@ -28,53 +28,49 @@ namespace Tradof.Payment.Service.implemintation
 
         public async Task<PaymentResponse> InitiateSubscriptionPayment(InitiatePaymentRequest request)
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("User not found");
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id);
-            var subscriptions = await _unitOfWork.Repository<CompanySubscription>().FindAsync(f => f.CompanyId == company.Id);
-
 
             if (company == null)
             {
-                throw new Exception("company not found");
+                throw new Exception("Company not found");
             }
-            if (subscriptions != null)
+
+            // Check if the user already has an active subscription
+            var activeSubscriptions = await _unitOfWork.Repository<CompanySubscription>()
+                .FindAsync(s => s.CompanyId == company.Id && s.Status == SubscriptionStatus.Active);
+
+            if (activeSubscriptions.Any())
             {
-                foreach (var subscription in subscriptions)
-                {
-                    if (DateTime.UtcNow < subscription.EndDate)
-                        throw new Exception("you already subscriped to a plan");
-                }
+                throw new Exception("You are already subscribed to a plan");
             }
+
             try
             {
                 var package = await _unitOfWork.Repository<Package>().GetByIdAsync(request.PackageId)
                     ?? throw new ArgumentException("Package not found");
 
-                var subscription = new CompanySubscription
-                {
-                    CompanyId = company.Id,
-                    PackageId = package.Id,
-                    StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(package.DurationInMonths),
-                    NetPrice = package.Price,
-                    Status = SubscriptionStatus.Pending,
-                    CreationDate = DateTime.UtcNow,
-                    ModificationDate = DateTime.UtcNow,
-                    ModifiedBy = "system",
-                    CreatedBy = "system"
-                };
-
-                await _unitOfWork.Repository<CompanySubscription>().AddAsync(subscription);
-                await _unitOfWork.CommitAsync();
-
+                // Generate payment details
                 var authToken = await _paymobClient.AuthenticateAsync();
                 var amount = Convert.ToDecimal(package.Price);
                 var order = await _paymobClient.CreateOrderAsync(authToken, amount);
 
-                subscription.TransactionReference = order.id.ToString();
-                await _unitOfWork.Repository<CompanySubscription>().UpdateAsync(subscription);
+                // Create a pending subscription record with the transaction reference
+                var pendingSubscription = new PendingSubscription
+                {
+                    CompanyId = company.Id,
+                    PackageId = package.Id,
+                    Amount = package.Price,
+                    TransactionReference = order.id.ToString(), // Set TransactionReference here
+                    CreationDate = DateTime.UtcNow,
+                    ModifiedBy = "system",
+                    CreatedBy = "system"
+                };
+
+                await _unitOfWork.Repository<PendingSubscription>().AddAsync(pendingSubscription);
                 await _unitOfWork.CommitAsync();
 
+                // Generate payment key
                 var customer = new PaymobClient.Customer(
                     first_name: currentUser.FirstName,
                     last_name: currentUser.LastName,
@@ -118,20 +114,20 @@ namespace Tradof.Payment.Service.implemintation
             return $"+20{phone}";
         }
 
-        public async Task HandleCallback(PaymentCallbackRequest request)
+        public async Task HandleCallback(PaymentCallbackRequest request, string hmac)
         {
             try
             {
                 _logger.LogInformation("Processing payment callback");
 
-                if (!ValidateHmac(request.Obj, request.Hmac))
+                // Validate HMAC signature
+                if (!ValidateHmac(request.Obj, hmac)) // Use the HMAC from the header
                 {
                     _logger.LogWarning("Invalid HMAC signature");
                     throw new SecurityException("Invalid HMAC signature");
                 }
 
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var response = JsonSerializer.Deserialize<PaymobCallbackResponse>(request.Obj, options);
+                var response = request.Obj;
 
                 if (!response.Success)
                 {
@@ -139,29 +135,44 @@ namespace Tradof.Payment.Service.implemintation
                     return;
                 }
 
-                var subscription = await _unitOfWork.Repository<CompanySubscription>()
-                    .FindFirstAsync(s => s.TransactionReference == response.Order.Id);
+                // Find the pending subscription using the transaction reference
+                var pendingSubscription = await _unitOfWork.Repository<PendingSubscription>()
+                    .FindFirstAsync(s => s.TransactionReference == response.Order.Id.ToString());  // Convert to string if necessary
 
-                if (subscription == null)
+                if (pendingSubscription == null)
                 {
-                    _logger.LogError("Subscription not found for order {OrderId}", response.Order.Id);
-                    throw new ArgumentException("Subscription not found");
+                    _logger.LogError("Pending subscription not found for order {OrderId}", response.Order.Id);
+                    throw new ArgumentException("Pending subscription not found");
                 }
 
-                if (subscription.Status == SubscriptionStatus.Active)
+                // Create the actual subscription
+                var package = await _unitOfWork.Repository<Package>().GetByIdAsync(pendingSubscription.PackageId);
+                if (package == null)
                 {
-                    _logger.LogWarning("Subscription {SubscriptionId} already active", subscription.Id);
-                    return;
+                    _logger.LogError("Package not found for pending subscription {PendingSubscriptionId}", pendingSubscription.Id);
+                    throw new ArgumentException("Package not found");
                 }
 
-                subscription.Status = SubscriptionStatus.Active;
-                subscription.PaymentDate = DateTime.UtcNow;
-                subscription.NetPrice = (double)(response.AmountCents / 100);
+                var subscription = new CompanySubscription
+                {
+                    CompanyId = pendingSubscription.CompanyId,
+                    PackageId = package.Id,
+                    StartDate = DateTime.UtcNow,
+                    EndDate = DateTime.UtcNow.AddMonths(package.DurationInMonths),
+                    NetPrice = pendingSubscription.Amount,
+                    Status = SubscriptionStatus.Active,
+                    PaymentDate = DateTime.UtcNow,
+                    CreationDate = DateTime.UtcNow,
+                    ModificationDate = DateTime.UtcNow,
+                    ModifiedBy = "system",
+                    CreatedBy = "system"
+                };
 
-                await _unitOfWork.Repository<CompanySubscription>().UpdateAsync(subscription);
+                await _unitOfWork.Repository<CompanySubscription>().AddAsync(subscription);
+                await _unitOfWork.Repository<PendingSubscription>().DeleteAsync(pendingSubscription.Id);
                 await _unitOfWork.CommitAsync();
 
-                _logger.LogInformation("Subscription {SubscriptionId} activated", subscription.Id);
+                _logger.LogInformation("Subscription {SubscriptionId} activated for company {CompanyId}", subscription.Id, subscription.CompanyId);
             }
             catch (Exception ex)
             {
@@ -170,11 +181,17 @@ namespace Tradof.Payment.Service.implemintation
             }
         }
 
-        private bool ValidateHmac(string obj, string receivedHmac)
+        private bool ValidateHmac(PaymobCallbackResponse obj, string receivedHmac)
         {
             try
             {
-                var computedHmac = ComputeHmac(obj, _config.HmacSecret);
+                // Serialize the obj to a JSON string
+                var jsonString = JsonSerializer.Serialize(obj);
+
+                // Compute the HMAC for the JSON string
+                var computedHmac = ComputeHmac(jsonString, _config.HmacSecret);
+
+                // Compare the computed HMAC with the received HMAC
                 return computedHmac.Equals(receivedHmac, StringComparison.OrdinalIgnoreCase);
             }
             catch

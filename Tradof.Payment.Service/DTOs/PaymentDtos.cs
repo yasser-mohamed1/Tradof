@@ -13,20 +13,22 @@ namespace Tradof.Payment.Service.DTOs
         public string TransactionReference { get; set; }
     }
 
-    public record PaymobCallbackResponse(
-        [property: JsonPropertyName("success")] bool Success,
-        [property: JsonPropertyName("order")] PaymobOrder Order,
-        [property: JsonPropertyName("amount_cents")] long AmountCents,
-        [property: JsonPropertyName("id")] string TransactionId
-    );
-
-    public record PaymobOrder(
-        [property: JsonPropertyName("id")] string Id
-    );
-
     public class PaymentCallbackRequest
     {
-        public string Hmac { get; set; }
-        public string Obj { get; set; }  // This should contain the JSON payload from Paymob
+        public PaymobCallbackResponse Obj { get; set; }
+    }
+
+    public class PaymobCallbackResponse
+    {
+        public bool Success { get; set; }
+        public PaymobOrder Order { get; set; }
+        public long AmountCents { get; set; }
+        public string TransactionId { get; set; }
+    }
+
+    public class PaymobOrder
+    {
+        [JsonPropertyName("id")]
+        public long Id { get; set; } // Use long for numeric IDs
     }
 }

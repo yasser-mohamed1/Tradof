@@ -16,9 +16,16 @@ namespace Tradof.Payment.Api.Controllers
         }
 
         [HttpPost("callback/paymob")]
-        public async Task<IActionResult> HandlePaymobCallback([FromBody] PaymentCallbackRequest request)
+        public async Task<IActionResult> HandlePaymobCallback(
+    [FromBody] PaymentCallbackRequest request,
+    [FromHeader(Name = "hmac")] string hmac) // Get HMAC from header
         {
-            await _paymentService.HandleCallback(request);
+            if (request == null || request.Obj == null || string.IsNullOrEmpty(hmac))
+            {
+                return BadRequest("Invalid request payload");
+            }
+
+            await _paymentService.HandleCallback(request, hmac); // Pass HMAC to service
             return Ok();
         }
     }
