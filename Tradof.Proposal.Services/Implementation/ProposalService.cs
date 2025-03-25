@@ -18,7 +18,7 @@ namespace Tradof.Proposal.Services.Implementation
 {
     public class ProposalService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers) : IProposalService
     {
-        Cloudinary _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+        private readonly Cloudinary _cloudinary = new(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
 
         public async Task<bool> AcceptProposal(long projectId, long proposalId)
         {
