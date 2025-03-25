@@ -133,5 +133,22 @@ namespace Tradof.Project.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("current-projects/freelancer")]
+        public async Task<IActionResult> GetCurrentProjectsByFreelancerId(
+        [FromQuery] string freelancerId,
+        [FromQuery] int pageIndex = 1,
+        [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var result = await _projectService.GetCurrentProjectsByFreelancerIdAsync(freelancerId, pageIndex, pageSize);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

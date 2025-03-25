@@ -19,5 +19,6 @@ namespace Tradof.Project.Services.Interfaces
         Task<Tuple<int, int, int>> ProjectsStatistics();
         Task<ProjectCardDto> GetProjectCardData(long projectId);
         Task<Pagination<ProjectDto>> GetCurrentProjectsByCompanyIdAsync(string companyId, int pageIndex, int pageSize);
+        Task<Pagination<ProjectDto>> GetCurrentProjectsByFreelancerIdAsync(string freelancerId, int pageIndex, int pageSize);
     }
 }

@@ -323,5 +323,19 @@ namespace Tradof.Project.Services.Implementation
             var dtos = projects.Select(p => p.ToDto()).ToList();
             return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
         }
+
+        public async Task<Pagination<ProjectDto>> GetCurrentProjectsByFreelancerIdAsync(string freelancerId, int pageIndex, int pageSize)
+        {
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == freelancerId)
+                ?? throw new Exception("Freelancer not found.");
+
+            var spec = new CurrentProjectsByFreelancerSpecification(freelancer.Id, pageIndex, pageSize);
+            var projects = await _unitOfWork.Repository<ProjectEntity>().ListAsync(spec);
+            var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(new CurrentProjectsByFreelancerSpecification(freelancer.Id));
+
+            var dtos = projects.Select(p => p.ToDto()).ToList();
+            return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
+        }
+
     }
 }
