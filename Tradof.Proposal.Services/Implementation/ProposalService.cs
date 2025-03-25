@@ -81,11 +81,11 @@ namespace Tradof.Proposal.Services.Implementation
 
             foreach (var file in dto.ProposalAttachments)
             {
-                //var uploadedUrl = await UploadToCloudinaryAsync(file);
+                var uploadedUrl = await UploadToCloudinaryAsync(file);
 
                 proposal.ProposalAttachments.Add(new ProposalAttachments
                 {
-                    AttachmentUrl = " h",
+                    AttachmentUrl = uploadedUrl,
                     Proposal = proposal,
                     CreatedBy = currentUser.FirstName,
                     CreationDate = DateTime.UtcNow,
@@ -146,11 +146,11 @@ namespace Tradof.Proposal.Services.Implementation
 
             foreach (var file in dto.ProposalAttachments)
             {
-                //var uploadedUrl = await UploadToCloudinaryAsync(file);
+                var uploadedUrl = await UploadToCloudinaryAsync(file);
 
                 proposal.ProposalAttachments.Add(new ProposalAttachments
                 {
-                    AttachmentUrl = "h ",
+                    AttachmentUrl = uploadedUrl,
                     Proposal = proposal,
                     CreatedBy = proposal.FreelancerId.ToString(),
                     CreationDate = DateTime.UtcNow,
