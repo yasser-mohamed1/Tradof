@@ -18,5 +18,6 @@ namespace Tradof.Project.Services.Interfaces
         Task<bool> MarkAsFinished(long id);
         Task<Tuple<int, int, int>> ProjectsStatistics();
         Task<ProjectCardDto> GetProjectCardData(long projectId);
+        Task<Pagination<ProjectDto>> GetCurrentProjectsByCompanyIdAsync(string companyId, int pageIndex, int pageSize);
     }
 }

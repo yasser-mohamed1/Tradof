@@ -18,7 +18,10 @@ namespace Tradof.Project.Api.Controllers
         }
 
         [HttpGet("AllStartedProjects")]
-        public async Task<IActionResult> GetStartedProjectsAsync(string companyId, int pageIndex, int pageSize)
+        public async Task<IActionResult> GetStartedProjectsAsync(
+        [FromQuery] string companyId,
+        [FromQuery] int pageIndex = 1,
+        [FromQuery] int pageSize = 10)
         { 
             try
             {
@@ -112,6 +115,23 @@ namespace Tradof.Project.Api.Controllers
         public async Task<IActionResult> GetProjectCardData(long projectId)
         {
             return Ok(await _projectService.GetProjectCardData(projectId));
+        }
+
+        [HttpGet("current-projects")]
+        public async Task<IActionResult> GetCurrentProjectsByCompanyId(
+        [FromQuery] string companyId,
+        [FromQuery] int pageIndex = 1,
+        [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var result = await _projectService.GetCurrentProjectsByCompanyIdAsync(companyId, pageIndex, pageSize);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

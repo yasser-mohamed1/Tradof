@@ -49,13 +49,10 @@ namespace Tradof.Project.Services.Implementation
             return pagination;
         }
 
-        public async Task<List<StartedProjectDto>> GetStartedProjectsAsync()
         public async Task<Pagination<StartedProjectDto>> GetStartedProjectsAsync(string companyId, int pageIndex, int pageSize)
         {
-
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
 
-            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
                 ?? throw new Exception("Company not found.");
 
@@ -312,6 +309,19 @@ namespace Tradof.Project.Services.Implementation
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
                 return uploadResult.SecureUrl.AbsoluteUri;
             }
+        }
+
+        public async Task<Pagination<ProjectDto>> GetCurrentProjectsByCompanyIdAsync(string companyId, int pageIndex, int pageSize)
+        {
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
+                ?? throw new Exception("Company not found.");
+
+            var spec = new CurrentProjectsByCompanySpecification(company.Id, pageIndex, pageSize);
+            var projects = await _unitOfWork.Repository<ProjectEntity>().ListAsync(spec);
+            var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(new CurrentProjectsByCompanySpecification(company.Id));
+
+            var dtos = projects.Select(p => p.ToDto()).ToList();
+            return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
         }
     }
 }
