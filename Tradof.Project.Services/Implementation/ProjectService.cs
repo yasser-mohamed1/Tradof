@@ -163,7 +163,7 @@ namespace Tradof.Project.Services.Implementation
             var specialization = await _unitOfWork.Repository<Specialization>().GetByIdAsync(dto.SpecializationId);
             var langFrom = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageFromId);
             var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
-            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(dto.Id)
+            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == dto.Id && p.CompanyId == company.Id)
                 ?? throw new NotFoundException("project not found");
 
 
