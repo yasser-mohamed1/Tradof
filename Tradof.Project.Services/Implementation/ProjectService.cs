@@ -49,12 +49,12 @@ namespace Tradof.Project.Services.Implementation
             return pagination;
         }
 
-        public async Task<List<StartedProjectDto>> GetStartedProjectsAsync(string companyId)
+        public async Task<List<StartedProjectDto>> GetStartedProjectsAsync()
         {
 
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
 
-            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
                 ?? throw new Exception("Company not found.");
 
             if (currentUser.Id != company.UserId) throw new Exception("not authorized .");
