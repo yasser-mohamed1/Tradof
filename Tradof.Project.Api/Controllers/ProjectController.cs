@@ -63,9 +63,9 @@ namespace Tradof.Project.Api.Controllers
         }
 
         [HttpGet("countByMonth")]
-        public async Task<IActionResult> GetProjectsCountByMonth(long id, int year, int month)
+        public async Task<IActionResult> GetProjectsCountByMonth(int year, int month)
         {
-            return Ok(await _projectService.GetProjectsCountByMonth(id, year, month));
+            return Ok(await _projectService.GetProjectsCountByMonth(year, month));
         }
 
         [HttpGet("statistics")]

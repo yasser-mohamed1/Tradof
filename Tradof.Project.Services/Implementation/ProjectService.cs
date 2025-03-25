@@ -221,8 +221,11 @@ namespace Tradof.Project.Services.Implementation
 
         public async Task<bool> DeleteAsync(long id)
         {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
+                ?? throw new Exception("Company not found.");
             if (id <= 0) throw new ValidationException("Invalid project ID.");
-            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(id) ?? throw new NotFoundException("project not found");
+            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == id && p.CompanyId == company.Id) ?? throw new NotFoundException("project not found");
 
             if (project.Status != ProjectStatus.Pending)
                 throw new Exception("Cannot delete a project after it has started.");
@@ -240,22 +243,31 @@ namespace Tradof.Project.Services.Implementation
             return await _unitOfWork.CommitAsync();
         }
 
-        public async Task<int> GetProjectsCountByMonth(long id, int year, int month)
+        public async Task<int> GetProjectsCountByMonth(int year, int month)
         {
-            return await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => id == p.CompanyId && p.PublishDate.Year == year && p.PublishDate.Month == month);
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
+                ?? throw new Exception("Company not found.");
+            return await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.CompanyId == company.Id && p.PublishDate.Year == year && p.PublishDate.Month == month);
 
         }
 
         public async Task<bool> SendReviewRequest(long id)
         {
-            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(id) ?? throw new NotFoundException("project not found");
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(c => c.UserId == currentUser.Id)
+                ?? throw new Exception("freelancer not found.");
+            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == id && p.FreelancerId == freelancer.Id) ?? throw new NotFoundException("project not found");
             project.Status = ProjectStatus.OnReviewing;
             return await _unitOfWork.CommitAsync();
         }
 
         public async Task<bool> MarkAsFinished(long id)
         {
-            var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(id) ?? throw new NotFoundException("project not found");
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
+                ?? throw new Exception("Company not found.");
+            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == id && p.CompanyId == company.Id) ?? throw new NotFoundException("project not found");
             project.Status = ProjectStatus.Finished;
             return await _unitOfWork.CommitAsync();
         }
