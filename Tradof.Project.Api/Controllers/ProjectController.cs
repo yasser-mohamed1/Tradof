@@ -8,9 +8,9 @@ namespace Tradof.Project.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ProjectController(IProjectService _projectService) : ControllerBase
     {
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] ProjectSpecParams specParams)
         {
@@ -22,7 +22,7 @@ namespace Tradof.Project.Api.Controllers
         [FromQuery] string companyId,
         [FromQuery] int pageIndex = 1,
         [FromQuery] int pageSize = 10)
-        { 
+        {
             try
             {
                 return Ok(await _projectService.GetStartedProjectsAsync(companyId, pageIndex, pageSize));
@@ -84,7 +84,6 @@ namespace Tradof.Project.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Create(CreateProjectDto projectDto)
         {
             try
@@ -98,14 +97,12 @@ namespace Tradof.Project.Api.Controllers
         }
 
         [HttpPut]
-        [Authorize]
         public async Task<IActionResult> Update(UpdateProjectDto projectDto)
         {
             return Ok(await _projectService.UpdateAsync(projectDto));
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> Delete(long id)
         {
             return Ok(await _projectService.DeleteAsync(id));
@@ -143,6 +140,23 @@ namespace Tradof.Project.Api.Controllers
             try
             {
                 var result = await _projectService.GetCurrentProjectsByFreelancerIdAsync(freelancerId, pageIndex, pageSize);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("started-projects/freelancer")]
+        public async Task<IActionResult> GetStartedProjectsByFreelancerId(
+        [FromQuery] string freelancerId,
+        [FromQuery] int pageIndex = 1,
+        [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var result = await _projectService.GetStartedProjectsByFreelancerIdAsync(freelancerId, pageIndex, pageSize);
                 return Ok(result);
             }
             catch (Exception ex)
