@@ -153,19 +153,19 @@ namespace Tradof.Project.Services.Implementation
                 throw new Exception("failed to create");
         }
 
-        public async Task<ProjectDto> UpdateAsync(string id, UpdateProjectDto dto)
+        public async Task<ProjectDto> UpdateAsync(UpdateProjectDto dto)
         {
             ValidationHelper.ValidateUpdateProjectDto(dto);
 
-            var currentUser = await _unitOfWork.Repository<ApplicationUser>().GetByIdAsync(id)
-                ?? throw new Exception("Current user not found.");
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
+                ?? throw new Exception("Company not found.");
             var specialization = await _unitOfWork.Repository<Specialization>().GetByIdAsync(dto.SpecializationId);
             var langFrom = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageFromId);
             var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
             var project = await _unitOfWork.Repository<ProjectEntity>().GetByIdAsync(dto.Id)
                 ?? throw new NotFoundException("project not found");
-            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == id)
-                ?? throw new Exception("Company not found.");
+
 
             await _unitOfWork.Repository<File>().DeleteWithCrateriaAsync(f => f.ProjectId == project.Id);
             project.Files.Clear();
@@ -260,11 +260,14 @@ namespace Tradof.Project.Services.Implementation
             return await _unitOfWork.CommitAsync();
         }
 
-        public async Task<Tuple<int, int, int>> ProjectsStatistics(long userId)
+        public async Task<Tuple<int, int, int>> ProjectsStatistics()
         {
-            int active = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == userId && p.Status == ProjectStatus.Active);
-            int inProgress = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == userId && p.Status == ProjectStatus.InProgress);
-            int accepted = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == userId && p.Status == ProjectStatus.Active || p.Status == ProjectStatus.Finished);
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(c => c.UserId == currentUser.Id)
+                ?? throw new Exception("Company not found.");
+            int active = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Active);
+            int inProgress = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.InProgress);
+            int accepted = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Active || p.Status == ProjectStatus.Finished);
 
             return new Tuple<int, int, int>(active, inProgress, accepted);
         }
