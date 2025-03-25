@@ -66,9 +66,10 @@ namespace Tradof.Project.Services.Implementation
             return [.. items.Select(p => p.ToStartedDto())];
         }
 
-        public async Task<List<ProjectDto>> GetInComingProjectsAsync(string companyId)
+        public async Task<List<ProjectDto>> GetInComingProjectsAsync()
         {
-            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
                 ?? throw new Exception("Company not found.");
 
             var spec = new PendingProjectsByCompanySpecification(company.Id);
