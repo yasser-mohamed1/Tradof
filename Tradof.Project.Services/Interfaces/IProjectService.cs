@@ -10,13 +10,13 @@ namespace Tradof.Project.Services.Interfaces
         Task<Pagination<StartedProjectDto>> GetStartedProjectsAsync(string companyId);
         Task<List<ProjectDto>> GetInComingProjectsAsync(string companyId);
         Task<ProjectDto> GetByIdAsync(long id);
-        Task<ProjectDto> CreateAsync(string companyid, CreateProjectDto dto);
-        Task<ProjectDto> UpdateAsync(string companyId, UpdateProjectDto dto);
-        Task<int> GetProjectsCountByMonth(long id, int year, int month);
+        Task<ProjectDto> CreateAsync(CreateProjectDto dto);
+        Task<ProjectDto> UpdateAsync(UpdateProjectDto dto);
+        Task<int> GetProjectsCountByMonth(int year, int month);
         Task<bool> DeleteAsync(long id);
         Task<bool> SendReviewRequest(long id);
         Task<bool> MarkAsFinished(long id);
-        Task<Tuple<int, int, int>> ProjectsStatistics(long UserId);
+        Task<Tuple<int, int, int>> ProjectsStatistics();
         Task<ProjectCardDto> GetProjectCardData(long projectId);
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
 using Tradof.Data.Entities;
@@ -15,7 +18,7 @@ namespace Tradof.Proposal.Services.Implementation
 {
     public class ProposalService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers) : IProposalService
     {
-        //Cloudinary _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+        Cloudinary _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
 
         public async Task<bool> AcceptProposal(long projectId, long proposalId)
         {
@@ -60,22 +63,22 @@ namespace Tradof.Proposal.Services.Implementation
             return await _unitOfWork.CommitAsync();
         }
 
-        //private async Task<string> UploadToCloudinaryAsync(IFormFile file)
-        //{
-        //    await using var stream = file.OpenReadStream();
-        //    var uploadParams = new RawUploadParams
-        //    {
-        //        File = new FileDescription(file.FileName, stream),
-        //        Folder = "proposal_attachments"
-        //    };
+        private async Task<string> UploadToCloudinaryAsync(IFormFile file)
+        {
+            await using var stream = file.OpenReadStream();
+            var uploadParams = new RawUploadParams
+            {
+                File = new FileDescription(file.FileName, stream),
+                Folder = "proposal_attachments"
+            };
 
-        //    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-        //    if (uploadResult.Error != null)
-        //        throw new Exception($"Cloudinary upload error: {uploadResult.Error.Message}");
+            if (uploadResult.Error != null)
+                throw new Exception($"Cloudinary upload error: {uploadResult.Error.Message}");
 
-        //    return uploadResult.SecureUrl.AbsoluteUri;
-        //}
+            return uploadResult.SecureUrl.AbsoluteUri;
+        }
 
         public async Task<ProposalDto> CreateAsync(CreateProposalDto dto)
         {
@@ -197,5 +200,21 @@ namespace Tradof.Proposal.Services.Implementation
             var pagination = new Pagination<ProposalDto>(specParams.PageIndex, specParams.PageSize, count, dtos);
             return pagination;
         }
+
+        //private async Task<string> UploadToCloudinaryAsync(IFormFile file)
+        //{
+        //    using (var stream = file.OpenReadStream())
+        //    {
+        //        var uploadParams = new ImageUploadParams
+        //        {
+        //            File = new FileDescription(file.FileName, stream),
+        //            PublicId = $"projects/{Guid.NewGuid()}_{file.FileName}",
+        //            Overwrite = true
+        //        };
+
+        //        var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+        //        return uploadResult.SecureUrl.AbsoluteUri;
+        //    }
+        //}
     }
 }
