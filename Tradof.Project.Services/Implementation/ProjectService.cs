@@ -86,19 +86,19 @@ namespace Tradof.Project.Services.Implementation
             return project == null ? throw new NotFoundException("project not found") : project.ToDto();
         }
 
-        public async Task<ProjectDto> CreateAsync(string id, CreateProjectDto dto)
+        public async Task<ProjectDto> CreateAsync(CreateProjectDto dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto), "Project data cannot be null.");
 
             ValidationHelper.ValidateCreateProjectDto(dto);
-            var currentUser = await _unitOfWork.Repository<ApplicationUser>().GetByIdAsync(id)
-                ?? throw new Exception("Current user not found.");
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
+                ?? throw new Exception("Company not found.");
             var specialization = await _unitOfWork.Repository<Specialization>().GetByIdAsync(dto.SpecializationId);
             var langFrom = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageFromId);
             var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
-            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == id)
-                ?? throw new Exception("Company not found.");
+
 
             var project = dto.ToEntity();
             project.Company = company;
