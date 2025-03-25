@@ -18,11 +18,11 @@ namespace Tradof.Project.Api.Controllers
         }
 
         [HttpGet("AllStartedProjects")]
-        public async Task<IActionResult> GetStartedProjectsAsync()
-        {
+        public async Task<IActionResult> GetStartedProjectsAsync(string companyId, int pageIndex, int pageSize)
+        { 
             try
             {
-                return Ok(await _projectService.GetStartedProjectsAsync());
+                return Ok(await _projectService.GetStartedProjectsAsync(companyId, pageIndex, pageSize));
             }
             catch (Exception ex)
             {
