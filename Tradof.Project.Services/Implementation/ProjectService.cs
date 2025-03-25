@@ -49,21 +49,17 @@ namespace Tradof.Project.Services.Implementation
             return pagination;
         }
 
-        public async Task<List<StartedProjectDto>> GetStartedProjectsAsync(string companyId)
+        public async Task<Pagination<StartedProjectDto>> GetStartedProjectsAsync(string companyId, int pageIndex, int pageSize)
         {
-
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
                 ?? throw new Exception("Company not found.");
 
-            if (currentUser.Id != company.UserId) throw new Exception("not authorized .");
-
-
-            var spec = new StartedProjectsByCompanySpecification(company.Id);
+            var spec = new StartedProjectsByCompanySpecification(company.Id, pageIndex, pageSize);
             var items = await _unitOfWork.Repository<ProjectEntity>().GetListWithSpecificationAsync(spec);
+            var count = await _unitOfWork.Repository<ProjectEntity>().CountAsync(new StartedProjectsByCompanySpecification(company.Id));
 
-            return [.. items.Select(p => p.ToStartedDto())];
+            var dtos = items.Select(p => p.ToStartedDto()).ToList();
+            return new Pagination<StartedProjectDto>(pageIndex, pageSize, count, dtos);
         }
 
         public async Task<List<ProjectDto>> GetInComingProjectsAsync(string companyId)

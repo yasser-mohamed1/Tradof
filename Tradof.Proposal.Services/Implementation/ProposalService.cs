@@ -197,21 +197,5 @@ namespace Tradof.Proposal.Services.Implementation
             var pagination = new Pagination<ProposalDto>(specParams.PageIndex, specParams.PageSize, count, dtos);
             return pagination;
         }
-
-        private async Task<string> UploadToCloudinaryAsync(IFormFile file)
-        {
-            using (var stream = file.OpenReadStream())
-            {
-                var uploadParams = new ImageUploadParams
-                {
-                    File = new FileDescription(file.FileName, stream),
-                    PublicId = $"projects/{Guid.NewGuid()}_{file.FileName}",
-                    Overwrite = true
-                };
-
-                var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-                return uploadResult.SecureUrl.AbsoluteUri;
-            }
-        }
     }
 }

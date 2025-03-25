@@ -32,7 +32,5 @@ namespace Tradof.Data.SpecificationParams
         public long? LanguageFromId { get; set; }
         public long? LanguageToId { get; set; }
         public string? SortBy { get; set; }
-
-
     }
 }
