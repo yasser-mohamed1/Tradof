@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
+using Tradof.Admin.Services.Extensions;
 using Tradof.Admin.Services.Interfaces;
 using Tradof.Common.Enums;
 using Tradof.Data.Entities;
@@ -16,9 +16,8 @@ using Tradof.ResponseHandler.Models;
 namespace Tradof.Admin.Services.Implementation
 {
     public class AuthenticationService(UserManager<ApplicationUser> _userManager,
-        IMapper _mapper, IConfiguration _configuration, RoleManager<IdentityRole> _roleManager) : IAuthenticationService
+        IConfiguration _configuration, RoleManager<IdentityRole> _roleManager) : IAuthenticationService
     {
-
         #region AddAdmin
         public async Task<APIOperationResponse<object>> AddAdminAsync(RegisterAdminDto addAdminDto)
         {
@@ -32,7 +31,7 @@ namespace Tradof.Admin.Services.Implementation
                         "The 'Admin' role does not exist. Please create the role before registering an admin user.");
                 }
 
-                var newUser = _mapper.Map<ApplicationUser>(addAdminDto);
+                var newUser = addAdminDto.ToApplicationUser();
                 newUser.UserType = UserType.Admin;
                 IdentityResult result = await _userManager.CreateAsync(newUser, addAdminDto.Password);
 
@@ -149,7 +148,7 @@ namespace Tradof.Admin.Services.Implementation
                     return APIOperationResponse<GetUserDto>.NotFound("User not found.");
                 }
 
-                var usersDto = _mapper.Map<GetUserDto>(user);
+                var usersDto = user.ToGetUserDto();
 
                 return APIOperationResponse<GetUserDto>.Success(usersDto, "users were successfully retrieved.");
             }
@@ -170,7 +169,7 @@ namespace Tradof.Admin.Services.Implementation
                 {
                     return APIOperationResponse<object>.NotFound("User not found.");
                 }
-                _mapper.Map(updateUserDto, user);
+
                 var result = await _userManager.UpdateAsync(user);
                 if (!result.Succeeded)
                 {
@@ -198,7 +197,7 @@ namespace Tradof.Admin.Services.Implementation
                     return APIOperationResponse<List<GetUserDto>>.NoContent();
                 }
 
-                var usersDto = _mapper.Map<List<GetUserDto>>(users);
+                var usersDto = users.ToArray().Select(u => u.ToGetUserDto()).ToList();
 
                 return APIOperationResponse<List<GetUserDto>>.Success(usersDto, $"{userType} users were successfully retrieved.");
             }

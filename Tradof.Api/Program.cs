@@ -53,8 +53,9 @@ builder.Services.AddHttpClient<PaymobClient>((provider, client) =>
 });
 
 // Register other services
-builder.Services.AddInfrastructureServices().AddReposetoriesServices();
-builder.Services.AddPackageServices()
+builder.Services.AddInfrastructureServices()
+                .AddAdminServices()
+                .AddPackageServices()
                 .AddAuthServices()
                 .AddLanguageServices()
                 .AddCountryServices()

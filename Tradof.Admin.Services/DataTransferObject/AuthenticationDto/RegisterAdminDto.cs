@@ -6,8 +6,13 @@ namespace Tradof.Admin.Services.DataTransferObject.AuthenticationDto
     {
         [Required(ErrorMessage = "Name is required"),
         MaxLength(1000, ErrorMessage = "Name cannot exceed 500 characters"),
-        MinLength(6, ErrorMessage = "Name must be at least 6 characters long")]
-        public string FullName { get; set; }
+        MinLength(3, ErrorMessage = "Name must be at least 3 characters long")]
+        public string FirstName { get; set; }
+        
+        [Required(ErrorMessage = "Name is required"),
+        MaxLength(1000, ErrorMessage = "Name cannot exceed 500 characters"),
+        MinLength(2, ErrorMessage = "Name must be at least 3 characters long")]
+        public string LastName { get; set; }
 
         [Required(ErrorMessage = "Phone number is required"), MaxLength(11, ErrorMessage = "Phone number cannot exceed 11 digits")]
         [RegularExpression(@"^\d+$", ErrorMessage = "Phone number must contain only digits")]
