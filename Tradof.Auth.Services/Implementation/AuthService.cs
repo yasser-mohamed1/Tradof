@@ -156,9 +156,16 @@ namespace Tradof.Auth.Services.Implementation
             ValidationHelper.ValidateLoginDto(dto);
 
             var user = await _userRepository.GetByEmailAsync(dto.Email);
-            if (user == null || !VerifyPassword(dto.Password, user.PasswordHash, user))
+            bool isPasswordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
+            if (user == null || !isPasswordValid)
             {
                 throw new UnauthorizedAccessException("Invalid email or password.");
+            }
+
+            // Check if user is locked out
+            if (user.LockoutEnd.HasValue && user.LockoutEnd > DateTime.UtcNow)
+            {
+                throw new UnauthorizedAccessException("Your account is locked. Try again later.");
             }
 
             if (!user.IsEmailConfirmed)
@@ -264,14 +271,6 @@ namespace Tradof.Auth.Services.Implementation
             var bytes = new byte[4];
             rng.GetBytes(bytes);
             return (BitConverter.ToUInt32(bytes, 0) % 1000000).ToString("D6");
-        }
-
-        public static bool VerifyPassword(string password, string storedHash, ApplicationUser user)
-        {
-            var passwordHasher = new PasswordHasher<ApplicationUser>();
-            var result = passwordHasher.VerifyHashedPassword(user, storedHash, password);
-
-            return result == PasswordVerificationResult.Success;
         }
 
         public async Task ChangePasswordWithTokenAsync(ChangePasswordDto dto)
