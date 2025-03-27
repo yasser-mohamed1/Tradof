@@ -17,6 +17,8 @@ namespace Tradof.Api.Extentions
 
             app.UseCors("AllowAllOrigins");
 
+            app.UseRouting();
+
             app.UseAuthentication();
 
             app.UseAuthorization();

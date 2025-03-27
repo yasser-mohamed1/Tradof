@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -49,7 +50,6 @@ namespace Tradof.Auth.Api.Controllers
                 userType
             });
         }
-
 
         [HttpPost("register-company")]
         public async Task<IActionResult> RegisterCompany([FromBody] RegisterCompanyDto dto)
@@ -255,6 +255,28 @@ namespace Tradof.Auth.Api.Controllers
                 return NotFound(new { message = "User not found" });
 
             return Ok(user);
+        }
+
+        [HttpGet("google-login")]
+        public IActionResult GoogleLogin()
+        {
+            var redirectUrl = Url.Action(nameof(GoogleResponse));
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet("signin-google")]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            try
+            {
+                var (token, refreshToken, userId, role) = await _authService.AuthenticateWithGoogle(HttpContext);
+                return Ok(new { UserId = userId, Role = role, Token = token, RefreshToken = refreshToken });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

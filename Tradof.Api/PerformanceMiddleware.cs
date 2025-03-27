@@ -2,21 +2,22 @@
 
 namespace Tradof.Api
 {
-    public class PerformanceMiddleware(ILogger<PerformanceMiddleware> _logger, RequestDelegate _next)
+    public class PerformanceMiddleware(ILogger<PerformanceMiddleware> logger, RequestDelegate next)
     {
         public async Task InvokeAsync(HttpContext context)
         {
-            const int performanceTimeLog = 500;
-            var sw = new Stopwatch();
-            sw.Start();
-            await _next(context);
-            sw.Stop();
-            if (sw.ElapsedMilliseconds > performanceTimeLog)
+            const int performanceTimeThreshold = 500; // Log requests that take >500ms
+
+            var stopwatch = Stopwatch.StartNew();
+            await next(context);
+            stopwatch.Stop();
+
+            if (stopwatch.ElapsedMilliseconds > performanceTimeThreshold)
             {
-                _logger.LogWarning("request {method} {path} took about {elapsed} ms",
-                context.Request?.Method,
-                context.Request.Path.Value,
-                sw.ElapsedMilliseconds);
+                logger.LogWarning("Request {Method} {Path} took {Elapsed} ms",
+                    context.Request.Method,
+                    context.Request.Path,
+                    stopwatch.ElapsedMilliseconds);
             }
         }
     }

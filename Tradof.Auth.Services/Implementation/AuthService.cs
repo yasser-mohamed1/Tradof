@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -336,6 +337,32 @@ namespace Tradof.Auth.Services.Implementation
         {
             var user = await _context.Users.FindAsync(id);
             return user?.ToUserDto();
+        }
+
+        public async Task<(string Token, string RefreshToken, string UserId, string Role)> AuthenticateWithGoogle(HttpContext httpContext)
+        {
+            var authenticateResult = await httpContext.AuthenticateAsync();
+
+            if (!authenticateResult.Succeeded)
+                throw new Exception("Google authentication failed.");
+
+            var claims = authenticateResult.Principal?.Identities.FirstOrDefault()?.Claims;
+
+            var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            var role = await _roleRepository.GetUserRoleAsync(user.Id);
+            if (string.IsNullOrEmpty(role))
+            {
+                throw new UnauthorizedAccessException("User does not have an assigned role.");
+            }
+
+            var token = GenerateJwtToken(user);
+            var refreshToken = GenerateRefreshToken();
+            await _userRepository.SaveRefreshTokenAsync(user.Id, refreshToken, DateTime.UtcNow.AddDays(7));
+
+            return (token, refreshToken, user.Id, role);
         }
     }
 }

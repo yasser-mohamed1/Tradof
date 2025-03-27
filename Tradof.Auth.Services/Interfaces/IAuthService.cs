@@ -1,4 +1,5 @@
-﻿using Tradof.Auth.Services.DTOs;
+﻿using Microsoft.AspNetCore.Http;
+using Tradof.Auth.Services.DTOs;
 
 namespace Tradof.Auth.Services.Interfaces
 {
@@ -16,5 +17,6 @@ namespace Tradof.Auth.Services.Interfaces
         Task<(string Token, string RefreshToken)> RefreshTokenAsync(string refreshToken);
         Task ResendOtpAsync(string email);
         Task<UserDto?> GetUserById(string id);
+        Task<(string Token, string RefreshToken, string UserId, string Role)> AuthenticateWithGoogle(HttpContext httpContext);
     }
 }
