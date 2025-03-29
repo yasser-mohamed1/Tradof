@@ -21,13 +21,19 @@ namespace Tradof.Api.Extentions
 
             services.AddAuthentication(options =>
             {
+                //options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                //options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+                //options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
                 //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 //options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
                 options.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(options =>
+            //.AddCookie()
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
@@ -40,7 +46,7 @@ namespace Tradof.Api.Extentions
                     ValidateLifetime = true
                 };
             })
-            .AddGoogle(options =>
+            .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
             {
                 options.ClientId = Env.GetString("GOOGLE_CLIENT_ID");
                 options.ClientSecret = Env.GetString("GOOGLE_CLIENT_SECRET");

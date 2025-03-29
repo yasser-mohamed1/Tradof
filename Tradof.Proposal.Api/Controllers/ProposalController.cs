@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tradof.Common.Enums;
 using Tradof.Data.SpecificationParams;
@@ -10,9 +11,9 @@ namespace Tradof.Proposal.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ProposalController(IProposalService _proposalService) : ControllerBase
     {
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] ProposalSpecParams specParams)
         {
@@ -24,14 +25,12 @@ namespace Tradof.Proposal.Api.Controllers
             var project = await _proposalService.GetByIdAsync(id);
             return project != null ? Ok(project) : NotFound();
         }
-        [Authorize]
         [HttpGet("countByMonth")]
         public async Task<IActionResult> GetProposalsCountByMonth(int year, int month, ProposalStatus status)
         {
             return Ok(await _proposalService.GetProposalsCountByMonth(year, month, status));
         }
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Create(CreateProposalDto projectDto)
         {
             try
@@ -76,7 +75,7 @@ namespace Tradof.Proposal.Api.Controllers
 
         }
 
-        [Authorize(Roles = RoleNames.Freelancer)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = RoleNames.Freelancer)]
         [HttpGet("freelancer-proposals")]
         public async Task<IActionResult> GetProposalsByFreelancer([FromQuery] FreelancerProposalsSpecParams specParams)
         {

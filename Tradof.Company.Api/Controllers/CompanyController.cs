@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tradof.CompanyModule.Services.DTOs;
 using Tradof.CompanyModule.Services.Interfaces;
@@ -7,11 +8,10 @@ namespace Tradof.Company.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CompanyController(ICompanyService _companyService) : ControllerBase
     {
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<IActionResult> GetById(string id)
         {
             var company = await _companyService.GetByIdAsync(id);

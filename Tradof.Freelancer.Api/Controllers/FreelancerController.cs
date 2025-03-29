@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace Tradof.Freelancer.Api.Controllers;
 
 [ApiController]
 [Route("api/freelancers")]
-[Authorize]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class FreelancerController(IFreelancerService _freelancerService) : ControllerBase
 {
     [HttpGet("{freelancerId}")]
