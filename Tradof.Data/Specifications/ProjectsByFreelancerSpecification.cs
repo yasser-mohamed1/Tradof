@@ -2,9 +2,9 @@
 
 namespace Tradof.Data.Specifications
 {
-    public class StartedProjectsByFreelancerSpecification : BaseSpecification<Project>
+    public class ProjectsByFreelancerSpecification : BaseSpecification<Project>
     {
-        public StartedProjectsByFreelancerSpecification(long freelancerId, int? pageIndex = null, int? pageSize = null)
+        public ProjectsByFreelancerSpecification(long freelancerId, int? pageIndex = null, int? pageSize = null)
             : base(p => p.FreelancerId == freelancerId)
         {
             AddInclude(p => p.Files);

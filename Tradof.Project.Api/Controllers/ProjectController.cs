@@ -149,15 +149,15 @@ namespace Tradof.Project.Api.Controllers
             }
         }
 
-        [HttpGet("started-projects/freelancer")]
-        public async Task<IActionResult> GetStartedProjectsByFreelancerId(
+        [HttpGet("projects/freelancer")]
+        public async Task<IActionResult> GetProjectsByFreelancerId(
         [FromQuery] string freelancerId,
         [FromQuery] int pageIndex = 1,
         [FromQuery] int pageSize = 10)
         {
             try
             {
-                var result = await _projectService.GetStartedProjectsByFreelancerIdAsync(freelancerId, pageIndex, pageSize);
+                var result = await _projectService.GetProjectsByFreelancerIdAsync(freelancerId, pageIndex, pageSize);
                 return Ok(result);
             }
             catch (Exception ex)
