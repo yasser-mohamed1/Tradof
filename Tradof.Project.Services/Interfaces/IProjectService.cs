@@ -21,5 +21,6 @@ namespace Tradof.Project.Services.Interfaces
         Task<Pagination<ProjectDto>> GetCurrentProjectsByCompanyIdAsync(string companyId, int pageIndex, int pageSize);
         Task<Pagination<ProjectDto>> GetCurrentProjectsByFreelancerIdAsync(string freelancerId, int pageIndex, int pageSize);
         Task<Pagination<StartedProjectDto>> GetStartedProjectsByFreelancerIdAsync(string freelancerId, int pageIndex, int pageSize);
+        Task<Pagination<ProjectDto>> GetUnassignedProjectsAsync(int pageIndex, int pageSize);
     }
 }

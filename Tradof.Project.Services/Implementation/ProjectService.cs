@@ -349,5 +349,15 @@ namespace Tradof.Project.Services.Implementation
             var dtos = projects.Select(p => p.ToStartedDto()).ToList();
             return new Pagination<StartedProjectDto>(pageIndex, pageSize, totalCount, dtos);
         }
+
+        public async Task<Pagination<ProjectDto>> GetUnassignedProjectsAsync(int pageIndex, int pageSize)
+        {
+            var spec = new UnassignedProjectsSpecification(pageIndex, pageSize);
+            var projects = await _unitOfWork.Repository<ProjectEntity>().ListAsync(spec);
+            var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(new UnassignedProjectsSpecification());
+
+            var dtos = projects.Select(p => p.ToDto()).ToList();
+            return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
+        }
     }
 }
