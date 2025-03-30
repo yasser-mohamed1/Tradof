@@ -359,5 +359,18 @@ namespace Tradof.Project.Services.Implementation
             var dtos = projects.Select(p => p.ToDto()).ToList();
             return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
         }
+
+        public async Task<Pagination<ProjectDto>> GetUnassignedProjectsByCompanyAsync(string companyId, int pageIndex, int pageSize)
+        {
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
+                ?? throw new Exception("Company not found.");
+
+            var spec = new UnassignedProjectsByCompanySpecification(company.Id, pageIndex, pageSize);
+            var projects = await _unitOfWork.Repository<ProjectEntity>().ListAsync(spec);
+            var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(new UnassignedProjectsByCompanySpecification(company.Id));
+
+            var dtos = projects.Select(p => p.ToDto()).ToList();
+            return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
+        }
     }
 }

@@ -181,5 +181,22 @@ namespace Tradof.Project.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("unassigned-projects/company")]
+        public async Task<IActionResult> GetUnassignedProjectsByCompany(
+        [FromQuery] string companyId,
+        [FromQuery] int pageIndex = 1,
+        [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var result = await _projectService.GetUnassignedProjectsByCompanyAsync(companyId, pageIndex, pageSize);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
