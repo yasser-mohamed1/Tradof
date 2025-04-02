@@ -37,7 +37,7 @@ namespace Tradof.Project.Services.Implementation
             }
             if (specParams.FreelancerId != null && freelancer != null)
             {
-                if (freelancer.Id != specParams.FreelancerId)
+                if (freelancer.UserId != specParams.FreelancerId)
                     throw new Exception("not authorized");
             }
             var specification = new ProjectFilterSortPaginationSpecification(specParams);

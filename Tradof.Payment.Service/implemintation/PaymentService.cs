@@ -28,7 +28,7 @@ namespace Tradof.Payment.Service.implemintation
 
         public async Task<PaymentResponse> InitiateSubscriptionPayment(InitiatePaymentRequest request)
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("User not found");
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("User not found");            
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("Company not found");
 
             // Check if the user already has an active subscription

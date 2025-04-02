@@ -5,10 +5,9 @@ namespace Tradof.Proposal.Services.DTOs
     public class ProposalDto
     {
         public long Id { get; set; }
-        public long CompanyId { get; set; }
-
+        public string CompanyId { get; set; }
         public long ProjectId { get; set; }
-        public long FreelancerId { get; set; }
+        public string FreelancerId { get; set; }
         public ProposalStatus ProposalStatus { get; set; }
         public string ProposalDescription { get; set; }
         public int Days { get; set; }

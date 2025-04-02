@@ -2,8 +2,8 @@
 {
     public class FreelancerProposalsSpecParams
     {
-        private long _freelancerId;
-        public long FreelancerId
+        private string _freelancerId = string.Empty;
+        public string FreelancerId
         {
             get => _freelancerId;
             set => _freelancerId = value;

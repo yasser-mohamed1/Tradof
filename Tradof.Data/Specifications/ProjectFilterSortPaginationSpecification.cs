@@ -13,7 +13,7 @@ namespace Tradof.Data.Specifications
             (!specParams.LanguageToId.HasValue || project.LanguageToId == specParams.LanguageToId) &&
             (!specParams.Budget.HasValue || (specParams.Budget >= project.MinPrice && specParams.Budget <= project.MaxPrice)) &&
             (!specParams.CompanyId.HasValue || specParams.CompanyId == project.CompanyId) &&
-            (!specParams.FreelancerId.HasValue || specParams.FreelancerId == project.FreelancerId) &&
+            (!string.IsNullOrEmpty(specParams.FreelancerId) || specParams.FreelancerId == project.Freelancer.UserId) &&
 
             (specParams.Status == null || specParams.Status == project.Status)
         )
@@ -25,8 +25,8 @@ namespace Tradof.Data.Specifications
             AddInclude(p => p.LanguageTo);
             AddInclude(p => p.Company);
             AddInclude(p => p.Company.User);
-            //AddInclude(p => p.Freelancer);
-            //AddInclude(p => p.Ratings);
+            AddInclude(p => p.Freelancer);
+            AddInclude(p => p.Ratings);
 
             ApplyPagination(specParams.PageSize * (specParams.PageIndex - 1), specParams.PageSize);
             switch (specParams.SortBy)

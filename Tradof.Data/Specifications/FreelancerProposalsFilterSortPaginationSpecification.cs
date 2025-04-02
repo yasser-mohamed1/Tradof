@@ -6,7 +6,7 @@ namespace Tradof.Data.Specifications
     public class FreelancerProposalsFilterSortPaginationSpecification : BaseSpecification<Proposal>
     {
         public FreelancerProposalsFilterSortPaginationSpecification(FreelancerProposalsSpecParams specParams) : base(proposal =>
-        (proposal.Freelancer.Id == specParams.FreelancerId) &&
+        (proposal.Freelancer.UserId == specParams.FreelancerId) &&
         (specParams.Days == null || proposal.Days <= specParams.Days) &&
         (specParams.OfferPrice == null || proposal.OfferPrice <= specParams.OfferPrice)
         )
