@@ -21,5 +21,7 @@ namespace Tradof.Admin.Services.DataTransferObject.AuthenticationDto
 
         [Required(ErrorMessage = "Email is required"), DataType(DataType.EmailAddress, ErrorMessage = "Invalid email format")]
         public string Email { get; set; }
+
+        public string Role { get; set; }
     }
 }

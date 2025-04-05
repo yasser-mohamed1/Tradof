@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
 using Tradof.Admin.Services.DataTransferObject.DashboardDto;
+using Tradof.Admin.Services.Extensions;
 using Tradof.Admin.Services.Interfaces;
 using Tradof.Common.Enums;
 using Tradof.Data.Entities;
@@ -127,19 +129,13 @@ namespace Tradof.Admin.Services
             return statistics;
         }
 
-        public async Task<List<ApplicationUser>> GetFreelancersAndCompaniesAsync()
+        public async Task<List<GetUserDto>> GetFreelancersAndCompaniesAsync()
         {
-            return await _userManager.Users
+            var users = await _userManager.Users
                 .Where(u => u.UserType == UserType.Freelancer || u.UserType == UserType.Company)
-                .Select(u => new ApplicationUser
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Email = u.Email,
-                    LockoutEnd = u.LockoutEnd
-                })
                 .ToListAsync();
+
+            return users.Select(u => u.ToGetUserDto()).ToList();
         }
 
         public async Task<APIOperationResponse<object>> ToggleBlockStatusAsync(string userId, bool isBlocked, int? blockDurationInMinutes = null)
@@ -174,6 +170,15 @@ namespace Tradof.Admin.Services
                     ? (blockDurationInMinutes.HasValue ? $"User has been blocked for {blockDurationInMinutes} minutes" : "User has been permanently blocked")
                     : "User has been unblocked"
             );
+        }
+
+        public async Task<List<GetUserDto>> GetAllAdminsAsync()
+        {
+            var admins = await _userManager.Users
+                .Where(u => u.UserType == UserType.Admin)
+                .ToListAsync();
+
+            return admins.Select(u => u.ToGetUserDto()).ToList();
         }
     }
 }

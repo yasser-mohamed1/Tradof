@@ -1,4 +1,5 @@
-﻿using Tradof.Admin.Services.DataTransferObject.DashboardDto;
+﻿using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
+using Tradof.Admin.Services.DataTransferObject.DashboardDto;
 using Tradof.Data.Entities;
 using Tradof.ResponseHandler.Models;
 
@@ -8,7 +9,8 @@ namespace Tradof.Admin.Services.Interfaces
     {
         Task<DashboardStatisticsDto> GetDashboardStatisticsAsync();
         Task<StatisticsDto> GetStatisticsAsync();
-        Task<List<ApplicationUser>> GetFreelancersAndCompaniesAsync();
+        Task<List<GetUserDto>> GetFreelancersAndCompaniesAsync();
         Task<APIOperationResponse<object>> ToggleBlockStatusAsync(string userId, bool isBlocked, int? blockDurationInMinutes = null);
+        Task<List<GetUserDto>> GetAllAdminsAsync();
     }
 }

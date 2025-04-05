@@ -68,5 +68,12 @@ namespace Tradof.Admin.Api.Controllers
             var response = await _adminService.ToggleBlockStatusAsync(userId, isBlocked);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpGet("admins")]
+        public async Task<IActionResult> GetAllAdmins()
+        {
+            var admins = await _adminService.GetAllAdminsAsync();
+            return Ok(admins);
+        }
     }
 }

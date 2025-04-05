@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
+using Tradof.Common.Enums;
 using Tradof.Data.Entities;
 
 namespace Tradof.Admin.Services.Extensions
@@ -32,9 +33,10 @@ namespace Tradof.Admin.Services.Extensions
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
-                Email = user.Email
+                Email = user.Email,
+                Role = user.UserType == UserType.CompanyAdmin ? RoleNames.CompanyAdmin :
+                       user.UserType == UserType.Freelancer ? RoleNames.Freelancer : RoleNames.Admin
             };
-
         }
     }
 }
