@@ -132,7 +132,7 @@ namespace Tradof.Admin.Services
         public async Task<List<GetUserDto>> GetFreelancersAndCompaniesAsync()
         {
             var users = await _userManager.Users
-                .Where(u => u.UserType == UserType.Freelancer || u.UserType == UserType.Company)
+                .Where(u => u.UserType == UserType.Freelancer || u.UserType == UserType.CompanyAdmin)
                 .ToListAsync();
 
             return users.Select(u => u.ToGetUserDto()).ToList();
