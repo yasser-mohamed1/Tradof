@@ -32,7 +32,7 @@ namespace Tradof.Project.Services.Implementation
 
             if (specParams.CompanyId != null && company != null)
             {
-                if (company.Id != specParams.CompanyId)
+                if (company.UserId != specParams.CompanyId)
                     throw new Exception("not authorized");
             }
             if (specParams.FreelancerId != null && freelancer != null)
