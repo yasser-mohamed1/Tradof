@@ -116,5 +116,14 @@ namespace Tradof.Company.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("by-employee/{employeeId}")]
+        public async Task<IActionResult> GetByEmployeeId(string employeeId)
+        {
+            var company = await _companyService.GetByEmployeeIdAsync(employeeId);
+            if (company == null) return NotFound();
+
+            return Ok(company);
+        }
     }
 }

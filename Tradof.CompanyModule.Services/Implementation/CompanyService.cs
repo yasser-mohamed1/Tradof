@@ -313,5 +313,19 @@ namespace Tradof.CompanyModule.Services.Implementation
             await _context.SaveChangesAsync();
         }
 
+        public async Task<CompanyDto?> GetByEmployeeIdAsync(string employeeId)
+        {
+            var company = await _context.Companies
+                .Include(c => c.Specializations)
+                .Include(c => c.PreferredLanguages)
+                .Include(c => c.Medias)
+                .Include(c => c.Employees)
+                .Include(c => c.User)
+                .Include(c => c.Projects)
+                    .ThenInclude(p => p.Ratings)
+                .FirstOrDefaultAsync(c => c.Employees.Any(e => e.UserId == employeeId));
+
+            return company?.ToDto();
+        }
     }
 }
