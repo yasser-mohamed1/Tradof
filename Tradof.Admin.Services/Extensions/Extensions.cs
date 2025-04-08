@@ -18,7 +18,9 @@ namespace Tradof.Admin.Services.Extensions
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
                 FirstName = dto.FirstName,
-                LastName = dto.LastName
+                LastName = dto.LastName,
+                IsEmailConfirmed = false,
+                EmailConfirmationToken = Guid.NewGuid().ToString()
             };
         }
 

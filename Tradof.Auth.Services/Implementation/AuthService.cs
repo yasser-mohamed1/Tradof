@@ -117,7 +117,7 @@ namespace Tradof.Auth.Services.Implementation
             string templatePath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "Templates", "ConfirmEmail.html");
             string emailTemplate = await SystemFile.ReadAllTextAsync(templatePath);
             emailTemplate = emailTemplate.Replace("{{FirstName}}", newUser.FirstName);
-            emailTemplate = emailTemplate.Replace("{{ConfirmationLink}}", $"http://tradof.runasp.net/api/auth/confirm-email?token={newUser.EmailConfirmationToken}&email={newUser.Email}");
+            emailTemplate = emailTemplate.Replace("{{ConfirmationLink}}", $"https://tradof.runasp.net/api/auth/confirm-email?token={newUser.EmailConfirmationToken}&email={newUser.Email}");
             emailTemplate = emailTemplate.Replace("{{CurrentYear}}", DateTime.Now.Year.ToString());
 
             await _emailService.SendEmailAsync(newUser.Email!, "Confirm Your Email", emailTemplate);

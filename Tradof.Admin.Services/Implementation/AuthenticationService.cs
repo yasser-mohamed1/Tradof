@@ -47,8 +47,6 @@ namespace Tradof.Admin.Services.Implementation
                 }
 
                 await _userManager.AddToRoleAsync(newUser, adminRole);
-                newUser.EmailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-                await _userManager.UpdateAsync(newUser);
                 _backgroundJob.Enqueue(() => SendConfirmationEmailAsync(newUser));
 
                 return APIOperationResponse<object>.Created("Admin user created successfully.");
@@ -65,7 +63,7 @@ namespace Tradof.Admin.Services.Implementation
             string templatePath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "Templates", "ConfirmEmail.html");
             string emailTemplate = await File.ReadAllTextAsync(templatePath);
             emailTemplate = emailTemplate.Replace("{{FirstName}}", newUser.FirstName);
-            emailTemplate = emailTemplate.Replace("{{ConfirmationLink}}", $"http://tradof.runasp.net/api/auth/confirm-email?token={newUser.EmailConfirmationToken}&email={newUser.Email}");
+            emailTemplate = emailTemplate.Replace("{{ConfirmationLink}}", $"https://tradof.runasp.net/api/auth/confirm-email?token={newUser.EmailConfirmationToken}&email={newUser.Email}");
             emailTemplate = emailTemplate.Replace("{{CurrentYear}}", DateTime.Now.Year.ToString());
 
             await _emailService.SendEmailAsync(newUser.Email!, "Confirm Your Email", emailTemplate);
