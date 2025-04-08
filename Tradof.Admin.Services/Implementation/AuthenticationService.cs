@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -12,11 +13,14 @@ using Tradof.Common.Enums;
 using Tradof.Data.Entities;
 using Tradof.ResponseHandler.Consts;
 using Tradof.ResponseHandler.Models;
+using File = System.IO.File;
 
 namespace Tradof.Admin.Services.Implementation
 {
     public class AuthenticationService(UserManager<ApplicationUser> _userManager,
-        IConfiguration _configuration, RoleManager<IdentityRole> _roleManager) : IAuthenticationService
+        IConfiguration _configuration, RoleManager<IdentityRole> _roleManager,
+        IEmailService _emailService,
+        IBackgroundJobClient _backgroundJob) : IAuthenticationService
     {
         #region AddAdmin
         public async Task<APIOperationResponse<object>> AddAdminAsync(RegisterAdminDto addAdminDto)
@@ -43,6 +47,10 @@ namespace Tradof.Admin.Services.Implementation
                 }
 
                 await _userManager.AddToRoleAsync(newUser, adminRole);
+                newUser.EmailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                await _userManager.UpdateAsync(newUser);
+                _backgroundJob.Enqueue(() => SendConfirmationEmailAsync(newUser));
+
                 return APIOperationResponse<object>.Created("Admin user created successfully.");
             }
             catch (Exception ex)
@@ -50,6 +58,17 @@ namespace Tradof.Admin.Services.Implementation
                 return APIOperationResponse<object>.ServerError(
                     "An error occurred while registering the admin user.", new List<string> { ex.Message });
             }
+        }
+
+        public async Task SendConfirmationEmailAsync(ApplicationUser newUser)
+        {
+            string templatePath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, "Templates", "ConfirmEmail.html");
+            string emailTemplate = await File.ReadAllTextAsync(templatePath);
+            emailTemplate = emailTemplate.Replace("{{FirstName}}", newUser.FirstName);
+            emailTemplate = emailTemplate.Replace("{{ConfirmationLink}}", $"http://tradof.runasp.net/api/auth/confirm-email?token={newUser.EmailConfirmationToken}&email={newUser.Email}");
+            emailTemplate = emailTemplate.Replace("{{CurrentYear}}", DateTime.Now.Year.ToString());
+
+            await _emailService.SendEmailAsync(newUser.Email!, "Confirm Your Email", emailTemplate);
         }
         #endregion
 

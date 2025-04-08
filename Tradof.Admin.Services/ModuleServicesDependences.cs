@@ -12,6 +12,7 @@ namespace Tradof.Admin.Services
             service.AddTransient<IAuthenticationService, AuthenticationService>();
             service.AddTransient<IHelperService, HelperService>();
             service.AddScoped<IAdminService, AdminService>();
+            service.AddScoped<IEmailService, EmailService>();
             return service;
         }
     }
