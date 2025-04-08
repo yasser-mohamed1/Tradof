@@ -1,4 +1,5 @@
-﻿using Tradof.Data.SpecificationParams;
+﻿using Microsoft.AspNetCore.Http;
+using Tradof.Data.SpecificationParams;
 using Tradof.EntityFramework.RequestHelpers;
 using Tradof.Project.Services.DTOs;
 
@@ -23,5 +24,6 @@ namespace Tradof.Project.Services.Interfaces
         Task<Pagination<StartedProjectDto>> GetProjectsByFreelancerIdAsync(string freelancerId, int pageIndex, int pageSize);
         Task<Pagination<ProjectDto>> GetUnassignedProjectsAsync(int pageIndex, int pageSize);
         Task<Pagination<ProjectDto>> GetUnassignedProjectsByCompanyAsync(string companyId, int pageIndex, int pageSize);
+        Task UploadFilesToProjectAsync(int projectId, List<IFormFile> files);
     }
 }

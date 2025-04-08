@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tradof.Data.SpecificationParams;
 using Tradof.Project.Services.DTOs;
@@ -196,6 +197,20 @@ namespace Tradof.Project.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("upload-files/{projectId}")]
+        public async Task<IActionResult> UploadFiles(int projectId, [FromForm] List<IFormFile> files)
+        {
+            try
+            {
+                await _projectService.UploadFilesToProjectAsync(projectId, files);
+                return Ok(new { message = "Files uploaded successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

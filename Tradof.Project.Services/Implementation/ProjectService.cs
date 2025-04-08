@@ -372,5 +372,46 @@ namespace Tradof.Project.Services.Implementation
             var dtos = projects.Select(p => p.ToDto()).ToList();
             return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
         }
+
+        public async Task UploadFilesToProjectAsync(int projectId, List<IFormFile> files)
+        {
+            if (files == null || !files.Any())
+                throw new ArgumentException("No files provided.");
+
+            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == projectId)
+                ?? throw new Exception("Project not found or access denied.");
+
+            foreach (var file in files)
+            {
+                if (file.Length > 0)
+                {
+                    var fileExtension = Path.GetExtension(file.FileName)?.TrimStart('.').ToLower();
+                    if (string.IsNullOrEmpty(fileExtension))
+                        throw new Exception("Invalid file type.");
+
+                    if (!Enum.TryParse(typeof(FileType), fileExtension, true, out var fileType))
+                        throw new Exception($"Unsupported file type: {fileExtension}");
+
+                    var cloudinaryUrl = await UploadToCloudinaryAsync(file);
+
+                    project.Files.Add(new Data.Entities.File
+                    {
+                        FilePath = cloudinaryUrl,
+                        ProjectId = project.Id,
+                        FileName = file.FileName,
+                        FileType = (FileType)fileType,
+                        FileSize = file.Length,
+                        CreationDate = DateTime.UtcNow,
+                        ModificationDate = DateTime.UtcNow,
+                        CreatedBy = "project.Company.UserId",
+                        ModifiedBy = "project.Company.UserId"
+                    });
+                }
+            }
+
+            await _unitOfWork.Repository<ProjectEntity>().UpdateAsync(project);
+            if (!await _unitOfWork.CommitAsync())
+                throw new Exception("Failed to upload files to project.");
+        }
     }
 }
