@@ -5,13 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 using Tradof.Data.SpecificationParams;
 using Tradof.Project.Services.DTOs;
 using Tradof.Project.Services.Interfaces;
+using Tradof.ResponseHandler.Consts;
+using Tradof.ResponseHandler.Models;
 
 namespace Tradof.Project.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ProjectController(IProjectService _projectService) : ControllerBase
+    public class ProjectController(IProjectService _projectService) : ApiControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] ProjectSpecParams specParams)
@@ -205,12 +207,29 @@ namespace Tradof.Project.Api.Controllers
         {
             try
             {
-                await _projectService.UploadFilesToProjectAsync(projectId, files);
-                return Ok(new { message = "Files uploaded successfully." });
+                if (files == null || !files.Any())
+                {
+                    var emptyResponse = APIOperationResponse<List<FileDto>>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.InvalidInput,
+                        "No files were provided."
+                    );
+                    return ProcessResponse(emptyResponse);
+                }
+
+                List<FileDto> uploadedFiles = await _projectService.UploadFilesToProjectAsync(projectId, files);
+
+                var response = APIOperationResponse<List<FileDto>>.Success(uploadedFiles, "Files uploaded successfully.");
+                return ProcessResponse(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { error = ex.Message });
+                var errorResponse = APIOperationResponse<List<FileDto>>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.FailedToSaveData,
+                    "An error occurred while uploading files."
+                );
+                return ProcessResponse(errorResponse);
             }
         }
 

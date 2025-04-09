@@ -374,13 +374,15 @@ namespace Tradof.Project.Services.Implementation
             return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
         }
 
-        public async Task UploadFilesToProjectAsync(int projectId, List<IFormFile> files)
+        public async Task<List<FileDto>> UploadFilesToProjectAsync(int projectId, List<IFormFile> files)
         {
             if (files == null || !files.Any())
                 throw new ArgumentException("No files provided.");
 
             var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == projectId)
                 ?? throw new Exception("Project not found or access denied.");
+
+            var uploadedFiles = new List<FileDto>();
 
             foreach (var file in files)
             {
@@ -395,7 +397,7 @@ namespace Tradof.Project.Services.Implementation
 
                     var (cloudinaryUrl, publicId) = await UploadToCloudinaryAsync(file);
 
-                    project.Files.Add(new Data.Entities.File
+                    var fileEntity = new Data.Entities.File
                     {
                         FilePath = cloudinaryUrl,
                         ProjectId = project.Id,
@@ -407,6 +409,19 @@ namespace Tradof.Project.Services.Implementation
                         CreatedBy = "project.Company.UserId",
                         ModifiedBy = "project.Company.UserId",
                         PublicId = publicId
+                    };
+
+                    await _unitOfWork.Repository<File>().AddAsync(fileEntity);
+                    await _unitOfWork.CommitAsync();
+
+                    uploadedFiles.Add(new FileDto
+                    {
+                        Id = fileEntity.Id,
+                        FileName = file.FileName,
+                        FilePath = cloudinaryUrl,
+                        FileSize = file.Length,
+                        FileType = (FileType)fileType,
+                        ProjectId = project.Id,
                     });
                 }
             }
@@ -414,6 +429,8 @@ namespace Tradof.Project.Services.Implementation
             await _unitOfWork.Repository<ProjectEntity>().UpdateAsync(project);
             if (!await _unitOfWork.CommitAsync())
                 throw new Exception("Failed to upload files to project.");
+
+            return uploadedFiles;
         }
 
         public async Task DeleteFileAsync(int fileId)

@@ -18,9 +18,10 @@ namespace Tradof.ResponseHandler.Models
         {
             return new APIOperationResponse<T>
             {
-                Code = CommonErrorCodes.NULL,
+                Code = CommonErrorCodes.Null,
                 Data = result,
-                StatusCode = (int)ResponseType.Success
+                StatusCode = (int)ResponseType.Success,
+                Succeeded = IsSuccessResponse(ResponseType.Success)
             };
         }
 
@@ -29,11 +30,8 @@ namespace Tradof.ResponseHandler.Models
             return new APIOperationResponse<T>
             {
                 Code = error,
-
-
                 Message = description,
                 StatusCode = (int)errorCode,
-
             };
         }
 
@@ -83,7 +81,13 @@ namespace Tradof.ResponseHandler.Models
 
         public static APIOperationResponse<T> NotFound(string message = "Not found.")
         {
-            return new APIOperationResponse<T> { Succeeded = false, Message = message };
+            return new APIOperationResponse<T>
+            {
+                Code = CommonErrorCodes.NotFound,
+                StatusCode = (int)ResponseType.NotFound,
+                Succeeded = false,
+                Message = message
+            };
         }
 
         public static APIOperationResponse<T> BadRequest(string? message = null, List<string>? errors = null)
@@ -96,7 +100,6 @@ namespace Tradof.ResponseHandler.Models
             return CreateResponse(ResponseType.InternalServerError, message, errors, default);
         }
     }
-
 
     public class ConfigConverter<I, T> : JsonConverter
     {
@@ -119,5 +122,4 @@ namespace Tradof.ResponseHandler.Models
             return deserialized;
         }
     }
-
 }
