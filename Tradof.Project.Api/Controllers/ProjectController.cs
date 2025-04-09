@@ -214,22 +214,22 @@ namespace Tradof.Project.Api.Controllers
                         CommonErrorCodes.InvalidInput,
                         "No files were provided."
                     );
-                    return ProcessResponse(emptyResponse);
+                    return StatusCode(emptyResponse.StatusCode, emptyResponse);
                 }
 
                 List<FileDto> uploadedFiles = await _projectService.UploadFilesToProjectAsync(projectId, files);
 
                 var response = APIOperationResponse<List<FileDto>>.Success(uploadedFiles, "Files uploaded successfully.");
-                return ProcessResponse(response);
+                return StatusCode(response.StatusCode, response);
             }
             catch (Exception ex)
             {
                 var errorResponse = APIOperationResponse<List<FileDto>>.Fail(
                     ResponseType.InternalServerError,
-                    CommonErrorCodes.FailedToSaveData,
-                    "An error occurred while uploading files."
+                    CommonErrorCodes.ServerError,
+                    ex.Message
                 );
-                return ProcessResponse(errorResponse);
+                return StatusCode(errorResponse.StatusCode, errorResponse);
             }
         }
 
