@@ -254,7 +254,7 @@ namespace Tradof.Admin.Services.Implementation
                     return APIOperationResponse<LoginResponse>.Success(APIOperationResponse);
                 }
             }
-            return APIOperationResponse<LoginResponse>.Fail(ResponseType.NotFound, CommonErrorCodes.INVALID_EMAIL_OR_PASSWORD);
+            return APIOperationResponse<LoginResponse>.Fail(ResponseType.NotFound, CommonErrorCodes.InvalidEmailOrPassword);
 
         }
         private async Task<string> GenerateJwtTokenAsync(ApplicationUser user)

@@ -4,51 +4,46 @@ namespace Tradof.ResponseHandler.Consts
 {
     public class CommonErrorCodes : IErrorCodes
     {
-        public static readonly CommonErrorCodes NULL = new("NULL", CommonErrorCode.NULL);
-        public static readonly CommonErrorCodes FORBIDDEN = new("FORBIDDEN", CommonErrorCode.FORBIDDEN);
-        public static readonly CommonErrorCodes UN_AUTHORIZED = new("UN_AUTHORIZED", CommonErrorCode.UN_AUTHORIZED);
-        public static readonly CommonErrorCodes OPERATION_FAILED = new("OPERATION_FAILED", CommonErrorCode.OPERATION_FAILED);
-        public static readonly CommonErrorCodes INVALID_INPUT = new("INVALID_INPUT", CommonErrorCode.INVALID_INPUT);
-        public static readonly CommonErrorCodes FAILED_TO_SAVE_DATA = new("FAILED_TO_SAVE_DATA", CommonErrorCode.FAILED_TO_SAVE_DATA);
-        public static readonly CommonErrorCodes SERVER_ERROR = new("SERVER_ERROR", CommonErrorCode.SERVER_ERROR);
-        public static readonly CommonErrorCodes FAILED_TO_SEND_CODE = new("FAILED_TO_SEND_CODE", CommonErrorCode.FAILED_TO_SEND_CODE);
-        public static readonly CommonErrorCodes INVALID_EMAIL_OR_PASSWORD = new("INVALID_EMAIL_OR_PASSWORD", CommonErrorCode.INVALID_EMAIL_OR_PASSWORD);
-        public static readonly CommonErrorCodes EMAIL_NOT_CONFIRMED = new("EMAIL_NOT_CONFIRMED", CommonErrorCode.EMAIL_NOT_CONFIRMED);
-        public static readonly CommonErrorCodes INVALID_REFRESH_TOKEN = new("INVALID_REFRESH_TOKEN", CommonErrorCode.INVALID_REFRESH_TOKEN);
-        public static readonly CommonErrorCodes RESOURCE_NOT_FOUND = new("RESOURCE_NOT_FOUND", CommonErrorCode.RESOURCE_NOT_FOUND);
-        public static readonly CommonErrorCodes NotAuthorized = new("NotAuthorized", CommonErrorCode.NotAuthorized);
-        public static readonly CommonErrorCodes NOT_FOUND = new("NOT_FOUND", CommonErrorCode.NOT_FOUND);
+        public static readonly CommonErrorCodes Null = new("NULL", CommonErrorCode.Null);
+        public static readonly CommonErrorCodes Forbidden = new("FORBIDDEN", CommonErrorCode.Forbidden);
+        public static readonly CommonErrorCodes Unauthorized = new("UNAUTHORIZED", CommonErrorCode.Unauthorized);
+        public static readonly CommonErrorCodes OperationFailed = new("OPERATION_FAILED", CommonErrorCode.OperationFailed);
+        public static readonly CommonErrorCodes InvalidInput = new("INVALID_INPUT", CommonErrorCode.InvalidInput);
+        public static readonly CommonErrorCodes FailedToSaveData = new("FAILED_TO_SAVE_DATA", CommonErrorCode.FailedToSaveData);
+        public static readonly CommonErrorCodes ServerError = new("SERVER_ERROR", CommonErrorCode.ServerError);
+        public static readonly CommonErrorCodes FailedToSendCode = new("FAILED_TO_SEND_CODE", CommonErrorCode.FailedToSendCode);
+        public static readonly CommonErrorCodes InvalidEmailOrPassword = new("INVALID_EMAIL_OR_PASSWORD", CommonErrorCode.InvalidEmailOrPassword);
+        public static readonly CommonErrorCodes EmailNotConfirmed = new("EMAIL_NOT_CONFIRMED", CommonErrorCode.EmailNotConfirmed);
+        public static readonly CommonErrorCodes InvalidRefreshToken = new("INVALID_REFRESH_TOKEN", CommonErrorCode.InvalidRefreshToken);
+        public static readonly CommonErrorCodes ResourceNotFound = new("RESOURCE_NOT_FOUND", CommonErrorCode.ResourceNotFound);
+        public static readonly CommonErrorCodes NotAuthorized = new("NOT_AUTHORIZED", CommonErrorCode.NotAuthorized);
+        public static readonly CommonErrorCodes NotFound = new("NOT_FOUND", CommonErrorCode.NotFound);
 
         private CommonErrorCodes(string value, CommonErrorCode code)
         {
             Value = value;
             Code = (int)code;
         }
-        public CommonErrorCodes()
-        {
-        }
-        public string Value { get; set; }
-        public int Code { get; set; }
 
-
+        public string Value { get; init; }
+        public int Code { get; init; }
     }
+
     public enum CommonErrorCode
     {
-        NULL = 000,
-        FORBIDDEN = 0001,
-        UN_AUTHORIZED = 0002,
-        OPERATION_FAILED = 0003,
-        INVALID_INPUT = 0004,
-        FAILED_TO_SAVE_DATA = 0005,
-        SERVER_ERROR = 0006,
-        FAILED_TO_SEND_CODE = 0007,
-        INVALID_EMAIL_OR_PASSWORD = 0008,
-        EMAIL_NOT_CONFIRMED = 0009,
-        INVALID_REFRESH_TOKEN = 0010,
-        RESOURCE_NOT_FOUND = 0011,
-        NotAuthorized = 0012,
-        NOT_FOUND = 0013,
-
-
+        Null = 0,
+        Forbidden = 1,
+        Unauthorized = 2,
+        OperationFailed = 3,
+        InvalidInput = 4,
+        FailedToSaveData = 5,
+        ServerError = 6,
+        FailedToSendCode = 7,
+        InvalidEmailOrPassword = 8,
+        EmailNotConfirmed = 9,
+        InvalidRefreshToken = 10,
+        ResourceNotFound = 11,
+        NotAuthorized = 12,
+        NotFound = 13
     }
 }

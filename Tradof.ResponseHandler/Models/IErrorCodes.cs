@@ -2,7 +2,7 @@
 {
     public interface IErrorCodes
     {
-        string Value { get; set; }
-        int Code { get; set; }
+        string Value { get; init; }
+        int Code { get; init; }
     }
 }

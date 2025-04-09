@@ -7,12 +7,19 @@ namespace Tradof.ResponseHandler.Models
     {
         protected ActionResult ProcessResponse(ResponseType errorCode, string erroMessage = "")
         {
-            return StatusCode((int)errorCode, new { code = CommonErrorCodes.NULL.Code, erroMessage });
+            return StatusCode((int)errorCode, new { code = CommonErrorCodes.Null.Code, erroMessage });
         }
 
         protected ActionResult ProcessResponse<T>(APIOperationResponse<T> response)
         {
-            return response.StatusCode == (int)ResponseType.Success ? Ok(response.Data) : StatusCode((int)response.StatusCode, new { code = response.Code.Code, value = response.Code.Value, response.Message });
+            return response.StatusCode == (int)ResponseType.Success ? Ok(response.Data)
+                : StatusCode((int)response.StatusCode,
+                    new
+                    {
+                        code = response.Code?.Code ?? CommonErrorCodes.Null.Code,
+                        value = response.Code?.Value ?? CommonErrorCodes.Null.Value,
+                        response.Message
+                    });
         }
     }
 }
