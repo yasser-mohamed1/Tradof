@@ -11,6 +11,7 @@ namespace Tradof.Data.Entities
         public FileType FileType { get; set; }
         public long FileSize { get; set; }
         public long ProjectId { get; set; }
+        public string PublicId { get; set; }
 
         [ForeignKey("ProjectId")]
         public Project Project { get; set; }

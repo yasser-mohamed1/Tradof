@@ -8,6 +8,7 @@ namespace Tradof.Project.Services.Extensions
         {
             return new FileDto
             {
+                Id = file.Id,
                 FileName = file.FileName,
                 FilePath = file.FilePath,
                 FileSize = file.FileSize,

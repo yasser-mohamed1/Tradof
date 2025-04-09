@@ -97,7 +97,6 @@ namespace Tradof.Project.Services.Implementation
             var langFrom = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageFromId);
             var langTo = await _unitOfWork.Repository<Language>().GetByIdAsync(dto.LanguageToId);
 
-
             var project = dto.ToEntity();
             project.Company = company;
             project.LanguageFrom = langFrom;
@@ -119,7 +118,7 @@ namespace Tradof.Project.Services.Implementation
                         if (!Enum.TryParse(typeof(FileType), fileExtension, true, out var fileType))
                             throw new Exception($"Unsupported file type: {fileExtension}");
 
-                        var cloudinaryUrl = await UploadToCloudinaryAsync(file);
+                        var (cloudinaryUrl, publicId) = await UploadToCloudinaryAsync(file);
 
                         project.Files.Add(new Data.Entities.File
                         {
@@ -131,12 +130,12 @@ namespace Tradof.Project.Services.Implementation
                             CreationDate = DateTime.UtcNow,
                             CreatedBy = currentUser.Id,
                             FileSize = file.Length,
-                            ModifiedBy = currentUser.Id
+                            ModifiedBy = currentUser.Id,
+                            PublicId = publicId
                         });
                     }
                 }
             }
-
 
             project.CreatedBy = company.User.UserName;
             project.CreationDate = DateTime.UtcNow;
@@ -184,7 +183,7 @@ namespace Tradof.Project.Services.Implementation
                         if (!Enum.TryParse(typeof(FileType), fileExtension, true, out var fileType))
                             throw new Exception($"Unsupported file type: {fileExtension}");
 
-                        var cloudinaryUrl = await UploadToCloudinaryAsync(file);
+                        var (cloudinaryUrl, publicId) = await UploadToCloudinaryAsync(file);
 
                         project.Files.Add(new Data.Entities.File
                         {
@@ -196,12 +195,12 @@ namespace Tradof.Project.Services.Implementation
                             CreationDate = DateTime.UtcNow,
                             CreatedBy = currentUser.Id,
                             FileSize = file.Length,
-                            ModifiedBy = currentUser.Id
+                            ModifiedBy = currentUser.Id,
+                            PublicId = publicId
                         });
                     }
                 }
             }
-
 
             project.LanguageFrom = langFrom;
             project.LanguageTo = langTo;
@@ -295,19 +294,21 @@ namespace Tradof.Project.Services.Implementation
             return projectCard;
         }
 
-        private async Task<string> UploadToCloudinaryAsync(IFormFile file)
+        private async Task<(string Url, string PublicId)> UploadToCloudinaryAsync(IFormFile file)
         {
+            string publicId = $"projects/{Guid.NewGuid()}_{file.FileName}";
+
             using (var stream = file.OpenReadStream())
             {
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(file.FileName, stream),
-                    PublicId = $"projects/{Guid.NewGuid()}_{file.FileName}",
+                    PublicId = publicId,
                     Overwrite = true
                 };
 
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-                return uploadResult.SecureUrl.AbsoluteUri;
+                return (uploadResult.SecureUrl.AbsoluteUri, uploadResult.PublicId);
             }
         }
 
@@ -392,7 +393,7 @@ namespace Tradof.Project.Services.Implementation
                     if (!Enum.TryParse(typeof(FileType), fileExtension, true, out var fileType))
                         throw new Exception($"Unsupported file type: {fileExtension}");
 
-                    var cloudinaryUrl = await UploadToCloudinaryAsync(file);
+                    var (cloudinaryUrl, publicId) = await UploadToCloudinaryAsync(file);
 
                     project.Files.Add(new Data.Entities.File
                     {
@@ -404,7 +405,8 @@ namespace Tradof.Project.Services.Implementation
                         CreationDate = DateTime.UtcNow,
                         ModificationDate = DateTime.UtcNow,
                         CreatedBy = "project.Company.UserId",
-                        ModifiedBy = "project.Company.UserId"
+                        ModifiedBy = "project.Company.UserId",
+                        PublicId = publicId
                     });
                 }
             }
@@ -412,6 +414,34 @@ namespace Tradof.Project.Services.Implementation
             await _unitOfWork.Repository<ProjectEntity>().UpdateAsync(project);
             if (!await _unitOfWork.CommitAsync())
                 throw new Exception("Failed to upload files to project.");
+        }
+
+        public async Task DeleteFileAsync(int fileId)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("User not found");
+
+            var file = await _unitOfWork.Repository<Data.Entities.File>()
+                .FindFirstAsync(f => f.Id == fileId);
+
+            if (file == null)
+                throw new Exception("File not found or access denied.");
+
+            if (!string.IsNullOrEmpty(file.PublicId))
+                await DeleteFromCloudinaryAsync(file.PublicId);
+
+            await _unitOfWork.Repository<Data.Entities.File>().DeleteAsync(fileId);
+
+            if (!await _unitOfWork.CommitAsync())
+                throw new Exception("Failed to delete file.");
+        }
+
+        private async Task DeleteFromCloudinaryAsync(string publicId)
+        {
+            var deletionParams = new DeletionParams(publicId);
+            var result = await _cloudinary.DestroyAsync(deletionParams);
+
+            if (result.Result != "ok")
+                throw new Exception("Failed to delete file from Cloudinary.");
         }
     }
 }

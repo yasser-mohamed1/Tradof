@@ -213,5 +213,19 @@ namespace Tradof.Project.Api.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpDelete("delete-file/{fileId}")]
+        public async Task<IActionResult> DeleteFile(int fileId)
+        {
+            try
+            {
+                await _projectService.DeleteFileAsync(fileId);
+                return Ok(new { message = "File deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 }

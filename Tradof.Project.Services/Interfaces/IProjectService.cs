@@ -25,5 +25,6 @@ namespace Tradof.Project.Services.Interfaces
         Task<Pagination<ProjectDto>> GetUnassignedProjectsAsync(int pageIndex, int pageSize);
         Task<Pagination<ProjectDto>> GetUnassignedProjectsByCompanyAsync(string companyId, int pageIndex, int pageSize);
         Task UploadFilesToProjectAsync(int projectId, List<IFormFile> files);
+        Task DeleteFileAsync(int fileId);
     }
 }

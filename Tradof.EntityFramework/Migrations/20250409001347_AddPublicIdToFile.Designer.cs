@@ -12,8 +12,8 @@ using Tradof.EntityFramework.DataBase_Context;
 namespace Tradof.EntityFramework.Migrations
 {
     [DbContext(typeof(TradofDbContext))]
-    [Migration("20250324013221_PendingSubscription")]
-    partial class PendingSubscription
+    [Migration("20250409001347_AddPublicIdToFile")]
+    partial class AddPublicIdToFile
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -595,6 +595,10 @@ namespace Tradof.EntityFramework.Migrations
                     b.Property<long>("ProjectId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
@@ -1055,7 +1059,6 @@ namespace Tradof.EntityFramework.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("TransactionReference")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
