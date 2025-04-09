@@ -21,6 +21,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Tradof.Comman\Tradof.Common.csproj" />
 		<ProjectReference Include="..\Tradof.Proposal.Services\Tradof.Proposal.Services.csproj" />
+		<ProjectReference Include="..\Tradof.ResponseHandler\Tradof.ResponseHandler.csproj" />
 	</ItemGroup>
 
 </Project>

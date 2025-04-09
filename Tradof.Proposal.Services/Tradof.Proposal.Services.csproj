@@ -7,13 +7,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Tradof.Data\Tradof.Data.csproj" />
-		<ProjectReference Include="..\Tradof.Repository\Tradof.Repository.csproj" />
+	  <Compile Remove="RequestHelpers\**" />
+	  <Compile Remove="Validation\**" />
+	  <EmbeddedResource Remove="RequestHelpers\**" />
+	  <EmbeddedResource Remove="Validation\**" />
+	  <None Remove="RequestHelpers\**" />
+	  <None Remove="Validation\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="RequestHelpers\" />
-		<Folder Include="Validation\" />
+		<ProjectReference Include="..\Tradof.Data\Tradof.Data.csproj" />
+		<ProjectReference Include="..\Tradof.Repository\Tradof.Repository.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

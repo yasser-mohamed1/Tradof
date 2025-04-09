@@ -5,6 +5,8 @@ using Tradof.Common.Enums;
 using Tradof.Data.SpecificationParams;
 using Tradof.Proposal.Services.DTOs;
 using Tradof.Proposal.Services.Interfaces;
+using Tradof.ResponseHandler.Consts;
+using Tradof.ResponseHandler.Models;
 
 
 namespace Tradof.Proposal.Api.Controllers
@@ -12,7 +14,7 @@ namespace Tradof.Proposal.Api.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ProposalController(IProposalService _proposalService) : ControllerBase
+    public class ProposalController(IProposalService _proposalService) : ApiControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] ProposalSpecParams specParams)
@@ -56,9 +58,34 @@ namespace Tradof.Proposal.Api.Controllers
         }
 
         [HttpPost("accept")]
-        public async Task<IActionResult> Accept(long projectId, long ProposalId)
+        public async Task<IActionResult> Accept(long projectId, long proposalId)
         {
-            return Ok(await _proposalService.AcceptProposal(projectId, ProposalId));
+            try
+            {
+                var result = await _proposalService.AcceptProposal(projectId, proposalId);
+
+                if (!result)
+                {
+                    var failedResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.OperationFailed,
+                        "Proposal could not be accepted."
+                    );
+                    return StatusCode(failedResponse.StatusCode, failedResponse);
+                }
+
+                var successResponse = APIOperationResponse<bool>.Success(true, "Proposal accepted successfully.");
+                return StatusCode(successResponse.StatusCode, successResponse);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.ServerError,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         [HttpPost("deny")]
