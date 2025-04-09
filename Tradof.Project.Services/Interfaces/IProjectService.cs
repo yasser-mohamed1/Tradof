@@ -15,7 +15,7 @@ namespace Tradof.Project.Services.Interfaces
         Task<ProjectDto> UpdateAsync(UpdateProjectDto dto);
         Task<int> GetProjectsCountByMonth(int year, int month);
         Task<bool> DeleteAsync(long id);
-        Task<bool> SendReviewRequest(long id);
+        Task<bool> SendReviewRequest(long projectId, string freelancerId);
         Task<bool> MarkAsFinished(long id);
         Task<Tuple<int, int, int>> ProjectsStatistics();
         Task<ProjectCardDto> GetProjectCardData(long projectId);

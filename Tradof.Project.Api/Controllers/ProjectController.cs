@@ -57,10 +57,45 @@ namespace Tradof.Project.Api.Controllers
             return project != null ? Ok(project) : NotFound();
         }
 
-        [HttpPut("SendReviewRequest")]
-        public async Task<IActionResult> SendReviewRequest(long id)
+        [HttpPut("send-review-request")]
+        public async Task<IActionResult> SendReviewRequest(long projectId, string freelancerId)
         {
-            return Ok(await _projectService.SendReviewRequest(id));
+            try
+            {
+                if (string.IsNullOrWhiteSpace(freelancerId))
+                {
+                    var invalidInputResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.InvalidInput,
+                        "Freelancer ID is required."
+                    );
+                    return StatusCode(invalidInputResponse.StatusCode, invalidInputResponse);
+                }
+
+                var success = await _projectService.SendReviewRequest(projectId, freelancerId);
+
+                if (!success)
+                {
+                    var failedResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.InternalServerError,
+                        CommonErrorCodes.OperationFailed,
+                        "Failed to send review request."
+                    );
+                    return StatusCode(failedResponse.StatusCode, failedResponse);
+                }
+
+                var response = APIOperationResponse<bool>.Success(true, "Review request sent successfully.");
+                return StatusCode(response.StatusCode, response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.ServerError,
+                    ex.Message 
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         [HttpPut("MarkAsFinished")]

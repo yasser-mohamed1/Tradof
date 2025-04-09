@@ -249,12 +249,11 @@ namespace Tradof.Project.Services.Implementation
 
         }
 
-        public async Task<bool> SendReviewRequest(long id)
+        public async Task<bool> SendReviewRequest(long projectId, string freelancerId)
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(c => c.UserId == currentUser.Id)
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(c => c.UserId == freelancerId)
                 ?? throw new Exception("freelancer not found.");
-            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == id && p.FreelancerId == freelancer.Id) ?? throw new NotFoundException("project not found");
+            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == projectId && p.FreelancerId == freelancer.Id) ?? throw new NotFoundException("project not found");
             project.Status = ProjectStatus.OnReviewing;
             return await _unitOfWork.CommitAsync();
         }
