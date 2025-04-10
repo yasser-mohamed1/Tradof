@@ -54,7 +54,32 @@ namespace Tradof.Proposal.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
-            return Ok(await _proposalService.DeleteAsync(id));
+            try
+            {
+                var result = await _proposalService.DeleteAsync(id);
+
+                if (!result)
+                {
+                    var failedResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.OperationFailed,
+                        "Proposal could not be deleted."
+                    );
+                    return StatusCode(failedResponse.StatusCode, failedResponse);
+                }
+
+                var successResponse = APIOperationResponse<bool>.Success(true, "Proposal deleted successfully.");
+                return StatusCode(successResponse.StatusCode, successResponse);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.ServerError,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         [HttpPost("accept")]
