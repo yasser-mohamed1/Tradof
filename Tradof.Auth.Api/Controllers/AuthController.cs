@@ -272,11 +272,41 @@ namespace Tradof.Auth.Api.Controllers
             try
             {
                 var (token, refreshToken, userId, role) = await _authService.AuthenticateWithGoogle(HttpContext);
-                return Ok(new { UserId = userId, Role = role, Token = token, RefreshToken = refreshToken });
+
+                var html = $@"
+        <html>
+            <body>
+                <script>
+                    window.opener?.postMessage({{
+                        token: '{token}',
+                        refreshToken: '{refreshToken}',
+                        userId: '{userId}',
+                        role: '{role}'
+                    }}, '*');
+                    window.close();
+                </script>
+                <p>Authentication successful. You can close this window.</p>
+            </body>
+        </html>";
+
+                return Content(html, "text/html");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                var html = $@"
+        <html>
+            <body>
+                <script>
+                    window.opener?.postMessage({{
+                        error: '{ex.Message}'
+                    }}, '*');
+                    window.close();
+                </script>
+                <p>Authentication failed. You can close this window.</p>
+            </body>
+        </html>";
+
+                return Content(html, "text/html");
             }
         }
     }
