@@ -17,7 +17,7 @@
         public SpecializationDto? Specialization { get; set; }
         public int NumberOfOffers { get; set; }
         public List<FileDto>? Files { get; set; }
-        public long CompanyId { get; set; }
+        public string CompanyId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string JobTitle { get; set; }

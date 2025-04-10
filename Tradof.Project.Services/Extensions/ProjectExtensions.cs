@@ -53,7 +53,7 @@ namespace Tradof.Project.Services.Extensions
                 StartDate = project.StartDate,
                 EndDate = project.EndDate,
                 Status = status,
-                CompanyId = project.CompanyId,
+                CompanyId = project.Company.UserId,
                 FirstName = project.Company.User.FirstName,
                 LastName = project.Company.User.LastName,
                 JobTitle = project.Company.JobTitle,
