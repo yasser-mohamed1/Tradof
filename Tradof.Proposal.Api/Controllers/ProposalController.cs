@@ -123,8 +123,32 @@ namespace Tradof.Proposal.Api.Controllers
         [HttpPost("cancel")]
         public async Task<IActionResult> Cancel(long ProposalId)
         {
-            return Ok(await _proposalService.CancelProposal(ProposalId));
+            try
+            {
+                var result = await _proposalService.CancelProposal(ProposalId);
 
+                if (!result)
+                {
+                    var failedResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.OperationFailed,
+                        "Proposal cancellation failed."
+                    );
+                    return StatusCode(failedResponse.StatusCode, failedResponse);
+                }
+
+                var successResponse = APIOperationResponse<bool>.Success(true, "Proposal cancelled successfully.");
+                return StatusCode(successResponse.StatusCode, successResponse);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.ServerError,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = RoleNames.Freelancer)]
