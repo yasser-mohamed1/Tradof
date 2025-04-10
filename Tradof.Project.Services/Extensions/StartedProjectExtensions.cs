@@ -1,5 +1,4 @@
-﻿
-using Tradof.Project.Services.DTOs;
+﻿using Tradof.Project.Services.DTOs;
 
 namespace Tradof.Project.Services.Extensions
 {
@@ -23,7 +22,6 @@ namespace Tradof.Project.Services.Extensions
             );
 
             var languageTo = new LanguageDto(
-
                 project.LanguageToId,
                 project.LanguageTo.LanguageName,
                 project.LanguageTo.LanguageCode,
@@ -53,17 +51,16 @@ namespace Tradof.Project.Services.Extensions
                 StartDate = project.StartDate,
                 EndDate = project.EndDate,
                 Status = status,
-                CompanyId = project.CompanyId,
+                CompanyId = project.Company.UserId,
                 FirstName = project.Company.User.FirstName,
                 LastName = project.Company.User.LastName,
                 JobTitle = project.Company.JobTitle,
                 ProfileImageUrl = project.Freelancer.User.ProfileImageUrl,
                 FreelancerFirstName = project.Freelancer.User.FirstName,
                 FreelancerLastName = project.Company.User.LastName,
-                FreelancerId = project.FreelancerId,
+                FreelancerId = project.Freelancer.UserId,
                 FreelancerProfileImageUrl = project.Freelancer.User.ProfileImageUrl,
                 FreelancerEmail = project.Freelancer.User.Email
-
             };
         }
     }
