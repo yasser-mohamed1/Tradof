@@ -116,8 +116,32 @@ namespace Tradof.Proposal.Api.Controllers
         [HttpPost("deny")]
         public async Task<IActionResult> Deny(long projectId, long ProposalId)
         {
-            return Ok(await _proposalService.DenyProposal(projectId, ProposalId));
+            try
+            {
+                var result = await _proposalService.DenyProposal(projectId, ProposalId);
 
+                if (!result)
+                {
+                    var failedResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.OperationFailed,
+                        "Proposal denial failed."
+                    );
+                    return StatusCode(failedResponse.StatusCode, failedResponse);
+                }
+
+                var successResponse = APIOperationResponse<bool>.Success(true, "Proposal denied successfully.");
+                return StatusCode(successResponse.StatusCode, successResponse);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.ServerError,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         [HttpPost("cancel")]
