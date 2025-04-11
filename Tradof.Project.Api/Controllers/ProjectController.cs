@@ -142,11 +142,18 @@ namespace Tradof.Project.Api.Controllers
         {
             try
             {
-                return Ok(await _projectService.CreateAsync(projectDto));
+                var result = await _projectService.CreateAsync(projectDto);
+                var response = APIOperationResponse<ProjectDto>.Success(result, "Project created successfully.");
+                return StatusCode(response.StatusCode, response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                var errorResponse = APIOperationResponse<ProjectDto>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.FailedToSaveData,
+                    "An error occurred while creating the project."
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
             }
         }
 
