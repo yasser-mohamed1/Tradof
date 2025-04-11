@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
@@ -167,11 +168,21 @@ namespace Tradof.Proposal.Services.Implementation
             throw new Exception("Failed to update proposal");
         }
 
-        public async Task<int> GetProposalsCountByMonth(int year, int month, ProposalStatus status)
+        public async Task<int> GetProposalsCountByMonth(int? year, int? month, ProposalStatus? status)
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
-            return await _unitOfWork.Repository<Data.Entities.Proposal>().CountAsync(p => p.Freelancer.UserId == currentUser.Id && p.ProposalStatus == status &&
-                                                                                        p.TimePosted.Year == year && p.TimePosted.Month == month);
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
+
+            var query = _unitOfWork.Repository<Data.Entities.Proposal>()
+                .GetQueryable()
+                .Where(p => p.Freelancer.UserId == currentUser.Id && p.ProposalStatus == status);
+
+            if (year.HasValue)
+                query = query.Where(p => p.TimePosted.Year == year.Value);
+
+            if (month.HasValue)
+                query = query.Where(p => p.TimePosted.Month == month.Value);
+
+            return await query.CountAsync();
         }
 
         public async Task<Pagination<ProposalDto>> GetFreelancerProposalsAsync(FreelancerProposalsSpecParams specParams)

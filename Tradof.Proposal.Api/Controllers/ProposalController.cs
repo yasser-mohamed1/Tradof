@@ -21,27 +21,65 @@ namespace Tradof.Proposal.Api.Controllers
         {
             return Ok(await _proposalService.GetAllAsync(specParams));
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(long id)
         {
             var project = await _proposalService.GetByIdAsync(id);
             return project != null ? Ok(project) : NotFound();
         }
+
         [HttpGet("countByMonth")]
-        public async Task<IActionResult> GetProposalsCountByMonth(int year, int month, ProposalStatus status)
+        public async Task<IActionResult> GetProposalsCountByMonth(int? year = null, int? month = null, ProposalStatus? status = ProposalStatus.Pending)
         {
-            return Ok(await _proposalService.GetProposalsCountByMonth(year, month, status));
+            try
+            {
+                var count = await _proposalService.GetProposalsCountByMonth(year, month, status);
+                var response = APIOperationResponse<int>.Success(count, "Proposals count retrieved successfully.");
+
+                return StatusCode(response.StatusCode, response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<int>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.FailedToRetrieveData,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateProposalDto projectDto)
         {
             try
             {
-                return Ok(await _proposalService.CreateAsync(projectDto));
+                var result = await _proposalService.CreateAsync(projectDto);
+
+                if (result != null)
+                {
+                    var response = APIOperationResponse<ProposalDto>.Success(result, "Proposal created successfully.");
+                    return StatusCode(response.StatusCode, response);
+                }
+                else
+                {
+                    var errorResponse = APIOperationResponse<CreateProposalDto>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.FailedToSaveData,
+                        "Failed to create proposal."
+                    );
+                    return StatusCode(errorResponse.StatusCode, errorResponse);
+                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return BadRequest(e.Message);
+                var errorResponse = APIOperationResponse<CreateProposalDto>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.FailedToSaveData,
+                    $"An error occurred while creating the proposal: {ex.Message}"
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
             }
         }
 
