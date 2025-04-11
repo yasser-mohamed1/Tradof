@@ -253,10 +253,9 @@ namespace Tradof.Project.Services.Implementation
 
             if (year.HasValue)
                 query = query.Where(p => p.PublishDate.Year == year.Value);
+
             if (month.HasValue)
                 query = query.Where(p => p.PublishDate.Month == month.Value);
-            if (month.HasValue && year.HasValue)
-                query = query.Where(p => p.PublishDate.Year == year.Value && p.PublishDate.Month == month.Value);
 
             return await query.CountAsync();
         }
