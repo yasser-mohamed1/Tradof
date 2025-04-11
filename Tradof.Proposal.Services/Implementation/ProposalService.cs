@@ -103,7 +103,11 @@ namespace Tradof.Proposal.Services.Implementation
             await _unitOfWork.Repository<Data.Entities.Proposal>().AddAsync(proposal);
 
             if (await _unitOfWork.CommitAsync())
-                return proposal.ToDto();
+            {
+                var specification = new ProposalSpecification(proposal.Id);
+                var proposalItem = await _unitOfWork.Repository<Data.Entities.Proposal>().GetEntityWithSpecification(specification);
+                return proposalItem.ToDto();
+            }
 
             throw new Exception("Failed to create proposal");
         }
