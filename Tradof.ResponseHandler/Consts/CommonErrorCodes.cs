@@ -18,6 +18,7 @@ namespace Tradof.ResponseHandler.Consts
         public static readonly CommonErrorCodes ResourceNotFound = new("RESOURCE_NOT_FOUND", CommonErrorCode.ResourceNotFound);
         public static readonly CommonErrorCodes NotAuthorized = new("NOT_AUTHORIZED", CommonErrorCode.NotAuthorized);
         public static readonly CommonErrorCodes NotFound = new("NOT_FOUND", CommonErrorCode.NotFound);
+        public static readonly CommonErrorCodes FailedToRetrieveData = new("Failed_To_Retrieve_Data", CommonErrorCode.FailedToRetrieveData);
 
         private CommonErrorCodes(string value, CommonErrorCode code)
         {
@@ -44,6 +45,7 @@ namespace Tradof.ResponseHandler.Consts
         InvalidRefreshToken = 10,
         ResourceNotFound = 11,
         NotAuthorized = 12,
-        NotFound = 13
+        NotFound = 13,
+        FailedToRetrieveData = 14
     }
 }
