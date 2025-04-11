@@ -105,9 +105,24 @@ namespace Tradof.Project.Api.Controllers
         }
 
         [HttpGet("countByMonth")]
-        public async Task<IActionResult> GetProjectsCountByMonth(int year, int month)
+        public async Task<IActionResult> GetProjectsCountByMonth(int? year = null, int? month = null)
         {
-            return Ok(await _projectService.GetProjectsCountByMonth(year, month));
+            try
+            {
+                var result = await _projectService.GetProjectsCountByMonth(year, month);
+
+                var response = APIOperationResponse<int>.Success(result, "Project count retrieved successfully.");
+                return StatusCode(response.StatusCode, response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<int>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.ServerError,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         [HttpGet("statistics")]

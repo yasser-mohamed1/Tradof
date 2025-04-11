@@ -153,6 +153,11 @@ namespace Tradof.Repository.Repository
             return await query.ToListAsync();
         }
 
+        public IQueryable<T> GetQueryable()
+        {
+            return _context.Set<T>();
+        }
+
         #region private methods
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {

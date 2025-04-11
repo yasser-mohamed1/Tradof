@@ -21,5 +21,6 @@ namespace Tradof.Data.Interfaces
         Task<int> CountAsync(ISpecification<T> spec);
         Task<int> CountAsync(Expression<Func<T, bool>> expression);
         Task<List<T>> GetListWithSpecificationAsync(ISpecification<T> spec);
+        IQueryable<T> GetQueryable();
     }
 }

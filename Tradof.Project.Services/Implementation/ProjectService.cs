@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using Tradof.Common.Enums;
@@ -240,12 +241,24 @@ namespace Tradof.Project.Services.Implementation
             return await _unitOfWork.CommitAsync();
         }
 
-        public async Task<int> GetProjectsCountByMonth(int year, int month)
+        public async Task<int> GetProjectsCountByMonth(int? year, int? month)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
-                ?? throw new Exception("Company not found.");
-            return await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.CompanyId == company.Id && p.PublishDate.Year == year && p.PublishDate.Month == month);
+            var company = await _unitOfWork.Repository<Company>()
+                .FindFirstAsync(c => c.UserId == currentUser.Id) ?? throw new Exception("Company not found.");
+
+            var query = _unitOfWork.Repository<ProjectEntity>()
+                .GetQueryable()
+                .Where(p => p.CompanyId == company.Id);
+
+            if (year.HasValue)
+                query = query.Where(p => p.PublishDate.Year == year.Value);
+            if (month.HasValue)
+                query = query.Where(p => p.PublishDate.Month == month.Value);
+            if (month.HasValue && year.HasValue)
+                query = query.Where(p => p.PublishDate.Year == year.Value && p.PublishDate.Month == month.Value);
+
+            return await query.CountAsync();
         }
 
         public async Task<bool> SendReviewRequest(long projectId, string freelancerId)
