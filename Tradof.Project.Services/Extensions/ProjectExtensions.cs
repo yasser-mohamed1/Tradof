@@ -57,7 +57,9 @@ namespace Tradof.Project.Services.Extensions
                 FirstName = project.Company.User.FirstName,
                 LastName = project.Company.User.LastName,
                 JobTitle = project.Company.JobTitle,
-                ProfileImageUrl = project.Company.User.ProfileImageUrl
+                ProfileImageUrl = project.Company.User.ProfileImageUrl,
+                CreationDate = project.CreationDate,
+                FreelancerId = project.Freelancer.UserId
             };
         }
 

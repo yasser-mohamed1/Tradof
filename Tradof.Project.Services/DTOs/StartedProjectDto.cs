@@ -27,5 +27,6 @@
         public string ProfileImageUrl { get; set; }
         public string FreelancerProfileImageUrl { get; set; }
         public string FreelancerEmail { get; set; }
+        public DateTime CreationDate { get; set; }
     }
 }

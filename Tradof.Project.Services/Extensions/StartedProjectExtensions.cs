@@ -60,7 +60,8 @@ namespace Tradof.Project.Services.Extensions
                 FreelancerLastName = project.Company.User.LastName,
                 FreelancerId = project.Freelancer.UserId,
                 FreelancerProfileImageUrl = project.Freelancer.User.ProfileImageUrl,
-                FreelancerEmail = project.Freelancer.User.Email
+                FreelancerEmail = project.Freelancer.User.Email,
+                CreationDate = project.CreationDate
             };
         }
     }

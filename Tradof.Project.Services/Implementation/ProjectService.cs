@@ -246,7 +246,6 @@ namespace Tradof.Project.Services.Implementation
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
                 ?? throw new Exception("Company not found.");
             return await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.CompanyId == company.Id && p.PublishDate.Year == year && p.PublishDate.Month == month);
-
         }
 
         public async Task<bool> SendReviewRequest(long projectId, string freelancerId)
