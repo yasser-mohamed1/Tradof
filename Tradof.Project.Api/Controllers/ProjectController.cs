@@ -151,7 +151,7 @@ namespace Tradof.Project.Api.Controllers
                 var errorResponse = APIOperationResponse<ProjectDto>.Fail(
                     ResponseType.InternalServerError,
                     CommonErrorCodes.FailedToSaveData,
-                    "An error occurred while creating the project."
+                    $"An error occurred while creating the project: {ex.Message}"
                 );
                 return StatusCode(errorResponse.StatusCode, errorResponse);
             }
