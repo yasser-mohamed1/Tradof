@@ -33,7 +33,7 @@ namespace Tradof.Proposal.Services.Implementation
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId) ?? throw new NotFoundException("proposal not found");
             proposal.ProposalStatus = ProposalStatus.Accepted;
             project.FreelancerId = proposal.FreelancerId;
-
+            project.StartDate = DateTime.UtcNow;
             return await _unitOfWork.CommitAsync();
         }
 

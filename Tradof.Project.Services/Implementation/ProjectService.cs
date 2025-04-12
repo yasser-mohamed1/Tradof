@@ -276,6 +276,7 @@ namespace Tradof.Project.Services.Implementation
                 ?? throw new Exception("Company not found.");
             var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == id && p.CompanyId == company.Id) ?? throw new NotFoundException("project not found");
             project.Status = ProjectStatus.Finished;
+            project.EndDate = DateTime.UtcNow;
             return await _unitOfWork.CommitAsync();
         }
 
