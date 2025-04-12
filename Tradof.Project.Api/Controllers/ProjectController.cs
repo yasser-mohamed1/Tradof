@@ -101,7 +101,34 @@ namespace Tradof.Project.Api.Controllers
         [HttpPut("MarkAsFinished")]
         public async Task<IActionResult> MarkAsFinished(long id)
         {
-            return Ok(await _projectService.MarkAsFinished(id));
+            try
+            {
+                bool result = await _projectService.MarkAsFinished(id);
+
+                if (result)
+                {
+                    var response = APIOperationResponse<bool>.Success(true, "Project marked as finished successfully.");
+                    return StatusCode(response.StatusCode, response);
+                }
+                else
+                {
+                    var failResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.FailedToUpdateData,
+                        "Unable to mark the project as finished."
+                    );
+                    return StatusCode(failResponse.StatusCode, failResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.FailedToUpdateData,
+                    $"An error occurred while marking the project as finished: {ex.Message}"
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         [HttpGet("countByMonth")]
