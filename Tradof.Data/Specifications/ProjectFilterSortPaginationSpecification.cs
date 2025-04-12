@@ -26,6 +26,7 @@ namespace Tradof.Data.Specifications
             AddInclude(p => p.Company);
             AddInclude(p => p.Company.User);
             AddInclude(p => p.Freelancer);
+            AddInclude(p => p.Freelancer.User);
             AddInclude(p => p.Ratings);
 
             ApplyPagination(specParams.PageSize * (specParams.PageIndex - 1), specParams.PageSize);
