@@ -217,7 +217,7 @@ namespace Tradof.Project.Api.Controllers
                 var errorResponse = APIOperationResponse<bool>.Fail(
                     ResponseType.InternalServerError,
                     CommonErrorCodes.FailedToDeleteData,
-                    "An error occurred while deleting the project."
+                    $"An error occurred while deleting the project: {ex.Message}"
                 );
                 return StatusCode(errorResponse.StatusCode, errorResponse);
             }
