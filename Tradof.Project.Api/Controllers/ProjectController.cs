@@ -193,7 +193,34 @@ namespace Tradof.Project.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
-            return Ok(await _projectService.DeleteAsync(id));
+            try
+            {
+                bool result = await _projectService.DeleteAsync(id);
+
+                if (result)
+                {
+                    var response = APIOperationResponse<bool>.Success(true, "Project deleted successfully.");
+                    return StatusCode(response.StatusCode, response);
+                }
+                else
+                {
+                    var failResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.FailedToDeleteData,
+                        "Failed to delete the project."
+                    );
+                    return StatusCode(failResponse.StatusCode, failResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.FailedToDeleteData,
+                    "An error occurred while deleting the project."
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         [HttpGet("GetProjectCardData")]
