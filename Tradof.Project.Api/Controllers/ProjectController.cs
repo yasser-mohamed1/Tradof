@@ -136,9 +136,9 @@ namespace Tradof.Project.Api.Controllers
         {
             try
             {
-                var result = await _projectService.GetProjectsCountByMonth(year, month);
+                var result = await _projectService.GetProjectsCountAndCostAsync(year, month);
 
-                var response = APIOperationResponse<int>.Success(result, "Project count retrieved successfully.");
+                var response = APIOperationResponse<List<ProjectGroupResult>>.Success(result, "Project count retrieved successfully.");
                 return StatusCode(response.StatusCode, response);
             }
             catch (Exception ex)

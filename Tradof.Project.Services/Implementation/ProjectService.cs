@@ -241,9 +241,9 @@ namespace Tradof.Project.Services.Implementation
             return await _unitOfWork.CommitAsync();
         }
 
-        public async Task<int> GetProjectsCountByMonth(int? year, int? month)
+        public async Task<List<ProjectGroupResult>> GetProjectsCountAndCostAsync(int? year, int? month)
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("User not found.");
             var company = await _unitOfWork.Repository<Company>()
                 .FindFirstAsync(c => c.UserId == currentUser.Id) ?? throw new Exception("Company not found.");
 
@@ -251,14 +251,52 @@ namespace Tradof.Project.Services.Implementation
                 .GetQueryable()
                 .Where(p => p.CompanyId == company.Id);
 
+            DateTime fromDate;
+            DateTime toDate = DateTime.Now;
+
             if (year.HasValue)
-                query = query.Where(p => p.PublishDate.Year == year.Value);
+            {
+                fromDate = new DateTime(year.Value, 1, 1);
+                toDate = new DateTime(year.Value, 12, 31, 23, 59, 59);
+            }
+            else
+            {
+                fromDate = DateTime.Now.AddMonths(-12);
+            }
+
+            query = query.Where(p => p.PublishDate >= fromDate && p.PublishDate <= toDate);
 
             if (month.HasValue)
+            {
                 query = query.Where(p => p.PublishDate.Month == month.Value);
 
-            return await query.CountAsync();
+                return await query
+                    .GroupBy(p => p.PublishDate.Day)
+                    .OrderBy(g => g.Key)
+                    .Select(g => new ProjectGroupResult
+                    {
+                        Key = g.Key,
+                        Count = g.Count(),
+                        TotalCost = g.Sum(p => p.Price)
+                    })
+                    .ToListAsync();
+            }
+            else
+            {
+                return await query
+                    .GroupBy(p => p.PublishDate.Month)
+                    .OrderBy(g => g.Key)
+                    .Select(g => new ProjectGroupResult
+                    {
+                        Key = g.Key,
+                        Count = g.Count(),
+                        TotalCost = g.Sum(p => p.Price)
+                    })
+                    .ToListAsync();
+            }
         }
+
+
 
         public async Task<bool> SendReviewRequest(long projectId, string freelancerId)
         {
