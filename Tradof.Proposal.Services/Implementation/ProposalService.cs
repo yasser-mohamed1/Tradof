@@ -172,21 +172,60 @@ namespace Tradof.Proposal.Services.Implementation
             throw new Exception("Failed to update proposal");
         }
 
-        public async Task<int> GetProposalsCountByMonth(int? year, int? month, ProposalStatus? status)
+        public async Task<List<ProposalGroupResult>> GetProposalsCountAsync(int? year, int? month, ProposalStatus? status)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
 
             var query = _unitOfWork.Repository<Data.Entities.Proposal>()
                 .GetQueryable()
-                .Where(p => p.Freelancer.UserId == currentUser.Id && p.ProposalStatus == status);
+                .Where(p => p.Freelancer.UserId == currentUser.Id);
+
+            if (status.HasValue)
+                query = query.Where(p => p.ProposalStatus == status.Value);
+
+            DateTime fromDate;
+            DateTime toDate = DateTime.Now;
 
             if (year.HasValue)
-                query = query.Where(p => p.TimePosted.Year == year.Value);
+            {
+                fromDate = new DateTime(year.Value, 1, 1);
+                toDate = new DateTime(year.Value, 12, 31, 23, 59, 59);
+            }
+            else
+            {
+                fromDate = DateTime.Now.AddMonths(-12);
+            }
+
+            query = query.Where(p => p.TimePosted >= fromDate && p.TimePosted <= toDate);
 
             if (month.HasValue)
+            {
                 query = query.Where(p => p.TimePosted.Month == month.Value);
 
-            return await query.CountAsync();
+                return await query
+                    .GroupBy(p => new { p.TimePosted.Day, p.ProposalStatus })
+                    .OrderBy(g => g.Key.Day)
+                    .Select(g => new ProposalGroupResult
+                    {
+                        Key = g.Key.Day,
+                        Count = g.Count(),
+                        Status = g.Key.ProposalStatus
+                    })
+                    .ToListAsync();
+            }
+            else
+            {
+                return await query
+                    .GroupBy(p => new { p.TimePosted.Month, p.ProposalStatus })
+                    .OrderBy(g => g.Key.Month)
+                    .Select(g => new ProposalGroupResult
+                    {
+                        Key = g.Key.Month,
+                        Count = g.Count(),
+                        Status = g.Key.ProposalStatus
+                    })
+                    .ToListAsync();
+            }
         }
 
         public async Task<Pagination<ProposalDto>> GetFreelancerProposalsAsync(FreelancerProposalsSpecParams specParams)

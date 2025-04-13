@@ -34,8 +34,8 @@ namespace Tradof.Proposal.Api.Controllers
         {
             try
             {
-                var count = await _proposalService.GetProposalsCountByMonth(year, month, status);
-                var response = APIOperationResponse<int>.Success(count, "Proposals count retrieved successfully.");
+                var count = await _proposalService.GetProposalsCountAsync(year, month, status);
+                var response = APIOperationResponse<List<ProposalGroupResult>>.Success(count, "Proposals count retrieved successfully.");
 
                 return StatusCode(response.StatusCode, response);
             }
