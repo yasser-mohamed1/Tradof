@@ -30,7 +30,7 @@ namespace Tradof.Proposal.Api.Controllers
         }
 
         [HttpGet("countByMonth")]
-        public async Task<IActionResult> GetProposalsCountByMonth(int? year = null, int? month = null, ProposalStatus? status = ProposalStatus.Pending)
+        public async Task<IActionResult> GetProposalsCountByMonth(int? year = null, int? month = null, ProposalStatus? status = null)
         {
             try
             {

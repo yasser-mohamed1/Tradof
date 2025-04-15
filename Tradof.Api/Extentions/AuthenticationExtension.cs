@@ -1,22 +1,16 @@
 ﻿using DotNetEnv;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Tradof.Api.Extentions
 {
     public static class AuthenticationExtension
     {
-        public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureAuthentication(this IServiceCollection services)
         {
-            var secretKey = configuration["JWT:Secret"] ?? Env.GetString("JWT_SECRET");
-            if (string.IsNullOrEmpty(secretKey))
-            {
-                throw new Exception("JWT Secret is not set properly.");
-            }
+            var secretKey = Env.GetString("JWT_SECRET") ?? throw new EnvVariableNotFoundException("JWT Secret is not set properly.", "JWT_SECRET");
 
             var key = Encoding.UTF8.GetBytes(secretKey);
 
