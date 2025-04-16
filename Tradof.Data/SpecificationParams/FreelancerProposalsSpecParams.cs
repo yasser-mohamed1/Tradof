@@ -1,4 +1,6 @@
-﻿namespace Tradof.Data.SpecificationParams
+﻿using Tradof.Common.Enums;
+
+namespace Tradof.Data.SpecificationParams
 {
     public class FreelancerProposalsSpecParams
     {
@@ -23,5 +25,6 @@
         public int? Days { get; set; }
         public double? OfferPrice { get; set; }
         public string? SortBy { get; set; }
+        public ProposalStatus? Status { get; set; }
     }
 }

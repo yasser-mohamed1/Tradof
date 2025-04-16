@@ -8,7 +8,8 @@ namespace Tradof.Data.Specifications
         public FreelancerProposalsFilterSortPaginationSpecification(FreelancerProposalsSpecParams specParams) : base(proposal =>
         (proposal.Freelancer.UserId == specParams.FreelancerId) &&
         (specParams.Days == null || proposal.Days <= specParams.Days) &&
-        (specParams.OfferPrice == null || proposal.OfferPrice <= specParams.OfferPrice)
+        (specParams.OfferPrice == null || proposal.OfferPrice <= specParams.OfferPrice) &&
+        (specParams.Status == null || proposal.ProposalStatus == specParams.Status)
         )
         {
             AddInclude(p => p.ProposalAttachments);
@@ -17,7 +18,21 @@ namespace Tradof.Data.Specifications
             AddInclude(p => p.Project);
             AddInclude(p => p.Project.Company);
             AddInclude(p => p.Project.Company.User);
+
             ApplyPagination(specParams.PageSize * (specParams.PageIndex - 1), specParams.PageSize);
+
+            switch (specParams.SortBy)
+            {
+                case "asc":
+                    SetOrderBy(p => p.OfferPrice);
+                    break;
+                case "desc":
+                    SetOrderByDescending(p => p.OfferPrice);
+                    break;
+                default:
+                    SetOrderBy(p => p.OfferPrice);
+                    break;
+            }
         }
     }
 }

@@ -18,7 +18,6 @@ namespace Tradof.Data.Specifications
             AddInclude(p => p.Project.Company);
             AddInclude(p => p.Project.Company.User);
 
-
             ApplyPagination(specParams.PageSize * (specParams.PageIndex - 1), specParams.PageSize);
         }
     }
