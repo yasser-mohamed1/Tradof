@@ -25,7 +25,9 @@ namespace Tradof.Proposal.Services.Extensions
                 CompanyId = proposal.Project.Company.UserId,
                 CompanyFirstName = proposal.Project.Company.User.FirstName,
                 CompanyLastName = proposal.Project.Company.User.LastName,
-                CompanyImage = proposal.Project.Company.User.ProfileImageUrl
+                CompanyImage = proposal.Project.Company.User.ProfileImageUrl,
+                ProjectMaxPrice = proposal.Project.MaxPrice,
+                ProjectMinPrice = proposal.Project.MinPrice
             };
         }
 

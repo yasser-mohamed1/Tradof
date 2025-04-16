@@ -8,7 +8,6 @@ using Tradof.Proposal.Services.Interfaces;
 using Tradof.ResponseHandler.Consts;
 using Tradof.ResponseHandler.Models;
 
-
 namespace Tradof.Proposal.Api.Controllers
 {
     [ApiController]

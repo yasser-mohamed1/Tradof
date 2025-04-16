@@ -20,6 +20,8 @@ namespace Tradof.Proposal.Services.DTOs
         public string CompanyFirstName { get; set; }
         public string CompanyLastName { get; set; }
         public DateTime TimePosted { get; set; }
+        public double ProjectMaxPrice { get; set; }
+        public double ProjectMinPrice { get; set; }
         public ICollection<ProposalAttachmentDto> ProposalAttachments { get; set; } = [];
     }
 }
