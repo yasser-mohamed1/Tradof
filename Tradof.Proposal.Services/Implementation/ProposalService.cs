@@ -196,35 +196,53 @@ namespace Tradof.Proposal.Services.Implementation
                 fromDate = DateTime.Now.AddMonths(-12);
             }
 
-            query = query.Where(p => p.TimePosted >= fromDate && p.TimePosted <= toDate);
-
+            if(!year.HasValue && !month.HasValue)
+            {
+                query = query.Where(p => p.TimePosted >= fromDate && p.TimePosted <= toDate);
+            }
+            if(year.HasValue)
+            {
+                query = query.Where(p => p.TimePosted.Year == year.Value);
+            }
             if (month.HasValue)
             {
                 query = query.Where(p => p.TimePosted.Month == month.Value);
+            }
 
-                return await query
-                    .GroupBy(p => new { p.TimePosted.Day, p.ProposalStatus })
-                    .OrderBy(g => g.Key.Day)
+            // Group by day or month depending on the request
+            if (month.HasValue)
+            {
+                var groupedData = await query
+                    .ToListAsync();
+
+                return groupedData
+                    .GroupBy(p => p.TimePosted.Day)
+                    .OrderBy(g => g.Key)
                     .Select(g => new ProposalGroupResult
                     {
-                        Key = g.Key.Day,
-                        Count = g.Count(),
-                        Status = g.Key.ProposalStatus
+                        Key = g.Key,
+                        StatusCounts = g
+                            .GroupBy(p => p.ProposalStatus.ToString())
+                            .ToDictionary(s => s.Key, s => s.Count())
                     })
-                    .ToListAsync();
+                    .ToList();
             }
             else
             {
-                return await query
-                    .GroupBy(p => new { p.TimePosted.Month, p.ProposalStatus })
-                    .OrderBy(g => g.Key.Month)
+                var groupedData = await query
+                    .ToListAsync();
+
+                return groupedData
+                    .GroupBy(p => p.TimePosted.Month)
+                    .OrderBy(g => g.Key)
                     .Select(g => new ProposalGroupResult
                     {
-                        Key = g.Key.Month,
-                        Count = g.Count(),
-                        Status = g.Key.ProposalStatus
+                        Key = g.Key,
+                        StatusCounts = g
+                            .GroupBy(p => p.ProposalStatus.ToString())
+                            .ToDictionary(s => s.Key, s => s.Count())
                     })
-                    .ToListAsync();
+                    .ToList();
             }
         }
 
