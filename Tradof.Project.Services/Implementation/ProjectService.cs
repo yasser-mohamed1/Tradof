@@ -264,7 +264,18 @@ namespace Tradof.Project.Services.Implementation
                 fromDate = DateTime.Now.AddMonths(-12);
             }
 
-            query = query.Where(p => p.PublishDate >= fromDate && p.PublishDate <= toDate);
+            if (!year.HasValue && !month.HasValue)
+            {
+                query = query.Where(p => p.PublishDate >= fromDate && p.PublishDate <= toDate);
+            }
+            if (year.HasValue)
+            {
+                query = query.Where(p => p.PublishDate.Year == year.Value);
+            }
+            if (month.HasValue)
+            {
+                query = query.Where(p => p.PublishDate.Month == month.Value);
+            }
 
             if (month.HasValue)
             {
