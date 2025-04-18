@@ -421,17 +421,28 @@ namespace Tradof.Project.Services.Implementation
             return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
         }
 
-        public async Task<Pagination<ProjectDto>> GetUnassignedProjectsByCompanyAsync(string companyId, int pageIndex, int pageSize)
+        public async Task<Pagination<ProjectDto>> GetUnassignedProjectsByCompanyAsync(UnassignedProjectsSpecParams specParams)
         {
-            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == companyId)
+            var company = await _unitOfWork.Repository<Company>()
+                .FindFirstAsync(c => c.UserId == specParams.CompanyId)
                 ?? throw new Exception("Company not found.");
 
-            var spec = new UnassignedProjectsByCompanySpecification(company.Id, pageIndex, pageSize);
+            var spec = new UnassignedProjectsByCompanySpecification(company.Id, specParams);
+
             var projects = await _unitOfWork.Repository<ProjectEntity>().ListAsync(spec);
-            var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(new UnassignedProjectsByCompanySpecification(company.Id));
+
+            var countSpec = new UnassignedProjectsByCompanySpecification(company.Id, specParams);
+
+            var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(countSpec);
 
             var dtos = projects.Select(p => p.ToDto()).ToList();
-            return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
+
+            return new Pagination<ProjectDto>(
+                specParams.PageIndex,
+                specParams.PageSize,
+                totalCount,
+                dtos
+            );
         }
 
         public async Task<List<FileDto>> UploadFilesToProjectAsync(int projectId, List<IFormFile> files)

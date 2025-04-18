@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tradof.Data.SpecificationParams;
+using Tradof.EntityFramework.RequestHelpers;
 using Tradof.Project.Services.DTOs;
 using Tradof.Project.Services.Interfaces;
 using Tradof.ResponseHandler.Consts;
@@ -281,35 +282,35 @@ namespace Tradof.Project.Api.Controllers
         }
 
         [HttpGet("unassigned-projects")]
-        public async Task<IActionResult> GetUnassignedProjects(
-        [FromQuery] int pageIndex = 1,
-        [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetUnassignedProjects([FromQuery] UnassignedProjectsSpecParams specParams)
         {
-            try
-            {
-                var result = await _projectService.GetUnassignedProjectsAsync(pageIndex, pageSize);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _projectService.GetUnassignedProjectsByCompanyAsync(specParams);
+            return Ok(result);
         }
 
         [HttpGet("unassigned-projects/company")]
-        public async Task<IActionResult> GetUnassignedProjectsByCompany(
-        [FromQuery] string companyId,
-        [FromQuery] int pageIndex = 1,
-        [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetUnassignedProjectsByCompany([FromQuery] UnassignedProjectsSpecParams specParams)
         {
             try
             {
-                var result = await _projectService.GetUnassignedProjectsByCompanyAsync(companyId, pageIndex, pageSize);
-                return Ok(result);
+                var result = await _projectService.GetUnassignedProjectsByCompanyAsync(specParams);
+
+                var response = APIOperationResponse<Pagination<ProjectDto>>.Success(
+                    result,
+                    "Unassigned projects retrieved successfully."
+                );
+
+                return StatusCode(response.StatusCode, response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                var errorResponse = APIOperationResponse<Pagination<ProjectDto>>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.FailedToRetrieveData,
+                    $"An error occurred while retrieving unassigned projects: {ex.Message}"
+                );
+
+                return StatusCode(errorResponse.StatusCode, errorResponse);
             }
         }
 
