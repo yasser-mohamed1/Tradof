@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tradof.Admin.Services;
 using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
+using Tradof.Admin.Services.DataTransferObject.DashboardDto;
 using Tradof.Admin.Services.Helpers;
 using Tradof.Admin.Services.Interfaces;
+using Tradof.ResponseHandler.Consts;
 using Tradof.ResponseHandler.Models;
 
 namespace Tradof.Admin.Api.Controllers
@@ -49,10 +51,29 @@ namespace Tradof.Admin.Api.Controllers
         }
 
         [HttpGet("GetStatistics")]
-        public async Task<IActionResult> GetStatistics()
+        public async Task<IActionResult> GetStatistics(int? year = null)
         {
-            var statistics = await _adminService.GetStatisticsAsync();
-            return Ok(statistics);
+            try
+            {
+                var statistics = await _adminService.GetStatisticsAsync(year);
+
+                var response = APIOperationResponse<List<MonthlyStatisticsDto>>.Success(
+                    statistics,
+                    "Statistics retrieved successfully."
+                );
+
+                return StatusCode(response.StatusCode, response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<List<MonthlyStatisticsDto>>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.FailedToRetrieveData,
+                    $"An error occurred while retrieving statistics: {ex.Message}"
+                );
+
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         [HttpGet("GetFreelancersAndCompanies")]

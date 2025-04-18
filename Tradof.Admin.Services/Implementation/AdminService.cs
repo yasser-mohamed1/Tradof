@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using Tradof.Admin.Services.DataTransferObject.AuthenticationDto;
 using Tradof.Admin.Services.DataTransferObject.DashboardDto;
 using Tradof.Admin.Services.Extensions;
@@ -32,101 +33,45 @@ namespace Tradof.Admin.Services
             };
         }
 
-        public async Task<StatisticsDto> GetStatisticsAsync()
+        public async Task<List<MonthlyStatisticsDto>> GetStatisticsAsync(int? year = null)
         {
-            var statistics = new StatisticsDto();
-            var today = DateTime.UtcNow;
-            var startOfMonth = new DateTime(today.Year, today.Month, 1);
-            var startOfWeek = today.AddDays(-(int)today.DayOfWeek);
-            var startOfYear = new DateTime(today.Year, 1, 1);
+            var result = new List<MonthlyStatisticsDto>();
 
-            // *** YEARLY DATA ***
-            var freelancersByMonth = await _context.Freelancers
-                .Where(f => f.CreationDate >= startOfMonth)
-                .GroupBy(f => f.CreationDate.Month)
-                .Select(g => new { Month = g.Key, Count = g.Count() })
-                .ToListAsync();
+            if (!year.HasValue)
+                year = DateTime.UtcNow.Year;
 
-            var projectsByMonth = await _context.Projects
-                .Where(p => p.CreationDate >= startOfYear)
-                .GroupBy(p => p.CreationDate.Month)
-                .Select(g => new { Month = g.Key, Count = g.Count() })
-                .ToListAsync();
+            for (int i = 1; i <= 12; i++)
+            {
+                var companiesCount = await _context.Companies
+                    .CountAsync(c => c.CreationDate.Year == year && c.CreationDate.Month == i);
 
-            var companiesByMonth = await _context.Companies
-                .Where(c => c.CreationDate >= startOfMonth)
-                .GroupBy(c => c.CreationDate.Month)
-                .Select(g => new { Month = g.Key, Count = g.Count() })
-                .ToListAsync();
+                var freelancersCount = await _context.Freelancers
+                    .CountAsync(f => f.CreationDate.Year == year && f.CreationDate.Month == i);
 
-            foreach (var item in freelancersByMonth)
-                statistics.FreelancersPerMonth[item.Month - 1] = item.Count;
+                var projectStats = await _context.Projects
+                    .Where(p => p.CreationDate.Year == year && p.CreationDate.Month == i)
+                    .GroupBy(p => 1)
+                    .Select(g => new
+                    {
+                        Count = g.Count(),
+                        TotalCost = g.Sum(p => p.MaxPrice)
+                    })
+                    .FirstOrDefaultAsync();
 
-            foreach (var item in projectsByMonth)
-                statistics.ProjectsPerMonth[item.Month - 1] = item.Count;
+                result.Add(new MonthlyStatisticsDto
+                {
+                    Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i),
+                    Companies = companiesCount,
+                    Freelancer = freelancersCount,
+                    Projects = new ProjectStat
+                    {
+                        Number = projectStats?.Count ?? 0,
+                        Cost = projectStats?.TotalCost ?? 0
+                    }
+                });
+            }
 
-            foreach (var item in companiesByMonth)
-                statistics.CompaniesPerMonth[item.Month - 1] = item.Count;
-
-
-            // *** MONTHLY DATA (DAY-WISE) ***
-            var freelancersByDay = await _context.Freelancers
-                .Where(f => f.CreationDate >= startOfWeek)
-                .GroupBy(u => u.CreationDate.Day)
-                .Select(g => new { Day = g.Key, Count = g.Count() })
-                .ToListAsync();
-
-            var projectsByDay = await _context.Projects
-                .Where(p => p.CreationDate >= startOfMonth)
-                .GroupBy(p => p.CreationDate.Day)
-                .Select(g => new { Day = g.Key, Count = g.Count() })
-                .ToListAsync();
-
-            var companiesByDay = await _context.Projects
-                .Where(p => p.CreationDate >= startOfMonth)
-                .GroupBy(u => u.CreationDate.Day)
-                .Select(g => new { Day = g.Key, Count = g.Count() })
-                .ToListAsync();
-
-            foreach (var item in freelancersByDay)
-                statistics.FreelancersPerDay[item.Day - 1] = item.Count;
-
-            foreach (var item in projectsByDay)
-                statistics.ProjectsPerDay[item.Day - 1] = item.Count;
-
-            foreach (var item in companiesByDay)
-                statistics.CompaniesPerDay[item.Day - 1] = item.Count;
-
-
-            // *** WEEKLY DATA (LAST 7 DAYS) ***
-            var freelancersByWeek = await _context.Freelancers
-                .Where(f => f.CreationDate >= startOfWeek)
-                .GroupBy(f => f.CreationDate.Day)
-                .Select(g => new { Day = g.Key, Count = g.Count() })
-                .ToListAsync();
-
-            var projectsByWeek = await _context.Projects
-                .Where(p => p.CreationDate >= startOfWeek)
-                .GroupBy(p => p.CreationDate.Day)
-                .Select(g => new { Day = g.Key, Count = g.Count() })
-                .ToListAsync();
-
-            var companiesByWeek = await _context.Companies
-                .Where(c => c.CreationDate >= startOfMonth)
-                .GroupBy(c => c.CreationDate.Day)
-                .Select(g => new { Day = g.Key, Count = g.Count() })
-                .ToListAsync();
-
-            foreach (var item in freelancersByWeek)
-                statistics.FreelancersPerWeek[item.Day - startOfWeek.Day] = item.Count;
-
-            foreach (var item in projectsByWeek)
-                statistics.ProjectsPerWeek[item.Day - startOfWeek.Day] = item.Count;
-
-            foreach (var item in companiesByWeek)
-                statistics.CompaniesPerWeek[item.Day - startOfWeek.Day] = item.Count;
-
-            return statistics;
+            return result;
         }
 
         public async Task<List<GetUserDto>> GetFreelancersAndCompaniesAsync()

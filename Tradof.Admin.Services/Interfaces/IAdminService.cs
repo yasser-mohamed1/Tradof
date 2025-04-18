@@ -8,7 +8,7 @@ namespace Tradof.Admin.Services.Interfaces
     public interface IAdminService
     {
         Task<DashboardStatisticsDto> GetDashboardStatisticsAsync();
-        Task<StatisticsDto> GetStatisticsAsync();
+        Task<List<MonthlyStatisticsDto>> GetStatisticsAsync(int? year);
         Task<List<GetUserDto>> GetFreelancersAndCompaniesAsync();
         Task<APIOperationResponse<object>> ToggleBlockStatusAsync(string userId, bool isBlocked, int? blockDurationInMinutes = null);
         Task<List<GetUserDto>> GetAllAdminsAsync();
