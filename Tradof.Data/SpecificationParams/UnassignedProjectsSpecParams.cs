@@ -2,7 +2,7 @@
 {
     public class UnassignedProjectsSpecParams
     {
-        public string CompanyId { get; set; } = null!;
+        public string? CompanyId { get; set; } = null!;
         public int PageIndex { get; set; } = 1;
         public int PageSize { get; set; } = 6;
 

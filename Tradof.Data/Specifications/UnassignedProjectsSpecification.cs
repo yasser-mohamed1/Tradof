@@ -1,11 +1,20 @@
 ﻿using Tradof.Data.Entities;
+using Tradof.Data.SpecificationParams;
 
 namespace Tradof.Data.Specifications
 {
     public class UnassignedProjectsSpecification : BaseSpecification<Project>
     {
-        public UnassignedProjectsSpecification(int? pageIndex = null, int? pageSize = null)
-            : base(p => p.FreelancerId == null)
+        public UnassignedProjectsSpecification(UnassignedProjectsSpecParams specParams)
+    : base(p =>
+        p.FreelancerId == null &&
+        (specParams.SpecializationId == null || p.SpecializationId == specParams.SpecializationId) &&
+        (specParams.LanguageFromId == null || p.LanguageFromId == specParams.LanguageFromId) &&
+        (specParams.LanguageToId == null || p.LanguageToId == specParams.LanguageToId) &&
+        (specParams.DeliveryTimeInDays == null || p.Days <= specParams.DeliveryTimeInDays) &&
+        (specParams.Budget == null || p.MaxPrice <= specParams.Budget) &&
+        (specParams.CompanyId == null || p.Company.UserId == specParams.CompanyId)
+    )
         {
             AddInclude(p => p.Files);
             AddInclude(p => p.Proposals);
@@ -18,10 +27,7 @@ namespace Tradof.Data.Specifications
             AddInclude(p => p.Freelancer.User);
             AddInclude(p => p.Ratings);
 
-            if (pageIndex.HasValue && pageSize.HasValue)
-            {
-                ApplyPagination((pageIndex.Value - 1) * pageSize.Value, pageSize.Value);
-            }
+            ApplyPagination((specParams.PageIndex - 1) * specParams.PageSize, specParams.PageSize);
         }
     }
 }

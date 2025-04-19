@@ -411,14 +411,15 @@ namespace Tradof.Project.Services.Implementation
             return new Pagination<StartedProjectDto>(pageIndex, pageSize, totalCount, dtos);
         }
 
-        public async Task<Pagination<ProjectDto>> GetUnassignedProjectsAsync(int pageIndex, int pageSize)
+        public async Task<Pagination<ProjectDto>> GetUnassignedProjectsAsync(UnassignedProjectsSpecParams specParams)
         {
-            var spec = new UnassignedProjectsSpecification(pageIndex, pageSize);
+            var spec = new UnassignedProjectsSpecification(specParams);
             var projects = await _unitOfWork.Repository<ProjectEntity>().ListAsync(spec);
-            var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(new UnassignedProjectsSpecification());
+
+            var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(spec);
 
             var dtos = projects.Select(p => p.ToDto()).ToList();
-            return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
+            return new Pagination<ProjectDto>(specParams.PageIndex, specParams.PageSize, totalCount, dtos);
         }
 
         public async Task<Pagination<ProjectDto>> GetUnassignedProjectsByCompanyAsync(UnassignedProjectsSpecParams specParams)

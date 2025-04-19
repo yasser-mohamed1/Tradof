@@ -284,8 +284,21 @@ namespace Tradof.Project.Api.Controllers
         [HttpGet("unassigned-projects")]
         public async Task<IActionResult> GetUnassignedProjects([FromQuery] UnassignedProjectsSpecParams specParams)
         {
-            var result = await _projectService.GetUnassignedProjectsByCompanyAsync(specParams);
-            return Ok(result);
+            try
+            {
+                var result = await _projectService.GetUnassignedProjectsAsync(specParams);
+                var response = APIOperationResponse<Pagination<ProjectDto>>.Success(result, "Unassigned projects retrieved successfully.");
+                return StatusCode(response.StatusCode, response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<Pagination<ProjectDto>>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.FailedToRetrieveData,
+                    $"Failed to retrieve unassigned projects: {ex.Message}"
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         [HttpGet("unassigned-projects/company")]
