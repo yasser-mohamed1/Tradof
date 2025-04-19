@@ -34,6 +34,7 @@ namespace Tradof.Proposal.Services.Implementation
             proposal.ProposalStatus = ProposalStatus.Accepted;
             project.FreelancerId = proposal.FreelancerId;
             project.StartDate = DateTime.UtcNow;
+            project.Status = ProjectStatus.Active;
             return await _unitOfWork.CommitAsync();
         }
 
