@@ -328,7 +328,7 @@ namespace Tradof.Project.Api.Controllers
         }
 
         [HttpPost("upload-files/{projectId}")]
-        public async Task<IActionResult> UploadFiles(int projectId, [FromForm] List<IFormFile> files)
+        public async Task<IActionResult> UploadFiles(int projectId, [FromForm] List<IFormFile> files, bool isFreelancerUpload)
         {
             try
             {
@@ -342,7 +342,7 @@ namespace Tradof.Project.Api.Controllers
                     return StatusCode(emptyResponse.StatusCode, emptyResponse);
                 }
 
-                List<FileDto> uploadedFiles = await _projectService.UploadFilesToProjectAsync(projectId, files);
+                List<FileDto> uploadedFiles = await _projectService.UploadFilesToProjectAsync(projectId, files, isFreelancerUpload);
 
                 var response = APIOperationResponse<List<FileDto>>.Success(uploadedFiles, "Files uploaded successfully.");
                 return StatusCode(response.StatusCode, response);

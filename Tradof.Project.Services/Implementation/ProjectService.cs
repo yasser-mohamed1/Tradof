@@ -446,7 +446,7 @@ namespace Tradof.Project.Services.Implementation
             );
         }
 
-        public async Task<List<FileDto>> UploadFilesToProjectAsync(int projectId, List<IFormFile> files)
+        public async Task<List<FileDto>> UploadFilesToProjectAsync(int projectId, List<IFormFile> files, bool isFreelancerUpload)
         {
             if (files == null || !files.Any())
                 throw new ArgumentException("No files provided.");
@@ -480,7 +480,8 @@ namespace Tradof.Project.Services.Implementation
                         ModificationDate = DateTime.UtcNow,
                         CreatedBy = "project.Company.UserId",
                         ModifiedBy = "project.Company.UserId",
-                        PublicId = publicId
+                        PublicId = publicId,
+                        IsFreelancerUpload = isFreelancerUpload
                     };
 
                     await _unitOfWork.Repository<File>().AddAsync(fileEntity);
@@ -494,6 +495,7 @@ namespace Tradof.Project.Services.Implementation
                         FileSize = file.Length,
                         FileType = (FileType)fileType,
                         ProjectId = project.Id,
+                        IsFreelancerUpload = fileEntity.IsFreelancerUpload
                     });
                 }
             }

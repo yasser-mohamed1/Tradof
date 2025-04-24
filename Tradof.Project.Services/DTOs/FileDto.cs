@@ -10,5 +10,6 @@ namespace Tradof.Project.Services.DTOs
         public FileType FileType { get; set; }
         public long FileSize { get; set; }
         public long ProjectId { get; set; }
+        public bool IsFreelancerUpload { get; set; }
     }
 }
