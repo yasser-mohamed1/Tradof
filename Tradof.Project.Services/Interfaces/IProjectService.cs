@@ -24,7 +24,7 @@ namespace Tradof.Project.Services.Interfaces
         Task<Pagination<StartedProjectDto>> GetProjectsByFreelancerIdAsync(string freelancerId, int pageIndex, int pageSize);
         Task<Pagination<ProjectDto>> GetUnassignedProjectsAsync(UnassignedProjectsSpecParams specParams);
         Task<Pagination<ProjectDto>> GetUnassignedProjectsByCompanyAsync(UnassignedProjectsSpecParams specParams);
-        Task<List<FileDto>> UploadFilesToProjectAsync(int projectId, List<IFormFile> files);
+        Task<List<FileDto>> UploadFilesToProjectAsync(int projectId, List<IFormFile> files, isFreelancerFile);
         Task DeleteFileAsync(int fileId);
     }
 }

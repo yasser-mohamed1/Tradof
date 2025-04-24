@@ -38,7 +38,8 @@ namespace Tradof.Data.Entities
         public Company Company { get; set; }
 
         public ICollection<File> Files { get; set; } = [];
-        public ICollection<File> FreelancerUploads { get; set; } = [];
+        [NotMapped]
+        public IEnumerable<File> FreelancerUploads => Files?.Where(f => f.IsFreelancerUpload == true);
         public ICollection<Rating> Ratings { get; set; } = [];
         public ICollection<Proposal> Proposals { get; set; } = [];
     }

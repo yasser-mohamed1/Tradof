@@ -17,7 +17,6 @@ namespace Tradof.Data.Specifications
             AddInclude(p => p.Freelancer);
             AddInclude(p => p.Freelancer.User);
             AddInclude(p => p.Ratings);
-            AddInclude(p => p.FreelancerUploads);
 
             if (pageIndex.HasValue && pageSize.HasValue)
             {

@@ -85,6 +85,10 @@ namespace Tradof.EntityFramework.DataBase_Context
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CompanyEmployeeConfiguration).Assembly);
             #endregion
 
+            #region File
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(FileConfiguration).Assembly);
+            #endregion
+
             base.OnModelCreating(modelBuilder);
         }
 

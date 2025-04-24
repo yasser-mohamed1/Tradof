@@ -11,12 +11,10 @@ namespace Tradof.Data.Entities
         public FileType FileType { get; set; }
         public long FileSize { get; set; }
         public long ProjectId { get; set; }
-        public long? FreelancerUploadProjectId { get; set; }
         public string PublicId { get; set; }
+        public bool IsFreelancerUpload { get; set; }
 
         [ForeignKey("ProjectId")]
         public Project Project { get; set; }
-        [ForeignKey("FreelancerUploadProjectId")]
-        public Project FreelancerUploadProject { get; set; }
     }
 }
