@@ -364,5 +364,27 @@ namespace Tradof.Auth.Services.Implementation
 
             return (token, refreshToken, user.Id, role);
         }
+
+        public async Task IncreaseProfileViewAsync(string profileUserId)
+        {
+            var profileUser = await _context.Users.FindAsync(profileUserId);
+            if (profileUser == null)
+                return;
+
+            var currentUser = await GetCurrentUserAsync();
+
+            if (currentUser == (null, null) || currentUser.Id == profileUser.Id)
+                return;
+
+            var session = _httpContextAccessor.HttpContext.Session;
+            string sessionKey = $"ViewedProfile_{profileUserId}";
+
+            if (session.GetString(sessionKey) == null)
+            {
+                profileUser.ProfileViews += 1;
+                await _context.SaveChangesAsync();
+                session.SetString(sessionKey, "true");
+            }
+        }
     }
 }

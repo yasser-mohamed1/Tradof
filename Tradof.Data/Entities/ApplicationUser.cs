@@ -13,6 +13,7 @@ namespace Tradof.Data.Entities
         public string EmailConfirmationToken { get; set; }
         public string RefreshToken { get; set; }
         public DateTime RefreshTokenExpiry { get; set; }
+        public int ProfileViews { get; set; }
 
         public ICollection<NotificationReceiver> NotificationReceivers { get; set; } = [];
         public ICollection<Feedback> Feedbacks { get; set; } = [];

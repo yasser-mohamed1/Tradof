@@ -22,6 +22,10 @@ builder.Services.AddControllers();
 
 builder.Services.AddGrpc();
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession();
+
 builder.Services.ConfigureCors();
 
 DotNetEnv.Env.Load();

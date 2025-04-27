@@ -21,6 +21,7 @@ namespace Tradof.CompanyModule.Services.Extensions
                 0,
                 company.User.ProfileImageUrl,
                 company.CountryId,
+                company.User.ProfileViews,
                 company.Specializations.Select(s => new SpecializationDto(s.Id, s.Name)).ToList(),
                 company.PreferredLanguages.Select(l => new LanguageDto(l.Id, l.LanguageName, l.LanguageCode, l.CountryName, l.CountryCode)).ToList(),
                 company.Medias.Select(m => new SocialMediaDto(m.Id, m.PlatformType.ToString(), m.Link)).ToList()

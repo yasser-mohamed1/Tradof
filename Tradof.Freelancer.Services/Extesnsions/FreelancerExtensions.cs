@@ -55,6 +55,7 @@ namespace Tradof.FreelancerModule.Services.Extensions
                 freelancer.User.PhoneNumber,
                 ratingData.RatingSum,
                 ratingData.ReviewCount,
+                freelancer.User.ProfileViews,
                 langauges,
                 socialMedias,
                 specializations

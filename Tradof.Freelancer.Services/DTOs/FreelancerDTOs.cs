@@ -15,6 +15,7 @@ namespace Tradof.FreelancerModule.Services.DTOs
         string Phone,
         double RatingSum,
         int ReviewCount,
+        int ProfileViews,
         IEnumerable<FreelancerLanguagePairDTO> FreelancerLanguagePairs,
         IEnumerable<FreelancerSocialMediaDTO> FreelancerSocialMedias,
         IEnumerable<SpecializationDto> FreelancerSpecializations

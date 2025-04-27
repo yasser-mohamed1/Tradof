@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Tradof.Auth.Services\Tradof.Auth.Services.csproj" />
+    <ProjectReference Include="..\Tradof.ResponseHandler\Tradof.ResponseHandler.csproj" />
   </ItemGroup>
 
 </Project>

@@ -7,12 +7,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Tradof.Auth.Services.DTOs;
 using Tradof.Auth.Services.Interfaces;
+using Tradof.ResponseHandler.Consts;
+using Tradof.ResponseHandler.Models;
 
 namespace Tradof.Auth.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController(IAuthService _authService) : ControllerBase
+    public class AuthController(IAuthService _authService) : ApiControllerBase
     {
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -307,6 +309,26 @@ namespace Tradof.Auth.Api.Controllers
         </html>";
 
                 return Content(html, "text/html");
+            }
+        }
+
+        [HttpPost("/api/user/increase-profile-view/{profileUserId}")]
+        public async Task<IActionResult> IncreaseProfileView(string profileUserId)
+        {
+            try
+            {
+                await _authService.IncreaseProfileViewAsync(profileUserId);
+                var response = APIOperationResponse<string>.Success(null, "Profile view count updated successfully.");
+                return StatusCode(response.StatusCode, response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<string>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.FailedToSaveData,
+                    $"Failed to update profile view count: {ex.Message}"
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
             }
         }
     }

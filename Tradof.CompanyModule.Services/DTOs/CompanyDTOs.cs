@@ -15,6 +15,7 @@ namespace Tradof.CompanyModule.Services.DTOs
         int ReviewCount,
         string ProfileImageUrl,
         long CountryId,
+        int ProfileViews,
         List<SpecializationDto> Specializations,
         List<LanguageDto> PreferredLanguages,
         List<SocialMediaDto> SocialMedia

@@ -18,5 +18,6 @@ namespace Tradof.Auth.Services.Interfaces
         Task ResendOtpAsync(string email);
         Task<UserDto?> GetUserById(string id);
         Task<(string Token, string RefreshToken, string UserId, string Role)> AuthenticateWithGoogle(HttpContext httpContext);
+        Task IncreaseProfileViewAsync(string profileUserId);
     }
 }
