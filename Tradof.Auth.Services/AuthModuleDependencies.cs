@@ -17,7 +17,6 @@ namespace Tradof.Auth.Services
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IFreelancerLanguagesPairRepository, FreelancerLanguagesPairRepository>();
             services.AddMemoryCache();
-
             return services;
         }
     }
