@@ -13,7 +13,8 @@ namespace Tradof.Project.Services.Extensions
                 FilePath = file.FilePath,
                 FileSize = file.FileSize,
                 FileType = file.FileType,
-                ProjectId = file.ProjectId
+                ProjectId = file.ProjectId,
+                IsFreelancerUpload = file.IsFreelancerUpload
             };
         }
     }
