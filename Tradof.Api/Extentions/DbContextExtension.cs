@@ -1,5 +1,4 @@
-﻿using DotNetEnv;
-using Hangfire;
+﻿using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Tradof.EntityFramework.DataBase_Context;
 
@@ -9,7 +8,7 @@ namespace Tradof.Api.Extentions
     {
         public static void ConfigureDbContext(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = Env.GetString("DefaultConnection") ?? throw new EnvVariableNotFoundException("Connection string not found.", "DefaultConnection");
+            var connectionString = configuration.GetConnectionString("DefaultConnection"); //Env.GetString("DefaultConnection") ?? throw new EnvVariableNotFoundException("Connection string not found.", "DefaultConnection");
 
             services.AddDbContext<TradofDbContext>(options =>
                 options.UseSqlServer(connectionString,
