@@ -35,6 +35,7 @@ namespace Tradof.Proposal.Services.Implementation
             project.FreelancerId = proposal.FreelancerId;
             project.StartDate = DateTime.UtcNow;
             project.Status = ProjectStatus.Active;
+            project.Price = proposal.OfferPrice;
             return await _unitOfWork.CommitAsync();
         }
 
@@ -197,11 +198,11 @@ namespace Tradof.Proposal.Services.Implementation
                 fromDate = DateTime.Now.AddMonths(-12);
             }
 
-            if(!year.HasValue && !month.HasValue)
+            if (!year.HasValue && !month.HasValue)
             {
                 query = query.Where(p => p.TimePosted >= fromDate && p.TimePosted <= toDate);
             }
-            if(year.HasValue)
+            if (year.HasValue)
             {
                 query = query.Where(p => p.TimePosted.Year == year.Value);
             }

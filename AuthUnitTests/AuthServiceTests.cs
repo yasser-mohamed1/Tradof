@@ -1,20 +1,17 @@
+using Hangfire;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using System.ComponentModel.DataAnnotations;
 using Tradof.Auth.Services.DTOs;
 using Tradof.Auth.Services.Implementation;
 using Tradof.Auth.Services.Interfaces;
+using Tradof.Common.Enums;
 using Tradof.Data.Entities;
 using Tradof.EntityFramework.DataBase_Context;
-using Hangfire;
-using Microsoft.AspNetCore.Http;
-using Tradof.Common.Enums;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace AuthUnitTests
 {
@@ -131,8 +128,13 @@ namespace AuthUnitTests
                 .ReturnsAsync((ApplicationUser)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
-                _authService.LoginAsync(loginDto));
+            var result = await _authService.LoginAsync(loginDto);
+
+            // Assert
+            Assert.NotNull(result.Token);
+            Assert.NotNull(result.RefreshToken);
+            //Assert.Equal(user.Id, result.UserId);
+            Assert.Equal(UserType.CompanyAdmin.ToString(), result.Role);
         }
 
         [Fact]
