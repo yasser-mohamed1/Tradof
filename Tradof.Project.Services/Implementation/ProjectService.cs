@@ -307,8 +307,6 @@ namespace Tradof.Project.Services.Implementation
             }
         }
 
-
-
         public async Task<bool> SendReviewRequest(long projectId, string freelancerId)
         {
             var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(c => c.UserId == freelancerId)
