@@ -36,6 +36,7 @@ namespace Tradof.Proposal.Services.Implementation
             project.StartDate = DateTime.UtcNow;
             project.Status = ProjectStatus.Active;
             project.Price = proposal.OfferPrice;
+            project.Days = proposal.Days;
             return await _unitOfWork.CommitAsync();
         }
 
