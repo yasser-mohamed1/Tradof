@@ -13,6 +13,7 @@
         public double? Price { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public DateTime DeliveryDate { get; set; }
         public ProjectStatusDto Status { get; set; }
         public SpecializationDto? Specialization { get; set; }
         public int NumberOfOffers { get; set; }
