@@ -11,6 +11,8 @@ namespace Tradof.Data.Entities
         public DateTime PublishDate { get; set; } = DateTime.UtcNow;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public DateTime DeliveryDate { get; set; }
+
         public ProjectStatus Status { get; set; }
         public int Days { get; set; }
         public double MinPrice { get; set; }
