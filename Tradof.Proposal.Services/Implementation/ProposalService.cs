@@ -265,7 +265,7 @@ namespace Tradof.Proposal.Services.Implementation
         }
 
 
-        public async Task<ProposalEditRequestDto> CreateProposalEditAsync(ProposalEditRequestDto dto)
+        public async Task<ProposalEditRequestDto> CreateProposalEditAsync(CreateProposalEditRequestDto dto)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
             var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id);
@@ -359,6 +359,25 @@ namespace Tradof.Proposal.Services.Implementation
             await _unitOfWork.Repository<ProposalEditRequest>().DeleteAsync(Id);
 
             return await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<ProposalEditRequestDto> GetProposalEditRequestAsync(long Id)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("company user not found");
+            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == Id) ?? throw new Exception("project not found");
+
+            if (project.CompanyId != company.Id)
+                throw new Exception("not autorized to get this");
+
+            var proposalEdit = await _unitOfWork.Repository<ProposalEditRequest>().FindFirstAsync(f => f.ProjectId == project.Id) ?? throw new Exception("proposal Edit request not found");
+
+            return new ProposalEditRequestDto
+            {
+                Id = proposalEdit.Id,
+                NewDuration = proposalEdit.NewDuration,
+                NewPrice = proposalEdit.NewPrice
+            };
         }
 
         private async Task<string> UploadToCloudinaryAsync(IFormFile file)

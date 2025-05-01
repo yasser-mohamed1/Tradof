@@ -219,5 +219,107 @@ namespace Tradof.Proposal.Api.Controllers
             var result = await _proposalService.GetFreelancerProposalsAsync(specParams);
             return Ok(result);
         }
+
+
+
+        [HttpPost("send-edit-request")]
+        public async Task<IActionResult> CreateProposalEditRequest(CreateProposalEditRequestDto projectDto)
+        {
+            try
+            {
+                var result = await _proposalService.CreateProposalEditAsync(projectDto);
+
+                if (result != null)
+                {
+                    var response = APIOperationResponse<ProposalEditRequestDto>.Success(result, "Proposal edit request created successfully.");
+                    return StatusCode(response.StatusCode, response);
+                }
+                else
+                {
+                    var errorResponse = APIOperationResponse<CreateProposalDto>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.FailedToSaveData,
+                        "Failed to create request."
+                    );
+                    return StatusCode(errorResponse.StatusCode, errorResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<CreateProposalDto>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.FailedToSaveData,
+                    $"An error occurred while creating the proposal edit request: {ex.Message}"
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+        }
+        [HttpPost("accept-edit-request")]
+        public async Task<IActionResult> AcceptProposalEditRequest(long proposalEditRequestId)
+        {
+            try
+            {
+                var result = await _proposalService.AcceptProposalEditAsync(proposalEditRequestId);
+
+                if (!result)
+                {
+                    var failedResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.OperationFailed,
+                        "Proposal edit request could not be accepted."
+                    );
+                    return StatusCode(failedResponse.StatusCode, failedResponse);
+                }
+
+                var successResponse = APIOperationResponse<bool>.Success(true, "Proposal edit request accepted successfully.");
+                return StatusCode(successResponse.StatusCode, successResponse);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.ServerError,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+        }
+
+        [HttpPost("deny-edit-request")]
+        public async Task<IActionResult> DenyProposalEditRequest(long proposalEditRequestId)
+        {
+            try
+            {
+                var result = await _proposalService.AcceptProposalEditAsync(proposalEditRequestId);
+
+                if (!result)
+                {
+                    var failedResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.OperationFailed,
+                        "Proposal edit request denial failed."
+                    );
+                    return StatusCode(failedResponse.StatusCode, failedResponse);
+                }
+
+                var successResponse = APIOperationResponse<bool>.Success(true, "Proposal edit request denied successfully.");
+                return StatusCode(successResponse.StatusCode, successResponse);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.ServerError,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+        }
+
+        [HttpGet("edit-request")]
+        public async Task<IActionResult> GetProposalEditRequest([FromQuery] long projectId)
+        {
+            return Ok(await _proposalService.GetProposalEditRequestAsync(projectId));
+        }
     }
 }
