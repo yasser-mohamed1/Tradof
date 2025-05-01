@@ -38,6 +38,7 @@ namespace Tradof.Proposal.Services.Implementation
             project.Price = proposal.OfferPrice;
             project.Days = proposal.Days;
             project.EndDate = DateTime.UtcNow.AddDays(proposal.Days);
+            project.AcceptedProposalId = proposalId;
             return await _unitOfWork.CommitAsync();
         }
 
@@ -258,6 +259,99 @@ namespace Tradof.Proposal.Services.Implementation
             var dtos = items.Select(p => p.ToDto()).ToList();
             var pagination = new Pagination<ProposalDto>(specParams.PageIndex, specParams.PageSize, count, dtos);
             return pagination;
+        }
+
+
+        public async Task<ProposalEditRequestDto> CreateProposalEditAsync(ProposalEditRequestDto dto)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id);
+            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.Id == dto.ProposalId);
+            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposal.ProjectId);
+
+            if (project.FreelancerId != freelancer.Id)
+                throw new Exception("not authorized to send requist");
+
+            if (project.Status != ProjectStatus.Active)
+                throw new Exception("project cant recieve the edit requist");
+
+            var proposalEdit = new ProposalEditRequest
+            {
+                FreelancerId = freelancer.Id,
+                ProjectId = project.Id,
+                CreatedBy = "system",
+                ModifiedBy = "system",
+                CreationDate = DateTime.UtcNow,
+                ModificationDate = DateTime.UtcNow
+            };
+            if (dto.NewDuration != null)
+                proposalEdit.NewDuration = (int)dto.NewDuration;
+            if (dto.NewPrice != null)
+                proposalEdit.NewPrice = (double)dto.NewPrice;
+
+            await _unitOfWork.Repository<ProposalEditRequest>().AddAsync(proposalEdit);
+
+            if (await _unitOfWork.CommitAsync())
+            {
+                return new ProposalEditRequestDto
+                {
+                    NewDuration = dto.NewDuration,
+                    NewPrice = dto.NewPrice
+                };
+            }
+
+            throw new Exception("Failed to send the requist");
+        }
+
+        public async Task<bool> AcceptProposalEditAsync(long Id)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("Current user not found");
+            var proposalEdit = await _unitOfWork.Repository<ProposalEditRequest>().FindFirstAsync(p => p.Id == Id) ?? throw new Exception("Company not found");
+            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("project not found");
+            var freelancer = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("freelancer not found");
+            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.Id == project.AcceptedProposalId) ?? throw new Exception("proposal not found");
+
+            if (project.FreelancerId != freelancer.Id && project.CompanyId != company.Id)
+                throw new Exception("not authorized to accept this");
+
+            if (project.FreelancerId != freelancer.Id)
+                throw new Exception("failed : freelancer id not equal project freelancer id");
+
+
+            if (proposalEdit.NewDuration != null)
+            {
+                project.Days = proposalEdit.NewDuration;
+                proposal.Days = proposalEdit.NewDuration;
+            }
+            if (proposalEdit.NewPrice != null)
+            {
+                project.Price = proposalEdit.NewDuration;
+                proposal.OfferPrice = proposalEdit.NewDuration;
+            }
+
+            return await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<bool> DenyProposalEditAsync(long Id)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("Current user not found");
+            var proposalEdit = await _unitOfWork.Repository<ProposalEditRequest>().FindFirstAsync(p => p.Id == Id) ?? throw new Exception("Company not found");
+            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("project not found");
+            var freelancer = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("freelancer not found");
+            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.Id == project.AcceptedProposalId) ?? throw new Exception("proposal not found");
+
+            if (project.FreelancerId != freelancer.Id && project.CompanyId != company.Id)
+                throw new Exception("not authorized to deny this");
+
+            if (project.FreelancerId != freelancer.Id)
+                throw new Exception("failed : freelancer id not equal project freelancer id");
+
+
+            await _unitOfWork.Repository<ProposalEditRequest>().DeleteAsync(Id);
+
+            return await _unitOfWork.CommitAsync();
         }
 
         private async Task<string> UploadToCloudinaryAsync(IFormFile file)

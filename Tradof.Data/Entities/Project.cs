@@ -21,6 +21,7 @@ namespace Tradof.Data.Entities
         public long? FreelancerId { get; set; }
         public long CompanyId { get; set; }
         public long? SpecializationId { get; set; }
+        public long? AcceptedProposalId { get; set; }
         public long LanguageFromId { get; set; }
         public long LanguageToId { get; set; }
 
@@ -38,6 +39,8 @@ namespace Tradof.Data.Entities
 
         [ForeignKey("CompanyId")]
         public Company Company { get; set; }
+        [ForeignKey("AcceptedProposalId")]
+        public Proposal AcceptedProposal { get; set; }
 
         public ICollection<File> Files { get; set; } = [];
         [NotMapped]
