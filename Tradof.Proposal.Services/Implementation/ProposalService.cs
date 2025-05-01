@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +18,9 @@ using Tradof.Proposal.Services.Interfaces;
 
 namespace Tradof.Proposal.Services.Implementation
 {
-    public class ProposalService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers) : IProposalService
+
+
+    public class ProposalService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers, IEmailService _emailService, IBackgroundJobClient _backgroundJob) : IProposalService
     {
         Cloudinary _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
 
@@ -268,6 +271,8 @@ namespace Tradof.Proposal.Services.Implementation
             var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id);
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.Id == dto.ProposalId);
             var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposal.ProjectId);
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.Id == project.CompanyId) ?? throw new Exception("company user not found");
+            var companyUser = await _unitOfWork.Repository<ApplicationUser>().FindFirstAsync(f => f.Id == company.UserId) ?? throw new Exception("company user not found");
 
             if (project.FreelancerId != freelancer.Id)
                 throw new Exception("not authorized to send requist");
@@ -293,6 +298,8 @@ namespace Tradof.Proposal.Services.Implementation
 
             if (await _unitOfWork.CommitAsync())
             {
+                string freelancerName = $"{currentUser.FirstName} {currentUser.LastName}";
+                _backgroundJob.Enqueue(() => SendProposalEditEmailAsync(companyUser.Email!, freelancerName, project.Name));
                 return new ProposalEditRequestDto
                 {
                     NewDuration = dto.NewDuration,
@@ -306,8 +313,8 @@ namespace Tradof.Proposal.Services.Implementation
         public async Task<bool> AcceptProposalEditAsync(long Id)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
-            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("Current user not found");
-            var proposalEdit = await _unitOfWork.Repository<ProposalEditRequest>().FindFirstAsync(p => p.Id == Id) ?? throw new Exception("Company not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("company user not found");
+            var proposalEdit = await _unitOfWork.Repository<ProposalEditRequest>().FindFirstAsync(p => p.Id == Id) ?? throw new Exception("proposalEdit requist not found");
             var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("project not found");
             var freelancer = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("freelancer not found");
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.Id == project.AcceptedProposalId) ?? throw new Exception("proposal not found");
@@ -370,5 +377,13 @@ namespace Tradof.Proposal.Services.Implementation
                 return uploadResult.SecureUrl.AbsoluteUri;
             }
         }
+
+
+        private async Task SendProposalEditEmailAsync(string toEmail, string freelancerName, string projectName)
+        {
+            string emailBody = $"{freelancerName} requested to edit the proposal on {projectName} project";
+            await _emailService.SendEmailAsync(toEmail, "Proposal's Edit Request", emailBody);
+        }
+
     }
 }
