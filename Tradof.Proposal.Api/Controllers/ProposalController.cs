@@ -181,7 +181,7 @@ namespace Tradof.Proposal.Api.Controllers
             }
         }
 
-        [HttpPost("cancel")]
+        [HttpPut("cancel")]
         public async Task<IActionResult> Cancel(long ProposalId)
         {
             try
