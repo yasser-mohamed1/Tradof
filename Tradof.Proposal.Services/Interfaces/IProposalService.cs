@@ -1,5 +1,4 @@
 ﻿using Tradof.Common.Enums;
-using Tradof.Data.Entities;
 using Tradof.Data.SpecificationParams;
 using Tradof.EntityFramework.RequestHelpers;
 using Tradof.Proposal.Services.DTOs;
@@ -21,7 +20,7 @@ namespace Tradof.Proposal.Services.Interfaces
         Task<bool> AcceptProposalEditAsync(long Id);
         Task<bool> DenyProposalEditAsync(long Id);
         Task<ProposalEditRequestDto> CreateProposalEditAsync(CreateProposalEditRequestDto dto);
-        Task<ProposalEditRequest> GetProposalEditRequestAsync(long Id);
+        Task<ProposalEditRequestDto> GetProposalEditRequestAsync(long Id);
 
     }
 }
