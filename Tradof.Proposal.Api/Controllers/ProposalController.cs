@@ -254,7 +254,7 @@ namespace Tradof.Proposal.Api.Controllers
                 return StatusCode(errorResponse.StatusCode, errorResponse);
             }
         }
-        [HttpPost("accept-edit-request")]
+        [HttpPut("accept-edit-request")]
         public async Task<IActionResult> AcceptProposalEditRequest(long proposalEditRequestId)
         {
             try
@@ -285,7 +285,7 @@ namespace Tradof.Proposal.Api.Controllers
             }
         }
 
-        [HttpPost("deny-edit-request")]
+        [HttpPut("deny-edit-request")]
         public async Task<IActionResult> DenyProposalEditRequest(long proposalEditRequestId)
         {
             try
