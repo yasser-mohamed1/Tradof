@@ -1,6 +1,8 @@
+using Hangfire;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using System.ComponentModel.DataAnnotations;
 using Tradof.Auth.Services.DTOs;
@@ -8,21 +10,13 @@ using Tradof.Auth.Services.Implementation;
 using Tradof.Auth.Services.Interfaces;
 using Tradof.Data.Entities;
 using Tradof.EntityFramework.DataBase_Context;
-using Hangfire;
-using Microsoft.AspNetCore.Http;
-using Tradof.Common.Enums;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Tradof.EntityFramework.Helpers;
 
 namespace AuthUnitTests
 {
     public class AuthServiceAdditionalTests
     {
         private readonly Mock<IConfiguration> _mockConfiguration;
-        private readonly Mock<IEmailService> _mockEmailService;
+        private readonly Mock<Tradof.Auth.Services.Interfaces.IEmailService> _mockEmailService;
         private readonly Mock<IUserRepository> _mockUserRepository;
         private readonly Mock<IRoleRepository> _mockRoleRepository;
         private readonly Mock<UserManager<ApplicationUser>> _mockUserManager;
@@ -39,7 +33,7 @@ namespace AuthUnitTests
         public AuthServiceAdditionalTests()
         {
             _mockConfiguration = new Mock<IConfiguration>();
-            _mockEmailService = new Mock<IEmailService>();
+            _mockEmailService = new Mock<Tradof.Auth.Services.Interfaces.IEmailService>();
             _mockUserRepository = new Mock<IUserRepository>();
             _mockRoleRepository = new Mock<IRoleRepository>();
             _mockUserManager = MockUserManager();
@@ -296,4 +290,4 @@ namespace AuthUnitTests
             return mgr;
         }
     }
-} 
+}
