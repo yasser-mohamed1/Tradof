@@ -17,5 +17,8 @@ namespace Tradof.Proposal.Services.Interfaces
         Task<bool> CancelProposal(long proposalId);
         Task<List<ProposalGroupResult>> GetProposalsCountAsync(int? year, int? month, ProposalStatus? status);
         Task<Pagination<ProposalDto>> GetFreelancerProposalsAsync(FreelancerProposalsSpecParams specParams);
+        Task<bool> AcceptProposalEditAsync(long Id);
+        Task<bool> DenyProposalEditAsync(long Id);
+        Task<ProposalEditRequestDto> CreateProposalEditAsync(ProposalEditRequestDto dto);
     }
 }
