@@ -5,6 +5,7 @@ using Tradof.Api.Services;
 using Tradof.Auth.Services;
 using Tradof.CompanyModule.Services;
 using Tradof.CountryModule.Services;
+using Tradof.EntityFramework;
 using Tradof.FreelancerModule.Services;
 using Tradof.Language.Services;
 using Tradof.PackageNamespace.Services;
@@ -58,6 +59,7 @@ builder.Services.AddHttpClient<PaymobClient>((provider, client) =>
 
 // Register other services
 builder.Services.AddInfrastructureServices()
+                .AddEmailServices()
                 .AddAdminServices()
                 .AddPackageServices()
                 .AddAuthServices()
