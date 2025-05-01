@@ -285,7 +285,7 @@ namespace Tradof.Proposal.Api.Controllers
             }
         }
 
-        [HttpPut("deny-edit-request")]
+        [HttpDelete("deny-edit-request")]
         public async Task<IActionResult> DenyProposalEditRequest(long proposalEditRequestId)
         {
             try
