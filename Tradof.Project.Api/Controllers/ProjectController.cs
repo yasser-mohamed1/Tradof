@@ -371,5 +371,25 @@ namespace Tradof.Project.Api.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpPost("create-rating")]
+        public async Task<IActionResult> CreateRating([FromBody] CreateRatingDto dto)
+        {
+            try
+            {
+                var rating = await _projectService.CreateRatingAsync(dto);
+                var response = APIOperationResponse<RatingDto>.Success(rating, "Rating submitted successfully.");
+                return StatusCode(response.StatusCode, response);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<RatingDto>.Fail(
+                    ResponseType.BadRequest,
+                    CommonErrorCodes.FailedToSaveData,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+        }
     }
 }

@@ -532,5 +532,66 @@ namespace Tradof.Project.Services.Implementation
             if (result.Result != "ok")
                 throw new Exception("Failed to delete file from Cloudinary.");
         }
+
+        public async Task<RatingDto> CreateRatingAsync(CreateRatingDto dto)
+        {
+            var spec = new ProjectWithParticipantsSpecification(dto.ProjectId);
+
+            var project = await _unitOfWork.Repository<ProjectEntity>()
+                .GetEntityWithSpecification(spec)
+                ?? throw new Exception("Project not found.");
+
+            var ratedTo = await _unitOfWork.Repository<ApplicationUser>()
+                .FindFirstAsync(u => u.Id == dto.RatedToId)
+                ?? throw new Exception("Rated user not found.");
+
+            var ratedBy = await _unitOfWork.Repository<ApplicationUser>()
+                .FindFirstAsync(u => u.Id == dto.RatedById)
+                ?? throw new Exception("Rater user not found.");
+
+            if(dto.RatingValue < 1 || dto.RatingValue > 5)
+                throw new Exception("Rating value must be between 1 and 5.");
+
+            var freelancerUserId = project.Freelancer?.UserId;
+            var companyUserId = project.Company?.UserId;
+
+            var isRatedByInProject = dto.RatedById == freelancerUserId || dto.RatedById == companyUserId;
+            var isRatedToInProject = dto.RatedToId == freelancerUserId || dto.RatedToId == companyUserId;
+
+            if (!isRatedByInProject || !isRatedToInProject)
+                throw new Exception("One or both users are not participants in the specified project.");
+
+            var existingRating = await _unitOfWork.Repository<Rating>()
+                .FindFirstAsync(r =>
+                    r.ProjectId == dto.ProjectId &&
+                    r.RatedById == dto.RatedById &&
+                    r.RatedToId == dto.RatedToId);
+
+            if (existingRating != null)
+                throw new Exception("You have already rated this user for this project.");
+
+            var rating = new Rating
+            {
+                RatingValue = dto.RatingValue,
+                Review = dto.Review,
+                ProjectId = dto.ProjectId,
+                RatedById = dto.RatedById,
+                RatedToId = dto.RatedToId,
+                CreationDate = DateTime.UtcNow
+            };
+
+            await _unitOfWork.Repository<Rating>().AddAsync(rating);
+            await _unitOfWork.CommitAsync();
+
+            return new RatingDto
+            {
+                Id = rating.Id,
+                RatingValue = rating.RatingValue,
+                Review = rating.Review,
+                ProjectId = rating.ProjectId,
+                RatedById = rating.RatedById,
+                RatedToId = rating.RatedToId,
+            };
+        }
     }
 }

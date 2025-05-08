@@ -7,8 +7,19 @@ namespace Tradof.CompanyModule.Services.Extensions
 {
     public static class CompanyExtensions
     {
-        public static CompanyDto ToDto(this Company company) =>
-            new(
+        public static CompanyDto ToDto(this Company company)
+        {
+            var ratingData = company.Projects
+                .SelectMany(p => p.Ratings)
+                .Aggregate(
+                    new { RatingSum = 0.0, ReviewCount = 0 },
+                    (acc, rating) => new
+                    {
+                        RatingSum = acc.RatingSum + rating.RatingValue,
+                        ReviewCount = acc.ReviewCount + (string.IsNullOrEmpty(rating.Review) ? 0 : 1)
+                    });
+
+            return new(
                 company.UserId,
                 company.CompanyAddress,
                 company.CompanyName ?? "Unnamed",
@@ -17,8 +28,8 @@ namespace Tradof.CompanyModule.Services.Extensions
                 company.User.Email,
                 company.User.PhoneNumber,
                 company.JobTitle,
-                0,
-                0,
+                ratingData.RatingSum,
+                ratingData.ReviewCount,
                 company.User.ProfileImageUrl,
                 company.CountryId,
                 company.User.ProfileViews,
@@ -26,6 +37,7 @@ namespace Tradof.CompanyModule.Services.Extensions
                 company.PreferredLanguages.Select(l => new LanguageDto(l.Id, l.LanguageName, l.LanguageCode, l.CountryName, l.CountryCode)).ToList(),
                 company.Medias.Select(m => new SocialMediaDto(m.Id, m.PlatformType.ToString(), m.Link)).ToList()
             );
+        }
 
         public static CompanySubscriptionDto ToDto(this CompanySubscription subscription)
         {

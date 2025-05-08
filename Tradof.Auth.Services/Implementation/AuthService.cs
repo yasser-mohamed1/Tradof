@@ -369,12 +369,12 @@ namespace Tradof.Auth.Services.Implementation
         {
             var profileUser = await _context.Users.FindAsync(profileUserId);
             if (profileUser == null)
-                return;
+                throw new KeyNotFoundException($"No user with this id: {profileUser}");
 
             var currentUser = await GetCurrentUserAsync();
 
             if (currentUser == (null, null) || currentUser.Id == profileUser.Id)
-                return;
+                throw new Exception("The current user can not be the profile user");
 
             var session = _httpContextAccessor.HttpContext.Session;
             string sessionKey = $"ViewedProfile_{profileUserId}";

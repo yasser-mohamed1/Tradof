@@ -16,7 +16,7 @@ namespace Tradof.FreelancerModule.Services.Extensions
                     new { RatingSum = 0.0, ReviewCount = 0 },
                     (acc, rating) => new
                     {
-                        RatingSum = acc.RatingSum + (double.TryParse(rating.RatingValue, out var ratingValue) ? ratingValue : 0),
+                        RatingSum = acc.RatingSum + rating.RatingValue,
                         ReviewCount = acc.ReviewCount + (string.IsNullOrEmpty(rating.Review) ? 0 : 1)
                     });
 

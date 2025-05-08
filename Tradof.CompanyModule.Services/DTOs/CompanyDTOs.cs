@@ -11,7 +11,7 @@ namespace Tradof.CompanyModule.Services.DTOs
         string Email,
         string Phone,
         string JobTitle,
-        int RatingSum,
+        double RatingSum,
         int ReviewCount,
         string ProfileImageUrl,
         long CountryId,

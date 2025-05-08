@@ -12,7 +12,6 @@ using Tradof.Auth.Services.Interfaces;
 using Tradof.Common.Enums;
 using Tradof.Data.Entities;
 using Tradof.EntityFramework.DataBase_Context;
-using Tradof.EntityFramework.Helpers;
 
 namespace AuthUnitTests
 {
