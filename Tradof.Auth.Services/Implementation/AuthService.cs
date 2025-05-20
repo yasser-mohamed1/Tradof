@@ -6,9 +6,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Tradof.Auth.Services.DTOs;
 using Tradof.Auth.Services.Extensions;
@@ -34,7 +36,9 @@ namespace Tradof.Auth.Services.Implementation
         IFreelancerLanguagesPairRepository _freelancerLanguagesPairRepository,
         TradofDbContext _context,
         IBackgroundJobClient _backgroundJob,
-        IHttpContextAccessor _httpContextAccessor) : IAuthService
+        IHttpContextAccessor _httpContextAccessor,
+        IHttpClientFactory _httpClientFactory
+        ) : IAuthService
     {
 
         private readonly string _jwtSecret = _configuration["JWT:Secret"] ?? Environment.GetEnvironmentVariable("JWT_SECRET")
@@ -158,6 +162,7 @@ namespace Tradof.Auth.Services.Implementation
 
             var user = await _userRepository.GetByEmailAsync(dto.Email);
             bool isPasswordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
+
             if (user == null || !isPasswordValid)
             {
                 throw new UnauthorizedAccessException("Invalid email or password.");
@@ -180,12 +185,47 @@ namespace Tradof.Auth.Services.Implementation
                 throw new UnauthorizedAccessException("User does not have an assigned role.");
             }
 
-            var token = GenerateJwtToken(user);
+            var token = GenerateJwtToken(user); // JWT token
             var refreshToken = GenerateRefreshToken();
             await _userRepository.SaveRefreshTokenAsync(user.Id, refreshToken, DateTime.UtcNow.AddDays(7));
 
+            // Check subscription if user is CompanyAdmin
+            if (role == RoleNames.CompanyAdmin)
+            {
+                var httpClient = _httpClientFactory.CreateClient();
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                try
+                {
+                    var response = await httpClient.GetAsync($"https://tradofserver.azurewebsites.net/api/subscription/current-subscription/{user.Id}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        var subscriptionResponse = JsonSerializer.Deserialize<SubscriptionResponse>(content, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+
+                        if (subscriptionResponse == null || subscriptionResponse.Success == false)
+                        {
+                            throw new UnauthorizedAccessException("You do not have an active subscription.");
+                        }
+                    }
+                    else
+                    {
+                        throw new UnauthorizedAccessException("Subscription service unavailable.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    throw new UnauthorizedAccessException("Error checking subscription.");
+                }
+            }
+
             return (token, refreshToken, user.Id, role);
         }
+
 
         private string GenerateJwtToken(ApplicationUser user)
         {
