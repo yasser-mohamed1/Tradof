@@ -379,6 +379,18 @@ namespace Tradof.Project.Services.Implementation
             var projects = await _unitOfWork.Repository<ProjectEntity>().ListAsync(spec);
             var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(new CurrentProjectsByCompanySpecification(company.Id));
 
+            // Force reload of freelancer data for each project
+            foreach (var project in projects)
+            {
+                if (project.FreelancerId.HasValue)
+                {
+                    var freelancer = await _unitOfWork.Repository<Freelancer>()
+                        .FindFirstAsync(f => f.Id == project.FreelancerId.Value,
+                            includes: [f => f.User]);
+                    project.Freelancer = freelancer;
+                }
+            }
+
             var dtos = projects.Select(p => p.ToDto()).ToList();
             return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
         }
@@ -392,6 +404,18 @@ namespace Tradof.Project.Services.Implementation
             var projects = await _unitOfWork.Repository<ProjectEntity>().ListAsync(spec);
             var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(new CurrentProjectsByFreelancerSpecification(freelancer.Id));
 
+            // Force reload of freelancer data for each project
+            foreach (var project in projects)
+            {
+                if (project.FreelancerId.HasValue)
+                {
+                    var freshFreelancer = await _unitOfWork.Repository<Freelancer>()
+                        .FindFirstAsync(f => f.Id == project.FreelancerId.Value,
+                            includes: [f => f.User]);
+                    project.Freelancer = freshFreelancer;
+                }
+            }
+
             var dtos = projects.Select(p => p.ToDto()).ToList();
             return new Pagination<ProjectDto>(pageIndex, pageSize, totalCount, dtos);
         }
@@ -404,6 +428,18 @@ namespace Tradof.Project.Services.Implementation
             var spec = new ProjectsByFreelancerSpecification(freelancer.Id, pageIndex, pageSize);
             var projects = await _unitOfWork.Repository<ProjectEntity>().ListAsync(spec);
             var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(new ProjectsByFreelancerSpecification(freelancer.Id));
+
+            // Force reload of freelancer data for each project
+            foreach (var project in projects)
+            {
+                if (project.FreelancerId.HasValue)
+                {
+                    var freshFreelancer = await _unitOfWork.Repository<Freelancer>()
+                        .FindFirstAsync(f => f.Id == project.FreelancerId.Value,
+                            includes: [f => f.User]);
+                    project.Freelancer = freshFreelancer;
+                }
+            }
 
             var dtos = projects.Select(p => p.ToStartedDto()).ToList();
             return new Pagination<StartedProjectDto>(pageIndex, pageSize, totalCount, dtos);
