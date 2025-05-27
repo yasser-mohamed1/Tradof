@@ -549,7 +549,7 @@ namespace Tradof.Project.Services.Implementation
                 .FindFirstAsync(u => u.Id == dto.RatedById)
                 ?? throw new Exception("Rater user not found.");
 
-            if(dto.RatingValue < 1 || dto.RatingValue > 5)
+            if (dto.RatingValue < 1 || dto.RatingValue > 5)
                 throw new Exception("Rating value must be between 1 and 5.");
 
             var freelancerUserId = project.Freelancer?.UserId;

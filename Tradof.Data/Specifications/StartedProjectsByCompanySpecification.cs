@@ -6,7 +6,7 @@ namespace Tradof.Data.Specifications
     public class StartedProjectsByCompanySpecification : BaseSpecification<Project>
     {
         public StartedProjectsByCompanySpecification(long companyId, int? pageIndex = null, int? pageSize = null)
-            : base(p => p.CompanyId == companyId && p.FreelancerId != null)
+            : base(p => p.CompanyId == companyId && p.FreelancerId != null && p.Status != ProjectStatus.Pending)
         {
             AddInclude(p => p.Files);
             AddInclude(p => p.Proposals);
