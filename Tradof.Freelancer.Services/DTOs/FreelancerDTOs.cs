@@ -18,7 +18,13 @@ namespace Tradof.FreelancerModule.Services.DTOs
         int ProfileViews,
         IEnumerable<FreelancerLanguagePairDTO> FreelancerLanguagePairs,
         IEnumerable<FreelancerSocialMediaDTO> FreelancerSocialMedias,
-        IEnumerable<SpecializationDto> FreelancerSpecializations
+        IEnumerable<SpecializationDto> FreelancerSpecializations,
+        bool FreeTaken,
+        int? FreeMark,
+        bool Pro1Taken,
+        int? Pro1Mark,
+        bool Pro2Taken,
+        int? Pro2Mark
     );
 
     public record UpdateFreelancerDTO(

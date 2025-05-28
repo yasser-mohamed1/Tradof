@@ -58,7 +58,13 @@ namespace Tradof.FreelancerModule.Services.Extensions
                 freelancer.User.ProfileViews,
                 langauges,
                 socialMedias,
-                specializations
+                specializations,
+                freelancer.Free?.HasTakenExam ?? false,
+                freelancer.Free?.Mark,
+                freelancer.Pro1?.HasTakenExam ?? false,
+                freelancer.Pro1?.Mark,
+                freelancer.Pro2?.HasTakenExam ?? false,
+                freelancer.Pro2?.Mark
             );
         }
 
