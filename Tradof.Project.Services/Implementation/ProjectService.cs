@@ -577,7 +577,10 @@ namespace Tradof.Project.Services.Implementation
                 ProjectId = dto.ProjectId,
                 RatedById = dto.RatedById,
                 RatedToId = dto.RatedToId,
-                CreationDate = DateTime.UtcNow
+                CreationDate = DateTime.UtcNow,
+                CreatedBy = dto.RatedById,
+                ModificationDate = DateTime.UtcNow,
+                ModifiedBy = dto.RatedById
             };
 
             await _unitOfWork.Repository<Rating>().AddAsync(rating);
