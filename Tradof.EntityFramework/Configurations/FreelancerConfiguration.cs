@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 using Tradof.Data.Entities;
 
 namespace Tradof.EntityFramework.Configurations
@@ -32,6 +33,27 @@ namespace Tradof.EntityFramework.Configurations
                 .WithOne(p => p.Freelancer)
                 .HasForeignKey(p => p.FreelancerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.OwnsOne(f => f.Free, nav =>
+            {
+                nav.Property(e => e.HasTakenExam).HasColumnName("Free_HasTakenExam");
+                nav.Property(e => e.Mark).HasColumnName("Free_Mark");
+                nav.WithOwner();
+            }).Navigation(e => e.Free).IsRequired(false);
+
+            builder.OwnsOne(f => f.Pro1, nav =>
+            {
+                nav.Property(e => e.HasTakenExam).HasColumnName("Pro1_HasTakenExam");
+                nav.Property(e => e.Mark).HasColumnName("Pro1_Mark");
+                nav.WithOwner();
+            }).Navigation(e => e.Pro1).IsRequired(false);
+
+            builder.OwnsOne(f => f.Pro2, nav =>
+            {
+                nav.Property(e => e.HasTakenExam).HasColumnName("Pro2_HasTakenExam");
+                nav.Property(e => e.Mark).HasColumnName("Pro2_Mark");
+                nav.WithOwner();
+            }).Navigation(e => e.Pro2).IsRequired(false);
         }
     }
 }

@@ -55,21 +55,21 @@ namespace AuthUnitTests
                 .Options;
             _mockContext = new TradofDbContext(options);
 
-            _authService = new AuthService(
-                _mockConfiguration.Object,
-                _mockEmailService.Object,
-                _mockUserRepository.Object,
-                _mockRoleRepository.Object,
-                _mockUserManager.Object,
-                _mockRoleManager.Object,
-                _mockFreelancerRepository.Object,
-                _mockCompanyRepository.Object,
-                _mockOtpRepository.Object,
-                _mockFreelancerLanguagesPairRepository.Object,
-                _mockContext,
-                _mockBackgroundJob.Object,
-                _mockHttpContextAccessor.Object
-            );
+            //_authService = new AuthService(
+            //    _mockConfiguration.Object,
+            //    _mockEmailService.Object,
+            //    _mockUserRepository.Object,
+            //    _mockRoleRepository.Object,
+            //    _mockUserManager.Object,
+            //    _mockRoleManager.Object,
+            //    _mockFreelancerRepository.Object,
+            //    _mockCompanyRepository.Object,
+            //    _mockOtpRepository.Object,
+            //    _mockFreelancerLanguagesPairRepository.Object,
+            //    _mockContext,
+            //    _mockBackgroundJob.Object,
+            //    _mockHttpContextAccessor.Object
+            //);
         }
 
         [Fact]
