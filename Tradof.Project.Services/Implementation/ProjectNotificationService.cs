@@ -27,7 +27,7 @@ namespace Tradof.Project.Services.Implementation
             _emailService = emailService;
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
-            _notificationApiUrl = _configuration["NotificationApi:Url"] ?? "https://tradofserver.azurewebsites.net/api/notification/send";
+            _notificationApiUrl = _configuration["NotificationApi:Url"] ?? "https://tradofapi-production.up.railway.app/api/notification/send";
             _systemUserId = _configuration["System:UserId"] ?? "22166f09-8e78-419e-a3ed-6b61f8983406";
         }
 

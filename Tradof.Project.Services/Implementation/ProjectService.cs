@@ -422,18 +422,9 @@ namespace Tradof.Project.Services.Implementation
             return await _unitOfWork.CommitAsync();
         }
 
-        private class PaymentStatusResponse
-        {
-            public bool Success { get; set; }
-            public string Message { get; set; }
-            public string PaymentStatus { get; set; }
-        }
 
-        private class FinishProjectResponse
-        {
-            public bool Success { get; set; }
-            public string Message { get; set; }
-        }
+
+
 
         public async Task<Tuple<int, int, int>> ProjectsStatistics()
         {

@@ -195,7 +195,7 @@ namespace Tradof.Auth.Services.Implementation
 
             //    try
             //    {
-            //        var response = await httpClient.GetAsync($"https://tradofserver.azurewebsites.net/api/subscription/current-subscription/{user.Id}");
+            //        var response = await httpClient.GetAsync($"https://tradofapi-production.up.railway.app/api/subscription/current-subscription/{user.Id}");
             //        if (response.IsSuccessStatusCode)
             //        {
             //            var content = await response.Content.ReadAsStringAsync();

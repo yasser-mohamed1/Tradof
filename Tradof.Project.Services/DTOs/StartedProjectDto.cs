@@ -28,5 +28,12 @@
         public string FreelancerProfileImageUrl { get; set; }
         public string FreelancerEmail { get; set; }
         public DateTime CreationDate { get; set; }
+        public bool CancellationRequested { get; set; }
+        public string? CancellationRequestedBy { get; set; }
+        public DateTime? CancellationRequestDate { get; set; }
+        public bool CancellationAccepted { get; set; }
+        public string? CancellationAcceptedBy { get; set; }
+        public DateTime? CancellationAcceptedDate { get; set; }
+        public string? CancellationResponse { get; set; }
     }
 }
