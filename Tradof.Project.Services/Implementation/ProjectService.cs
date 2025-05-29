@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
+using System.Net.Http.Json;
 using Tradof.Common.Enums;
 using Tradof.Common.Exceptions;
 using Tradof.Data.Entities;
@@ -322,9 +323,47 @@ namespace Tradof.Project.Services.Implementation
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
                 ?? throw new Exception("Company not found.");
             var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == id && p.CompanyId == company.Id) ?? throw new NotFoundException("project not found");
+
+            // Check payment status
+            using (var httpClient = new HttpClient())
+            {
+                var paymentStatusResponse = await httpClient.GetAsync($"https://tradofserver.azurewebsites.net/api/financial/payment-status/{id}");
+                if (!paymentStatusResponse.IsSuccessStatusCode)
+                    throw new Exception("Failed to check payment status");
+
+                var paymentStatus = await paymentStatusResponse.Content.ReadFromJsonAsync<PaymentStatusResponse>();
+                if (paymentStatus == null)
+                    throw new Exception("Invalid payment status response");
+
+                if (paymentStatus.PaymentStatus.ToLower() == "pending")
+                    throw new Exception("Cannot mark project as finished: Payment is pending");
+
+                // If payment is not pending, proceed with finishing the project
+                var finishProjectResponse = await httpClient.PostAsync($"https://tradofserver.azurewebsites.net/api/payment/finish-project/{id}", null);
+                if (!finishProjectResponse.IsSuccessStatusCode)
+                    throw new Exception("Failed to process project completion");
+
+                var finishResult = await finishProjectResponse.Content.ReadFromJsonAsync<FinishProjectResponse>();
+                if (finishResult == null || !finishResult.Success)
+                    throw new Exception(finishResult?.Message ?? "Failed to complete project");
+            }
+
             project.Status = ProjectStatus.Finished;
             project.DeliveryDate = DateTime.UtcNow;
             return await _unitOfWork.CommitAsync();
+        }
+
+        private class PaymentStatusResponse
+        {
+            public bool Success { get; set; }
+            public string Message { get; set; }
+            public string PaymentStatus { get; set; }
+        }
+
+        private class FinishProjectResponse
+        {
+            public bool Success { get; set; }
+            public string Message { get; set; }
         }
 
         public async Task<Tuple<int, int, int>> ProjectsStatistics()
