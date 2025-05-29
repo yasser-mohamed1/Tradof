@@ -47,5 +47,14 @@ namespace Tradof.Data.Entities
         public IEnumerable<File> FreelancerUploads => Files?.Where(f => f.IsFreelancerUpload == true);
         public ICollection<Rating> Ratings { get; set; } = [];
         public ICollection<Proposal> Proposals { get; set; } = [];
+
+        // Cancellation properties
+        public bool CancellationRequested { get; set; }
+        public string? CancellationRequestedBy { get; set; }
+        public DateTime? CancellationRequestDate { get; set; }
+        public bool CancellationAccepted { get; set; }
+        public string? CancellationAcceptedBy { get; set; }
+        public DateTime? CancellationAcceptedDate { get; set; }
+        public string? CancellationResponse { get; set; }
     }
 }

@@ -93,7 +93,7 @@ namespace Tradof.Project.Api.Controllers
                 var errorResponse = APIOperationResponse<bool>.Fail(
                     ResponseType.InternalServerError,
                     CommonErrorCodes.ServerError,
-                    ex.Message 
+                    ex.Message
                 );
                 return StatusCode(errorResponse.StatusCode, errorResponse);
             }
@@ -386,6 +386,99 @@ namespace Tradof.Project.Api.Controllers
                 var errorResponse = APIOperationResponse<RatingDto>.Fail(
                     ResponseType.BadRequest,
                     CommonErrorCodes.FailedToSaveData,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+        }
+
+        [HttpPost("request-cancellation/{projectId}")]
+        public async Task<IActionResult> RequestProjectCancellation(long projectId)
+        {
+            try
+            {
+                var result = await _projectService.RequestProjectCancellation(projectId);
+                if (result)
+                {
+                    var response = APIOperationResponse<bool>.Success(true, "Cancellation request sent successfully.");
+                    return StatusCode(response.StatusCode, response);
+                }
+                else
+                {
+                    var failResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.FailedToUpdateData,
+                        "Unable to request cancellation.");
+                    return StatusCode(failResponse.StatusCode, failResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.ServerError,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+        }
+
+        [HttpPost("accept-cancellation/{projectId}")]
+        public async Task<IActionResult> AcceptProjectCancellation(long projectId)
+        {
+            try
+            {
+                var result = await _projectService.AcceptProjectCancellation(projectId);
+                if (result)
+                {
+                    var response = APIOperationResponse<bool>.Success(true, "Project cancelled successfully.");
+                    return StatusCode(response.StatusCode, response);
+                }
+                else
+                {
+                    var failResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.FailedToUpdateData,
+                        "Unable to cancel the project.");
+                    return StatusCode(failResponse.StatusCode, failResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.ServerError,
+                    ex.Message
+                );
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+        }
+
+        [HttpPost("reject-cancellation/{projectId}")]
+        public async Task<IActionResult> RejectProjectCancellation(long projectId)
+        {
+            try
+            {
+                var result = await _projectService.RejectProjectCancellation(projectId);
+                if (result)
+                {
+                    var response = APIOperationResponse<bool>.Success(true, "Cancellation request rejected successfully.");
+                    return StatusCode(response.StatusCode, response);
+                }
+                else
+                {
+                    var failResponse = APIOperationResponse<bool>.Fail(
+                        ResponseType.BadRequest,
+                        CommonErrorCodes.FailedToUpdateData,
+                        "Unable to reject the cancellation request.");
+                    return StatusCode(failResponse.StatusCode, failResponse);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = APIOperationResponse<bool>.Fail(
+                    ResponseType.InternalServerError,
+                    CommonErrorCodes.ServerError,
                     ex.Message
                 );
                 return StatusCode(errorResponse.StatusCode, errorResponse);

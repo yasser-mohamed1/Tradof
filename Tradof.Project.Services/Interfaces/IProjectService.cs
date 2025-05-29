@@ -27,5 +27,8 @@ namespace Tradof.Project.Services.Interfaces
         Task<List<FileDto>> UploadFilesToProjectAsync(int projectId, List<IFormFile> files, bool isFreelancerUpload);
         Task DeleteFileAsync(int fileId);
         Task<RatingDto> CreateRatingAsync(CreateRatingDto dto);
+        Task<bool> RequestProjectCancellation(long projectId);
+        Task<bool> AcceptProjectCancellation(long projectId);
+        Task<bool> RejectProjectCancellation(long projectId);
     }
 }

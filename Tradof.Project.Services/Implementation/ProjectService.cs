@@ -327,7 +327,7 @@ namespace Tradof.Project.Services.Implementation
             // Check payment status
             using (var httpClient = new HttpClient())
             {
-                var paymentStatusResponse = await httpClient.GetAsync($"https://tradofserver.azurewebsites.net/api/financial/payment-status/{id}");
+                var paymentStatusResponse = await httpClient.GetAsync($"https://tradofapi-production.up.railway.app/api/financial/payment-status/{id}");
                 if (!paymentStatusResponse.IsSuccessStatusCode)
                     throw new Exception("Failed to check payment status");
 
@@ -339,7 +339,7 @@ namespace Tradof.Project.Services.Implementation
                     throw new Exception("Cannot mark project as finished: Payment is pending");
 
                 // If payment is not pending, proceed with finishing the project
-                var finishProjectResponse = await httpClient.PostAsync($"https://tradofserver.azurewebsites.net/api/payment/finish-project/{id}", null);
+                var finishProjectResponse = await httpClient.PostAsync($"https://tradofapi-production.up.railway.app/api/payment/finish-project/{id}", null);
                 if (!finishProjectResponse.IsSuccessStatusCode)
                     throw new Exception("Failed to process project completion");
 
@@ -350,6 +350,75 @@ namespace Tradof.Project.Services.Implementation
 
             project.Status = ProjectStatus.Finished;
             project.DeliveryDate = DateTime.UtcNow;
+            return await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<bool> RequestProjectCancellation(long projectId)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
+                ?? throw new Exception("Company not found.");
+
+            var project = await _unitOfWork.Repository<ProjectEntity>()
+                .FindFirstAsync(p => p.Id == projectId && p.CompanyId == company.Id)
+                ?? throw new NotFoundException("project not found");
+
+            if (project.Status != ProjectStatus.Active && project.Status != ProjectStatus.InProgress)
+                throw new Exception("Can only request cancellation for active or in-progress projects");
+
+            if (project.CancellationRequested)
+                throw new Exception("Cancellation has already been requested for this project");
+
+            project.CancellationRequested = true;
+            project.CancellationRequestedBy = currentUser.Id;
+            project.CancellationRequestDate = DateTime.UtcNow;
+
+            return await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<bool> AcceptProjectCancellation(long projectId)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id)
+                ?? throw new Exception("Freelancer not found");
+
+            var project = await _unitOfWork.Repository<ProjectEntity>()
+                .FindFirstAsync(p => p.Id == projectId && p.FreelancerId == freelancer.Id)
+                ?? throw new NotFoundException("project not found");
+
+            if (!project.CancellationRequested)
+                throw new Exception("No cancellation request exists for this project");
+
+            if (project.Status != ProjectStatus.Active && project.Status != ProjectStatus.InProgress)
+                throw new Exception("Can only accept cancellation for active or in-progress projects");
+
+            project.Status = ProjectStatus.Cancelled;
+            project.CancellationAccepted = true;
+            project.CancellationAcceptedDate = DateTime.UtcNow;
+            project.CancellationAcceptedBy = currentUser.Id;
+            project.CancellationResponse = "Accepted";
+
+            return await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<bool> RejectProjectCancellation(long projectId)
+        {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id)
+                ?? throw new Exception("Freelancer not found");
+
+            var project = await _unitOfWork.Repository<ProjectEntity>()
+                .FindFirstAsync(p => p.Id == projectId && p.FreelancerId == freelancer.Id)
+                ?? throw new NotFoundException("project not found");
+
+            if (!project.CancellationRequested)
+                throw new Exception("No cancellation request exists for this project");
+
+            project.CancellationRequested = false;
+            project.CancellationRequestedBy = null;
+            project.CancellationRequestDate = null;
+            project.CancellationResponse = "Rejected";
+
             return await _unitOfWork.CommitAsync();
         }
 

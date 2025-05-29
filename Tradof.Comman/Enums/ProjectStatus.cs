@@ -6,6 +6,7 @@
         Active,
         InProgress,
         OnReviewing,
-        Finished
+        Finished,
+        Cancelled
     }
 }
