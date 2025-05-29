@@ -331,10 +331,7 @@ namespace Tradof.Project.Services.Implementation
                 if (!paymentStatusResponse.IsSuccessStatusCode)
                     throw new Exception("Failed to check payment status");
 
-                var paymentStatus = await paymentStatusResponse.Content.ReadFromJsonAsync<PaymentStatusResponse>();
-                if (paymentStatus == null)
-                    throw new Exception("Invalid payment status response");
-
+                var paymentStatus = await paymentStatusResponse.Content.ReadFromJsonAsync<PaymentStatusResponse>() ?? throw new Exception("Invalid payment status response");
                 if (paymentStatus.PaymentStatus.ToLower() == "pending")
                     throw new Exception("Cannot mark project as finished: Payment is pending");
 
