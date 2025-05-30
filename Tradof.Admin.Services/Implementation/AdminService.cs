@@ -19,7 +19,7 @@ namespace Tradof.Admin.Services
         {
             var numberOfProjects = await _context.Projects.CountAsync();
             var numberOfFreelancers = await _userManager.Users.CountAsync(u => u.UserType == UserType.Freelancer);
-            var numberOfCompanies = await _userManager.Users.CountAsync(u => u.UserType == UserType.Company);
+            var numberOfCompanies = await _userManager.Users.CountAsync(u => u.UserType == UserType.CompanyAdmin);
             var numberOfAdmins = await _userManager.Users.CountAsync(u => u.UserType == UserType.Admin);
             var numberOfAdminsOnline = await _userManager.Users.CountAsync(u => u.UserType == UserType.Admin && u.LockoutEnd == null);
 
