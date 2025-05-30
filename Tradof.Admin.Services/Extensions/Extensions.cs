@@ -37,7 +37,8 @@ namespace Tradof.Admin.Services.Extensions
                 PhoneNumber = user.PhoneNumber,
                 Email = user.Email,
                 Role = user.UserType == UserType.CompanyAdmin ? RoleNames.CompanyAdmin :
-                       user.UserType == UserType.Freelancer ? RoleNames.Freelancer : RoleNames.Admin
+                       user.UserType == UserType.Freelancer ? RoleNames.Freelancer : RoleNames.Admin,
+                ProfileImageUrl = user.ProfileImageUrl
             };
         }
     }
