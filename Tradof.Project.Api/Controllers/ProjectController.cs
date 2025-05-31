@@ -484,5 +484,25 @@ namespace Tradof.Project.Api.Controllers
                 return StatusCode(errorResponse.StatusCode, errorResponse);
             }
         }
+
+        [HttpGet("top-rated-users")]
+        [ProducesResponseType(typeof(TopRatedUsersDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> GetTopRatedUsers()
+        {
+            try
+            {
+                var topRatedUsers = await _projectService.GetTopRatedUsersAsync();
+                var response = APIOperationResponse<APIOperationResponse<TopRatedUsersDto>>.Success(topRatedUsers, "Top rated users retrieved successfully.");
+                return ProcessResponse(response);
+            }
+            catch (Exception ex)
+            {
+                var response = APIOperationResponse<TopRatedUsersDto>.ServerError(
+                    "An error occurred while retrieving top-rated users.",
+                    new List<string> { ex.Message });
+                return ProcessResponse(response);
+            }
+        }
     }
 }

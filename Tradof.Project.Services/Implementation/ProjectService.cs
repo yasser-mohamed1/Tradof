@@ -17,6 +17,7 @@ using Tradof.Project.Services.DTOs;
 using Tradof.Project.Services.Extensions;
 using Tradof.Project.Services.Interfaces;
 using Tradof.Project.Services.Validation;
+using Tradof.ResponseHandler.Models;
 using File = Tradof.Data.Entities.File;
 using ProjectEntity = Tradof.Data.Entities.Project;
 
@@ -419,10 +420,6 @@ namespace Tradof.Project.Services.Implementation
             return await _unitOfWork.CommitAsync();
         }
 
-
-
-
-
         public async Task<Tuple<int, int, int>> ProjectsStatistics()
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
@@ -691,6 +688,66 @@ namespace Tradof.Project.Services.Implementation
                 RatedById = rating.RatedById,
                 RatedToId = rating.RatedToId,
             };
+        }
+
+        public async Task<APIOperationResponse<TopRatedUsersDto>> GetTopRatedUsersAsync()
+        {
+            try
+            {
+                var topFreelancers = await _unitOfWork.Repository<Freelancer>()
+                    .GetQueryable()
+                    .Include(f => f.User)
+                    .Where(f => f.User.RatingsTo.Any())
+                    .Select(f => new TopRatedUserDto
+                    {
+                        UserId = f.UserId,
+                        FirstName = f.User.FirstName,
+                        LastName = f.User.LastName,
+                        ProfileImageUrl = f.User.ProfileImageUrl,
+                        UserType = f.User.UserType,
+                        AverageRating = f.User.RatingsTo.Average(r => r.RatingValue),
+                        TotalRatings = f.User.RatingsTo.Count(),
+                        CompletedProjects = f.Projects.Count(p => p.Status == ProjectStatus.Finished)
+                    })
+                    .OrderByDescending(f => f.AverageRating)
+                    .ThenByDescending(f => f.TotalRatings)
+                    .Take(5)
+                    .ToListAsync();
+
+                var topCompanies = await _unitOfWork.Repository<Company>()
+                    .GetQueryable()
+                    .Include(c => c.User)
+                    .Where(c => c.User.RatingsTo.Any())
+                    .Select(c => new TopRatedUserDto
+                    {
+                        UserId = c.UserId,
+                        FirstName = c.User.FirstName,
+                        LastName = c.User.LastName,
+                        ProfileImageUrl = c.User.ProfileImageUrl,
+                        UserType = c.User.UserType,
+                        AverageRating = c.User.RatingsTo.Average(r => r.RatingValue),
+                        TotalRatings = c.User.RatingsTo.Count(),
+                        CompletedProjects = c.Projects.Count(p => p.Status == ProjectStatus.Finished)
+                    })
+                    .OrderByDescending(c => c.AverageRating)
+                    .ThenByDescending(c => c.TotalRatings)
+                    .Take(5)
+                    .ToListAsync();
+
+                var result = new TopRatedUsersDto
+                {
+                    TopFreelancers = topFreelancers,
+                    TopCompanies = topCompanies
+                };
+
+                return APIOperationResponse<TopRatedUsersDto>.Success(result, "Top rated users retrieved successfully.");
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<TopRatedUsersDto>.ServerError(
+                    "Failed to retrieve top rated users.",
+                    new List<string> { ex.Message });
+            }
         }
     }
 }

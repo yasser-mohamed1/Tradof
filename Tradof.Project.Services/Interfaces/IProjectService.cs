@@ -2,6 +2,7 @@
 using Tradof.Data.SpecificationParams;
 using Tradof.EntityFramework.RequestHelpers;
 using Tradof.Project.Services.DTOs;
+using Tradof.ResponseHandler.Models;
 
 namespace Tradof.Project.Services.Interfaces
 {
@@ -30,5 +31,6 @@ namespace Tradof.Project.Services.Interfaces
         Task<bool> RequestProjectCancellation(long projectId);
         Task<bool> AcceptProjectCancellation(long projectId);
         Task<bool> RejectProjectCancellation(long projectId);
+        Task<APIOperationResponse<TopRatedUsersDto>> GetTopRatedUsersAsync();
     }
 }
