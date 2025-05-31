@@ -96,5 +96,12 @@ namespace Tradof.Admin.Api.Controllers
             var admins = await _adminService.GetAllAdminsAsync();
             return Ok(admins);
         }
+
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteAdmin(string userId)
+        {
+            var response = await _authenticationService.DeleteAdminAsync(userId);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }

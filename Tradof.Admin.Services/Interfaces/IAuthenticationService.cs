@@ -13,5 +13,6 @@ namespace Tradof.Admin.Services.Interfaces
         Task<APIOperationResponse<LoginResponse>> Login(LoginRequest request);
         Task<APIOperationResponse<GetUserDto>> GetUserByIdAsync(string userId);
         Task<APIOperationResponse<object>> UpdateUserAsync(GetUserDto updateUserDto);
+        Task<APIOperationResponse<object>> DeleteAdminAsync(string userId);
     }
 }

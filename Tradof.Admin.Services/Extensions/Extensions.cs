@@ -38,7 +38,8 @@ namespace Tradof.Admin.Services.Extensions
                 Email = user.Email,
                 Role = user.UserType == UserType.CompanyAdmin ? RoleNames.CompanyAdmin :
                        user.UserType == UserType.Freelancer ? RoleNames.Freelancer : RoleNames.Admin,
-                ProfileImageUrl = user.ProfileImageUrl
+                ProfileImageUrl = user.ProfileImageUrl,
+                EmailConfirmed = user.IsEmailConfirmed
             };
         }
     }

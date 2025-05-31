@@ -2,7 +2,9 @@
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http.Json;
 using Tradof.Common.Enums;
@@ -221,26 +223,164 @@ namespace Tradof.Project.Services.Implementation
 
         public async Task<bool> DeleteAsync(long id)
         {
-            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
-                ?? throw new Exception("Company not found.");
-            if (id <= 0) throw new ValidationException("Invalid project ID.");
-            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == id && p.CompanyId == company.Id) ?? throw new NotFoundException("project not found");
-
-            if (project.Status != ProjectStatus.Pending)
-                throw new Exception("Cannot delete a project after it has started.");
-
-            foreach (var file in project.Files)
+            using var transaction = await _unitOfWork.BeginTransactionAsync();
+            try
             {
-                if (System.IO.File.Exists(file.FilePath))
+                // Validate input
+                if (id <= 0)
                 {
-                    System.IO.File.Delete(file.FilePath);
+                    throw new ValidationException("Invalid project ID. ID must be greater than 0.");
+                }
+
+                // Get current user with proper error handling
+                var currentUser = await _userHelpers.GetCurrentUserAsync();
+                if (currentUser == null)
+                {
+                    throw new UnauthorizedAccessException("User authentication failed. Please log in again.");
+                }
+
+                // Get company with proper error handling
+                var company = await _unitOfWork.Repository<Company>()
+                    .FindFirstAsync(c => c.UserId == currentUser.Id);
+                if (company == null)
+                {
+                    throw new NotFoundException("Company profile not found for the current user.");
+                }
+
+                // Get project with eager loading of files and related data
+                var project = await _unitOfWork.Repository<ProjectEntity>()
+                    .FindFirstAsync(
+                        p => p.Id == id && p.CompanyId == company.Id,
+                        includes: new List<Expression<Func<ProjectEntity, object>>>
+                                  {
+                                      p =>  p.Files,
+                                      p => p.Proposals,
+                                      p => p.Ratings
+                                  }
+                    );
+
+                if (project == null)
+                {
+                    throw new NotFoundException($"Project with ID {id} not found or you don't have permission to delete it.");
+                }
+
+                // Validate project status - more comprehensive check
+                if (!CanDeleteProject(project))
+                {
+                    throw new InvalidOperationException(
+                        $"Cannot delete project. Current status: {project.Status}. " +
+                        "Only projects with 'Pending' status can be deleted."
+                    );
+                }
+
+                // Check for active proposals that might prevent deletion
+                var activeProposals = project.Proposals?.Where(p => p.ProposalStatus == ProposalStatus.Pending).ToList();
+                if (activeProposals?.Any() == true)
+                {
+                    // Log warning but continue - you might want to handle this differently
+                    // Consider notifying freelancers or rejecting proposals first
+                }
+
+                // Handle file deletion with comprehensive error handling
+                var fileDeleteTasks = new List<Task>();
+
+                if (project.Files?.Any() == true)
+                {
+                    foreach (var file in project.Files)
+                    {
+                        fileDeleteTasks.Add(DeleteFileAsync(file.Id));
+                    }
+
+                    // Wait for all file deletions to complete
+                    await Task.WhenAll(fileDeleteTasks);
+                }
+
+                // Delete related entities in correct order to avoid foreign key violations
+
+                // 1. Delete file records from database
+                if (project.Files?.Any() == true)
+                {
+                    var fileIds = project.Files.Select(f => f.Id).ToList();
+                    await _unitOfWork.Repository<File>()
+                        .DeleteWithCrateriaAsync(f => fileIds.Contains(f.Id));
+                }
+
+                // 2. Delete ratings
+                if (project.Ratings?.Any() == true)
+                {
+                    await _unitOfWork.Repository<Rating>()
+                        .DeleteWithCrateriaAsync(r => r.ProjectId == project.Id);
+                }
+
+                // 3. Delete or update proposals (depending on your business logic)
+                if (project.Proposals?.Any() == true)
+                {
+                    // Option 1: Delete proposals
+                    await _unitOfWork.Repository<Proposal>()
+                        .DeleteWithCrateriaAsync(p => p.ProjectId == project.Id);
+
+                    // Option 2: Mark proposals as cancelled (alternative approach)
+                    // foreach (var proposal in project.Proposals)
+                    // {
+                    //     proposal.Status = ProposalStatus.Cancelled;
+                    //     await _unitOfWork.Repository<Proposal>().UpdateAsync(proposal);
+                    // }
+                }
+
+                // 4. Finally delete the project
+                await _unitOfWork.Repository<ProjectEntity>().DeleteAsync(project.Id);
+
+                // Commit transaction
+                var result = await _unitOfWork.CommitAsync();
+
+                if (result)
+                {
+                    await transaction.CommitAsync();
+                    return true;
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    throw new InvalidOperationException("Failed to delete project. Database operation unsuccessful.");
                 }
             }
-            await _unitOfWork.Repository<ProjectEntity>().DeleteAsync(project.Id);
-            await _unitOfWork.Repository<File>().DeleteWithCrateriaAsync(f => f.ProjectId == project.Id);
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
 
-            return await _unitOfWork.CommitAsync();
+                // Log the exception with context
+                // _logger.LogError(ex, "Failed to delete project {ProjectId} for user {UserId}", id, currentUser?.Id);
+
+                // Re-throw with additional context if it's not already a known exception type
+                if (ex is ValidationException or NotFoundException or UnauthorizedAccessException or InvalidOperationException)
+                {
+                    throw;
+                }
+
+                throw new InvalidOperationException($"An error occurred while deleting the project: {ex.Message}", ex);
+            }
+        }
+
+        private static bool CanDeleteProject(ProjectEntity project)
+        {
+            // Define which statuses allow deletion
+            var deletableStatuses = new[]
+            {
+                ProjectStatus.Pending,
+            };
+
+            // Additional business rules
+            if (project.CancellationRequested && !project.CancellationAccepted)
+            {
+                return false; // Don't allow deletion if cancellation is pending
+            }
+
+            if (project.FreelancerId.HasValue && project.Status != ProjectStatus.Pending)
+            {
+                return false; // Don't allow deletion if freelancer is assigned and project has started
+            }
+
+            return deletableStatuses.Contains(project.Status);
         }
 
         public async Task<List<ProjectGroupResult>> GetProjectsCountAndCostAsync(int? year, int? month)
@@ -598,7 +738,7 @@ namespace Tradof.Project.Services.Implementation
             return uploadedFiles;
         }
 
-        public async Task DeleteFileAsync(int fileId)
+        public async Task DeleteFileAsync(long fileId)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("User not found");
 

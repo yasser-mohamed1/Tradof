@@ -26,7 +26,7 @@ namespace Tradof.Project.Services.Interfaces
         Task<Pagination<ProjectDto>> GetUnassignedProjectsAsync(UnassignedProjectsSpecParams specParams);
         Task<Pagination<ProjectDto>> GetUnassignedProjectsByCompanyAsync(UnassignedProjectsSpecParams specParams);
         Task<List<FileDto>> UploadFilesToProjectAsync(int projectId, List<IFormFile> files, bool isFreelancerUpload);
-        Task DeleteFileAsync(int fileId);
+        Task DeleteFileAsync(long fileId);
         Task<RatingDto> CreateRatingAsync(CreateRatingDto dto);
         Task<bool> RequestProjectCancellation(long projectId);
         Task<bool> AcceptProjectCancellation(long projectId);

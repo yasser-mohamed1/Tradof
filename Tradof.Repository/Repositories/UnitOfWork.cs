@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System.Collections.Concurrent;
+using System.Data;
 using Tradof.Data.Interfaces;
 using Tradof.EntityFramework.DataBase_Context;
 using Tradof.Repository.Repository;
@@ -26,5 +28,10 @@ public class UnitOfWork(TradofDbContext _context) : IUnitOfWork
             return Activator.CreateInstance(repositoryType, _context)
                 ?? throw new InvalidOperationException($"Could not create instance of {repositoryType}");
         });
+    }
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    {
+        return await _context.Database.BeginTransactionAsync();
     }
 }

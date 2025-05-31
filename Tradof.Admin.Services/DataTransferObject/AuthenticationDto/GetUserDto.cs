@@ -25,5 +25,7 @@ namespace Tradof.Admin.Services.DataTransferObject.AuthenticationDto
         public string Role { get; set; }
 
         public string ProfileImageUrl { get; set; }
+
+        public bool? EmailConfirmed { get; set; }
     }
 }

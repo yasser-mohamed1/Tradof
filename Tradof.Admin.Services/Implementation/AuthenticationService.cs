@@ -70,6 +70,32 @@ namespace Tradof.Admin.Services.Implementation
         }
         #endregion
 
+        #region DeleteAdmin
+        public async Task<APIOperationResponse<object>> DeleteAdminAsync(string userId)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    return APIOperationResponse<object>.NotFound("User not found.");
+                }
+                var result = await _userManager.DeleteAsync(user);
+                if (!result.Succeeded)
+                {
+                    var errors = result.Errors.Select(e => e.Description).ToList();
+                    return APIOperationResponse<object>.ServerError("Failed to delete user.", errors);
+                }
+                return APIOperationResponse<object>.Deleted("User deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return APIOperationResponse<object>.ServerError(
+                    "An error occurred while deleting the user.", new List<string> { ex.Message });
+            }
+        }
+        #endregion
+
         #region CreateRole
         public async Task<APIOperationResponse<object>> CreateRoleAsync(string roleName)
         {
