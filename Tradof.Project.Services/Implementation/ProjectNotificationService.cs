@@ -33,13 +33,17 @@ namespace Tradof.Project.Services.Implementation
 
         public async Task SendProjectEndDateNotificationsAsync()
         {
-            var tomorrow = DateTime.UtcNow.AddDays(1).Date;
+            var today = DateTime.UtcNow.Date;
+            var tomorrow = today.AddDays(1);
+            var threeDays = today.AddDays(3);
 
+            // Get projects ending in different timeframes
             var endingProjects = await _unitOfWork.Repository<Data.Entities.Project>()
                 .FindAsync(p =>
-                    p.Status == ProjectStatus.Active &&
-                    p.EndDate.Date == tomorrow &&
-                    p.Freelancer != null);
+                    (p.Status == ProjectStatus.Active || p.Status == ProjectStatus.InProgress) &&
+                    !p.CancellationRequested &&
+                    p.Freelancer != null &&
+                    (p.EndDate.Date == tomorrow || p.EndDate.Date == threeDays));
 
             var httpClient = _httpClientFactory.CreateClient();
 
@@ -47,10 +51,18 @@ namespace Tradof.Project.Services.Implementation
             {
                 if (project.Freelancer?.User?.Email == null) continue;
 
+                var daysUntilDeadline = (project.EndDate.Date - today).Days;
+                var notificationMessage = daysUntilDeadline switch
+                {
+                    1 => $"Your project '{project.Name}' is ending tomorrow",
+                    3 => $"Your project '{project.Name}' is ending in 3 days",
+                    _ => $"Your project '{project.Name}' is ending soon"
+                };
+
                 var emailBody = $@"
                     <h2>Project Deadline Reminder</h2>
                     <p>Dear {project.Freelancer.User.FirstName},</p>
-                    <p>This is a reminder that your project '{project.Name}' is ending tomorrow ({project.EndDate:MM/dd/yyyy}).</p>
+                    <p>This is a reminder that your project '{project.Name}' is ending in {daysUntilDeadline} days ({project.EndDate:MM/dd/yyyy}).</p>
                     <p>Please make sure to complete all necessary tasks and deliverables before the deadline.</p>
                     <p>Project Details:</p>
                     <ul>
@@ -68,10 +80,12 @@ namespace Tradof.Project.Services.Implementation
 
                 var notificationRequest = new
                 {
-                    type = "Finish_or_Deadline",
-                    senderId = _systemUserId,
-                    message = $"Your project '{project.Name}' is ending tomorrow.",
-                    description = $"Project '{project.Name}' deadline is approaching. Please ensure all deliverables are completed by {project.EndDate:MM/dd/yyyy}."
+                    type = "Project",
+                    receiverId = project.Freelancer.UserId,
+                    message = notificationMessage,
+                    description = $"Project '{project.Name}' deadline is approaching. Please ensure all deliverables are completed by {project.EndDate:MM/dd/yyyy}.",
+                    seen = false,
+                    timestamp = DateTime.UtcNow
                 };
 
                 var jsonContent = JsonSerializer.Serialize(notificationRequest);

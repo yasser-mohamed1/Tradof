@@ -14,7 +14,7 @@ namespace Tradof.Project.Api.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class ProjectController(IProjectService _projectService) : ApiControllerBase
+    public class ProjectController(IProjectService _projectService, IProjectNotificationService _projectNotificationService) : ApiControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] ProjectSpecParams specParams)
@@ -503,6 +503,20 @@ namespace Tradof.Project.Api.Controllers
                     "An error occurred while retrieving top-rated users.",
                     new List<string> { ex.Message });
                 return ProcessResponse(response);
+            }
+        }
+
+        [HttpPost("test-notification")]
+        public async Task<IActionResult> TestNotification()
+        {
+            try
+            {
+                await _projectNotificationService.SendProjectEndDateNotificationsAsync();
+                return Ok(new { success = true, message = "Notifications sent successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
             }
         }
     }

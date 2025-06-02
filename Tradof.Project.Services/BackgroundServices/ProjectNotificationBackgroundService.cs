@@ -5,13 +5,19 @@ using Tradof.Project.Services.Interfaces;
 
 namespace Tradof.Project.Services.BackgroundServices
 {
-    public class ProjectNotificationBackgroundService(
-        IServiceProvider serviceProvider,
-        ILogger<ProjectNotificationBackgroundService> logger) : BackgroundService
+    public class ProjectNotificationBackgroundService : BackgroundService
     {
-        private readonly IServiceProvider _serviceProvider = serviceProvider;
-        private readonly ILogger<ProjectNotificationBackgroundService> _logger = logger;
-        private readonly TimeSpan _checkInterval = TimeSpan.FromHours(24);
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger<ProjectNotificationBackgroundService> _logger;
+        private readonly TimeSpan _checkInterval = TimeSpan.FromHours(12); // Check every 12 hours
+
+        public ProjectNotificationBackgroundService(
+            IServiceProvider serviceProvider,
+            ILogger<ProjectNotificationBackgroundService> logger)
+        {
+            _serviceProvider = serviceProvider;
+            _logger = logger;
+        }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -23,11 +29,12 @@ namespace Tradof.Project.Services.BackgroundServices
                     {
                         var notificationService = scope.ServiceProvider.GetRequiredService<IProjectNotificationService>();
                         await notificationService.SendProjectEndDateNotificationsAsync();
+                        _logger.LogInformation("Project deadline notifications check completed successfully");
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "An error occurred while sending project end date notifications.");
+                    _logger.LogError(ex, "An error occurred while sending project end date notifications");
                 }
 
                 await Task.Delay(_checkInterval, stoppingToken);
