@@ -11,6 +11,7 @@ namespace Tradof.Project.Services
         {
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IProjectNotificationService, ProjectNotificationService>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddHostedService<ProjectNotificationBackgroundService>();
             services.AddHttpClient();
             return services;

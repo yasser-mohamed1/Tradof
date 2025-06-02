@@ -12,6 +12,8 @@ using Tradof.Data.SpecificationParams;
 using Tradof.Data.Specifications;
 using Tradof.EntityFramework.Helpers;
 using Tradof.EntityFramework.RequestHelpers;
+using Tradof.Project.Services.DTOs;
+using Tradof.Project.Services.Interfaces;
 using Tradof.Proposal.Services.DTOs;
 using Tradof.Proposal.Services.Extensions;
 using Tradof.Proposal.Services.Interfaces;
@@ -20,20 +22,20 @@ namespace Tradof.Proposal.Services.Implementation
 {
 
 
-    public class ProposalService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers, IEmailService _emailService, IBackgroundJobClient _backgroundJob) : IProposalService
+    public class ProposalService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers, IEmailService _emailService, IBackgroundJobClient _backgroundJob, INotificationService _notificationService) : IProposalService
     {
         Cloudinary _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
 
         public async Task<bool> AcceptProposal(long projectId, long proposalId)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
-            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == projectId) ?? throw new Exception("project not found");
+            var project = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == projectId) ?? throw new Exception("project not found");
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new NotFoundException("company not found");
 
             if (company.Id != project.CompanyId)
                 throw new Exception("not authorized to accept this");
 
-            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId) ?? throw new NotFoundException("proposal not found");
+            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId, includes: [p => p.Freelancer.User]) ?? throw new NotFoundException("proposal not found");
             proposal.ProposalStatus = ProposalStatus.Accepted;
             project.FreelancerId = proposal.FreelancerId;
             project.StartDate = DateTime.UtcNow;
@@ -42,20 +44,46 @@ namespace Tradof.Proposal.Services.Implementation
             project.Days = proposal.Days;
             project.EndDate = DateTime.UtcNow.AddDays(proposal.Days);
             project.AcceptedProposalId = proposalId;
+
+            // Send notification to freelancer
+            var notification = new NotificationDto
+            {
+                type = "Offer",
+                senderId = currentUser.Id,
+                receiverId = proposal.Freelancer.User.Id,
+                message = $"Your proposal for project '{project.Name}' has been accepted.",
+                description = $"Your offer for project '{project.Name}' was accepted. You can now start working on it.",
+                timestamp = DateTime.UtcNow
+            };
+            await _notificationService.SendNotificationAsync(notification);
+
             return await _unitOfWork.CommitAsync();
         }
 
         public async Task<bool> DenyProposal(long projectId, long proposalId)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("current user not found");
-            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == projectId) ?? throw new Exception("project not found");
+            var project = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == projectId) ?? throw new Exception("project not found");
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new NotFoundException("company not found");
 
             if (company.Id != project.CompanyId)
                 throw new Exception("not authorized to deny this");
 
-            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId) ?? throw new NotFoundException("proposal not found");
+            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId, includes: [p => p.Freelancer.User]) ?? throw new NotFoundException("proposal not found");
             proposal.ProposalStatus = ProposalStatus.Declined;
+
+            // Send notification to freelancer
+            var notification = new NotificationDto
+            {
+                type = "Offer",
+                senderId = currentUser.Id,
+                receiverId = proposal.Freelancer.User.Id,
+                message = $"Your proposal for project '{project.Name}' has been rejected.",
+                description = $"Your offer for project '{project.Name}' was not accepted.",
+                timestamp = DateTime.UtcNow
+            };
+            await _notificationService.SendNotificationAsync(notification);
+
             return await _unitOfWork.CommitAsync();
         }
 
@@ -75,8 +103,8 @@ namespace Tradof.Proposal.Services.Implementation
         public async Task<ProposalDto> CreateAsync(CreateProposalDto dto)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
-            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id);
-            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == dto.ProjectId);
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id, includes: [p => p.User]);
+            var project = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == dto.ProjectId, includes: [p => p.Company.User]);
 
             if (project.Status != ProjectStatus.Pending)
                 throw new Exception("Cannot send proposal for this project");
@@ -112,6 +140,16 @@ namespace Tradof.Proposal.Services.Implementation
 
             if (await _unitOfWork.CommitAsync())
             {
+                var notification = new NotificationDto
+                {
+                    type = "Offer",
+                    senderId = currentUser.Id,
+                    receiverId = project.Company.User.Id,
+                    message = $"{freelancer.User.FirstName} {freelancer.User.LastName} sent a proposal for project '{project.Name}'.",
+                    description = $"please response for  {freelancer.User.FirstName} {freelancer.User.LastName} on '{project.Name}'.",
+                    timestamp = DateTime.UtcNow
+                };
+                await _notificationService.SendNotificationAsync(notification);
                 var specification = new ProposalSpecification(proposal.Id);
                 var proposalItem = await _unitOfWork.Repository<Data.Entities.Proposal>().GetEntityWithSpecification(specification);
                 return proposalItem.ToDto();
@@ -271,9 +309,9 @@ namespace Tradof.Proposal.Services.Implementation
         public async Task<ProposalEditRequestDto> CreateProposalEditAsync(CreateProposalEditRequestDto dto)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
-            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id);
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id, includes: [p => p.User]);
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.Id == dto.ProposalId);
-            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposal.ProjectId);
+            var project = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == proposal.ProjectId, includes: [p => p.Company.User]);
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.Id == project.CompanyId) ?? throw new Exception("company user not found");
             var companyUser = await _unitOfWork.Repository<ApplicationUser>().FindFirstAsync(f => f.Id == company.UserId) ?? throw new Exception("company user not found");
 
@@ -301,6 +339,16 @@ namespace Tradof.Proposal.Services.Implementation
 
             if (await _unitOfWork.CommitAsync())
             {
+                var notification = new NotificationDto
+                {
+                    type = "Offer",
+                    senderId = currentUser.Id,
+                    receiverId = project.Company.User.Id,
+                    message = $"{freelancer.User.FirstName} {freelancer.User.LastName} asks for editing the offer for project '{project.Name}'.",
+                    description = $"please response for {freelancer.User.FirstName} {freelancer.User.LastName} edit request for  '{project.Name}'.",
+                    timestamp = DateTime.UtcNow
+                };
+                await _notificationService.SendNotificationAsync(notification);
                 string freelancerName = $"{currentUser.FirstName} {currentUser.LastName}";
                 _backgroundJob.Enqueue(() => SendProposalEditEmailAsync(companyUser.Email!, freelancerName, project.Name));
                 return new ProposalEditRequestDto
@@ -316,10 +364,10 @@ namespace Tradof.Proposal.Services.Implementation
         public async Task<bool> AcceptProposalEditAsync(long Id)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
-            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("company user not found");
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id, includes: [p => p.User]) ?? throw new Exception("company user not found");
             var proposalEdit = await _unitOfWork.Repository<ProposalEditRequest>().FindFirstAsync(p => p.Id == Id) ?? throw new Exception("proposalEdit requist not found");
-            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("project not found");
-            var freelancer = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("freelancer not found");
+            var project = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("project not found");
+            var freelancer = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId, includes: [p => p.Freelancer.User]) ?? throw new Exception("freelancer not found");
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.Id == project.AcceptedProposalId) ?? throw new Exception("proposal not found");
 
             if (project.FreelancerId != freelancer.Id && project.CompanyId != company.Id)
@@ -340,6 +388,17 @@ namespace Tradof.Proposal.Services.Implementation
                 proposal.OfferPrice = proposalEdit.NewDuration;
             }
 
+            var notification = new NotificationDto
+            {
+                type = "Offer",
+                senderId = currentUser.Id,
+                receiverId = proposal.Freelancer.User.Id,
+                message = $"Your offer edit request for project '{project.Name}' has been accepted.",
+                description = $"{company.User.FirstName} {company.User.LastName} accepted your offer for project '{project.Name}'. You can now start working on it.",
+                timestamp = DateTime.UtcNow
+            };
+            await _notificationService.SendNotificationAsync(notification);
+
             return await _unitOfWork.CommitAsync();
         }
 
@@ -348,8 +407,8 @@ namespace Tradof.Proposal.Services.Implementation
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("Current user not found");
             var proposalEdit = await _unitOfWork.Repository<ProposalEditRequest>().FindFirstAsync(p => p.Id == Id) ?? throw new Exception("Company not found");
-            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("project not found");
-            var freelancer = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("freelancer not found");
+            var project = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("project not found");
+            var freelancer = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("freelancer not found");
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.Id == project.AcceptedProposalId) ?? throw new Exception("proposal not found");
 
             if (project.FreelancerId != freelancer.Id && project.CompanyId != company.Id)
@@ -360,7 +419,16 @@ namespace Tradof.Proposal.Services.Implementation
 
 
             await _unitOfWork.Repository<ProposalEditRequest>().DeleteAsync(Id);
-
+            var notification = new NotificationDto
+            {
+                type = "Offer",
+                senderId = currentUser.Id,
+                receiverId = proposal.Freelancer.User.Id,
+                message = $"Your offer edit request for project '{project.Name}' has been denied.",
+                description = $"{company.User.FirstName} {company.User.LastName} denied your offer for project '{project.Name}'.",
+                timestamp = DateTime.UtcNow
+            };
+            await _notificationService.SendNotificationAsync(notification);
             return await _unitOfWork.CommitAsync();
         }
 
@@ -368,7 +436,7 @@ namespace Tradof.Proposal.Services.Implementation
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("company user not found");
-            var project = await _unitOfWork.Repository<Project>().FindFirstAsync(f => f.Id == Id) ?? throw new Exception("project not found");
+            var project = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == Id) ?? throw new Exception("project not found");
 
             if (project.CompanyId != company.Id)
                 throw new Exception("not autorized to get this");
@@ -401,7 +469,7 @@ namespace Tradof.Proposal.Services.Implementation
         }
 
 
-        private async Task SendProposalEditEmailAsync(string toEmail, string freelancerName, string projectName)
+        public async Task SendProposalEditEmailAsync(string toEmail, string freelancerName, string projectName)
         {
             string emailBody = $"{freelancerName} requested to edit the proposal on {projectName} project";
             await _emailService.SendEmailAsync(toEmail, "Proposal's Edit Request", emailBody);

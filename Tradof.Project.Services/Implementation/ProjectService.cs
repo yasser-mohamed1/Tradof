@@ -2,9 +2,8 @@
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
+using System.Data;
 using System.Linq.Expressions;
 using System.Net.Http.Json;
 using Tradof.Common.Enums;
@@ -25,9 +24,23 @@ using ProjectEntity = Tradof.Data.Entities.Project;
 
 namespace Tradof.Project.Services.Implementation
 {
-    public class ProjectService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers) : IProjectService
+    public class ProjectService : IProjectService
     {
-        private readonly Cloudinary _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserHelpers _userHelpers;
+        private readonly INotificationService _notificationService;
+        private readonly Cloudinary _cloudinary;
+
+        public ProjectService(
+            IUnitOfWork unitOfWork,
+            IUserHelpers userHelpers,
+            INotificationService notificationService)
+        {
+            _unitOfWork = unitOfWork;
+            _userHelpers = userHelpers;
+            _notificationService = notificationService;
+            _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+        }
 
         public async Task<Pagination<ProjectDto>> GetAllAsync(ProjectSpecParams specParams)
         {
@@ -455,6 +468,19 @@ namespace Tradof.Project.Services.Implementation
                 ?? throw new Exception("freelancer not found.");
             var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == projectId && p.FreelancerId == freelancer.Id) ?? throw new NotFoundException("project not found");
             project.Status = ProjectStatus.OnReviewing;
+
+            // Send notification to company
+            var notification = new NotificationDto
+            {
+                type = "Project",
+                senderId = project.Freelancer.User.Id,
+                receiverId = project.Company.User.Id,
+                message = $"Review request sent for project '{project.Name}'.",
+                description = $"Please review the project '{project.Name}' and provide your feedback.",
+                timestamp = DateTime.UtcNow
+            };
+            await _notificationService.SendNotificationAsync(notification);
+
             return await _unitOfWork.CommitAsync();
         }
 
@@ -463,7 +489,8 @@ namespace Tradof.Project.Services.Implementation
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
                 ?? throw new Exception("Company not found.");
-            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == id && p.CompanyId == company.Id) ?? throw new NotFoundException("project not found");
+            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == id && p.CompanyId == company.Id,
+                 includes: [p => p.Freelancer, p => p.Freelancer.User]) ?? throw new NotFoundException("project not found");
 
             // Check payment status
             using (var httpClient = new HttpClient())
@@ -488,17 +515,35 @@ namespace Tradof.Project.Services.Implementation
 
             project.Status = ProjectStatus.Finished;
             project.DeliveryDate = DateTime.UtcNow;
-            return await _unitOfWork.CommitAsync();
+            var result = await _unitOfWork.CommitAsync();
+
+            if (result && project.Freelancer != null)
+            {
+                // Send notification to freelancer
+                var notification = new NotificationDto
+                {
+                    type = "Project",
+                    senderId = project.Freelancer.User.Id,
+                    receiverId = project.Company.User.Id,
+                    message = $"The project '{project.Name}' is finished successfully",
+                    description = $"Project '{project.Name}' has been marked as completed",
+                    timestamp = DateTime.UtcNow
+                };
+                await _notificationService.SendNotificationAsync(notification);
+            }
+
+            return result;
         }
 
         public async Task<bool> RequestProjectCancellation(long projectId)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
+            var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id, includes: [p => p.User])
                 ?? throw new Exception("Company not found.");
 
             var project = await _unitOfWork.Repository<ProjectEntity>()
-                .FindFirstAsync(p => p.Id == projectId && p.CompanyId == company.Id)
+                .FindFirstAsync(p => p.Id == projectId && p.CompanyId == company.Id,
+                    includes: [p => p.Freelancer, p => p.Freelancer.User])
                 ?? throw new NotFoundException("project not found");
 
             if (project.Status != ProjectStatus.Active && project.Status != ProjectStatus.InProgress)
@@ -511,17 +556,34 @@ namespace Tradof.Project.Services.Implementation
             project.CancellationRequestedBy = currentUser.Id;
             project.CancellationRequestDate = DateTime.UtcNow;
 
-            return await _unitOfWork.CommitAsync();
+            var result = await _unitOfWork.CommitAsync();
+
+            if (result && project.Freelancer != null)
+            {
+                // Send notification to the freelancer
+                var notification = new NotificationDto
+                {
+                    type = "Project",
+                    senderId = project.Company.User.Id,
+                    receiverId = project.Freelancer.User.Id,
+                    message = $"Project '{project.Name}' cancellation has been requested.",
+                    description = $"A cancellation request has been submitted for project '{project.Name}'.",
+                    timestamp = DateTime.UtcNow
+                };
+                await _notificationService.SendNotificationAsync(notification);
+            }
+
+            return result;
         }
 
         public async Task<bool> AcceptProjectCancellation(long projectId)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id)
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id, includes: [p => p.User])
                 ?? throw new Exception("Freelancer not found");
 
             var project = await _unitOfWork.Repository<ProjectEntity>()
-                .FindFirstAsync(p => p.Id == projectId && p.FreelancerId == freelancer.Id)
+                .FindFirstAsync(p => p.Id == projectId && p.FreelancerId == freelancer.Id, includes: [p => p.Company, p => p.Company.User])
                 ?? throw new NotFoundException("project not found");
 
             if (!project.CancellationRequested)
@@ -536,17 +598,36 @@ namespace Tradof.Project.Services.Implementation
             project.CancellationAcceptedBy = currentUser.Id;
             project.CancellationResponse = "Accepted";
 
-            return await _unitOfWork.CommitAsync();
+            var result = await _unitOfWork.CommitAsync();
+
+            if (result && project.Company != null)
+            {
+                // Send notification to the company
+                var notification = new NotificationDto
+                {
+                    type = "Project",
+                    senderId = project.Company.User.Id,
+                    receiverId = project.Freelancer.User.Id,
+                    message = $"Your project cancellation request for '{project.Name}' has been accepted.",
+                    description = $"The company has accepted your cancellation request for project '{project.Name}'.",
+                    timestamp = DateTime.UtcNow
+                };
+                await _notificationService.SendNotificationAsync(notification);
+            }
+
+            return result;
         }
 
         public async Task<bool> RejectProjectCancellation(long projectId)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
-            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id)
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(f => f.UserId == currentUser.Id,
+                includes: [p => p.User])
                 ?? throw new Exception("Freelancer not found");
 
             var project = await _unitOfWork.Repository<ProjectEntity>()
-                .FindFirstAsync(p => p.Id == projectId && p.FreelancerId == freelancer.Id)
+                .FindFirstAsync(p => p.Id == projectId && p.FreelancerId == freelancer.Id,
+                    includes: [p => p.Company, p => p.Company.User])
                 ?? throw new NotFoundException("project not found");
 
             if (!project.CancellationRequested)
@@ -557,7 +638,24 @@ namespace Tradof.Project.Services.Implementation
             project.CancellationRequestDate = null;
             project.CancellationResponse = "Rejected";
 
-            return await _unitOfWork.CommitAsync();
+            var result = await _unitOfWork.CommitAsync();
+
+            if (result && project.Company != null)
+            {
+                // Send notification to the company
+                var notification = new NotificationDto
+                {
+                    type = "Project",
+                    senderId = project.Company.User.Id,
+                    receiverId = project.Freelancer.User.Id,
+                    message = $"Your project cancellation request for '{project.Name}' has been rejected.",
+                    description = $"The company has rejected your cancellation request for project '{project.Name}'.",
+                    timestamp = DateTime.UtcNow
+                };
+                await _notificationService.SendNotificationAsync(notification);
+            }
+
+            return result;
         }
 
         public async Task<Tuple<int, int, int>> ProjectsStatistics()
@@ -565,11 +663,11 @@ namespace Tradof.Project.Services.Implementation
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
             var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(c => c.UserId == currentUser.Id)
                 ?? throw new Exception("freelancer not found.");
-            int active = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Active);
-            int inProgress = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.InProgress);
-            int accepted = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Active || p.Status == ProjectStatus.Finished);
+            int active = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Active || p.Status == ProjectStatus.InProgress);
+            int pending = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Pending);
+            int completed = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Finished);
 
-            return new Tuple<int, int, int>(active, inProgress, accepted);
+            return new Tuple<int, int, int>(active, pending, completed);
         }
 
         public async Task<ProjectCardDto> GetProjectCardData(long projectId)
