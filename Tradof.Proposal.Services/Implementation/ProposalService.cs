@@ -149,7 +149,10 @@ namespace Tradof.Proposal.Services.Implementation
 
         public async Task<ProposalDto> UpdateAsync(UpdateProposalDto dto)
         {
-            var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(dto.Id, includes: [p => p.Freelancer, p => p.Project]) ?? throw new NotFoundException("Proposal not found");
+            var proposal = await _unitOfWork.Repository<Tradof.Data.Entities.Proposal>()
+                .GetByIdAsync(dto.Id, includes: [p => p.Freelancer, p => p.Freelancer.User, p => p.Project,
+                    p => p.Project.Company, p => p.Project.Company.User])
+                ?? throw new NotFoundException("Proposal not found");
 
             await _unitOfWork.Repository<ProposalAttachments>().DeleteWithCrateriaAsync(p => p.ProposalId == proposal.Id);
             proposal.ProposalAttachments.Clear();

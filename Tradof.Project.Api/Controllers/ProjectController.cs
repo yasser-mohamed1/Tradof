@@ -485,6 +485,7 @@ namespace Tradof.Project.Api.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("top-rated-users")]
         [ProducesResponseType(typeof(TopRatedUsersDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

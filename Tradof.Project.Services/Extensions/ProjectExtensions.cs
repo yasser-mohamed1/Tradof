@@ -62,6 +62,13 @@ namespace Tradof.Project.Services.Extensions
                 CreationDate = project.CreationDate,
                 FreelancerId = project.Freelancer != null ? project.Freelancer.UserId : string.Empty,
                 FreelancerEmail = project.Freelancer != null ? project.Freelancer.User.Email : string.Empty,
+                CancellationAccepted = project.CancellationAccepted,
+                CancellationAcceptedBy = project.CancellationAcceptedBy,
+                CancellationAcceptedDate = project.CancellationAcceptedDate,
+                CancellationRequested = project.CancellationRequested,
+                CancellationRequestedBy = project.CancellationRequestedBy,
+                CancellationRequestDate = project.CancellationRequestDate,
+                CancellationResponse = project.CancellationResponse
             };
         }
 
