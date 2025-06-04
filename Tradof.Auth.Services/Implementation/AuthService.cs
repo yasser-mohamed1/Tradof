@@ -26,13 +26,9 @@ namespace Tradof.Auth.Services.Implementation
         IConfiguration _configuration,
         IEmailService _emailService,
         IUserRepository _userRepository,
-        IRoleRepository _roleRepository,
         UserManager<ApplicationUser> _userManager,
         RoleManager<IdentityRole> _roleManager,
-        IFreelancerRepository _freelancerRepository,
-        ICompanyRepository _companyRepository,
         IOtpRepository _otpRepository,
-        IFreelancerLanguagesPairRepository _freelancerLanguagesPairRepository,
         TradofDbContext _context,
         IBackgroundJobClient _backgroundJob,
         IHttpContextAccessor _httpContextAccessor,
@@ -57,8 +53,8 @@ namespace Tradof.Auth.Services.Implementation
                 additionalEntityAction: async newUser =>
                 {
                     var newCompany = dto.ToCompanyEntity(newUser, _context);
-                    await _companyRepository.AddAsync(newCompany);
-
+                    await _unitOfWork.Repository<Company>().AddAsync(newCompany);
+                    await _unitOfWork.CommitAsync();
                     _backgroundJob.Enqueue(() => SendConfirmationEmailAsync(newUser));
                 });
         }
@@ -75,11 +71,14 @@ namespace Tradof.Auth.Services.Implementation
                 additionalEntityAction: async newUser =>
                 {
                     var newFreelancer = dto.ToFreelancerEntity(newUser, _context);
-                    await _freelancerRepository.AddAsync(newFreelancer);
+                    await _unitOfWork.Repository<Freelancer>().AddAsync(newFreelancer);
+                    await _unitOfWork.CommitAsync();
 
                     var freelancerLanguagePairs = dto.LanguagePairs.Select(lp => lp.ToFreelancerLanguagesPairEntity(newFreelancer));
 
-                    await _freelancerLanguagesPairRepository.AddRangeAsync(freelancerLanguagePairs);
+                    await _unitOfWork.Repository<FreelancerLanguagesPair>()
+                        .AddRangeAsync(freelancerLanguagePairs);
+                    await _unitOfWork.CommitAsync();
 
                     _backgroundJob.Enqueue(() => SendConfirmationEmailAsync(newUser));
                 });
@@ -142,7 +141,7 @@ namespace Tradof.Auth.Services.Implementation
 
         public async Task<bool> ConfirmEmailAsync(string email, string token)
         {
-            var user = await _userRepository.GetByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null || user.EmailConfirmationToken != token)
             {
                 return false;
@@ -150,15 +149,15 @@ namespace Tradof.Auth.Services.Implementation
 
             user.IsEmailConfirmed = true;
             user.EmailConfirmationToken = null!;
-            await _userRepository.UpdateAsync(user);
 
-            return true;
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
         }
 
         public async Task<LoginResult> LoginAsync(LoginDto dto)
         {
             ValidationHelper.ValidateLoginDto(dto);
-            var user = await _userRepository.GetByEmailAsync(dto.Email);
+            var user = await _userManager.FindByEmailAsync(dto.Email);
             bool isPasswordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
 
             if (user == null || !isPasswordValid)
@@ -177,13 +176,15 @@ namespace Tradof.Auth.Services.Implementation
                 throw new UnauthorizedAccessException("Please confirm your email before logging in.");
             }
 
-            var role = await _roleRepository.GetUserRoleAsync(user.Id);
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+
             if (string.IsNullOrEmpty(role))
             {
                 throw new UnauthorizedAccessException("User does not have an assigned role.");
             }
 
-            var token = GenerateJwtToken(user); // JWT token
+            var token = GenerateJwtToken(user);
             var refreshToken = GenerateRefreshToken();
             await _userRepository.SaveRefreshTokenAsync(user.Id, refreshToken, DateTime.UtcNow.AddDays(7));
 
@@ -327,7 +328,7 @@ namespace Tradof.Auth.Services.Implementation
 
         private static string GenerateOtp()
         {
-            using var rng = System.Security.Cryptography.RandomNumberGenerator.Create();
+            using var rng = RandomNumberGenerator.Create();
             var bytes = new byte[4];
             rng.GetBytes(bytes);
             return (BitConverter.ToUInt32(bytes, 0) % 1000000).ToString("D6");
@@ -363,7 +364,6 @@ namespace Tradof.Auth.Services.Implementation
             }
 
             var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userName = user.FindFirstValue(ClaimTypes.Name);
             var userRole = user.FindFirstValue(ClaimTypes.Role) ?? "No role assigned";
 
             return Task.FromResult((userId, userRole));
@@ -411,7 +411,9 @@ namespace Tradof.Auth.Services.Implementation
 
             var user = await _userManager.FindByEmailAsync(email);
 
-            var role = await _roleRepository.GetUserRoleAsync(user.Id);
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+
             if (string.IsNullOrEmpty(role))
             {
                 throw new UnauthorizedAccessException("User does not have an assigned role.");

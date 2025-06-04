@@ -178,6 +178,15 @@ namespace Tradof.Repository.Repository
                 throw new ArgumentException($"Entity {typeof(T).Name} does not have a UserId property.", ex);
             }
         }
+
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            if (entities == null || !entities.Any())
+            {
+                throw new ArgumentException("No entities provided to add.");
+            }
+            await _context.Set<T>().AddRangeAsync(entities);
+        }
         #region private methods
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {

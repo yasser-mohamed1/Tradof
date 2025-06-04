@@ -11,6 +11,7 @@ namespace Tradof.Data.Interfaces
         Task<T?> GetByUserIdAsync(string userId, List<Expression<Func<T, object>>>? includes = null);
         Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         Task AddAsync(T entity);
+        Task AddRangeAsync(IEnumerable<T> entities);
         Task UpdateAsync(T entity);
         Task DeleteAsync(long id);
         Task<T> FindFirstAsync(Expression<Func<T, bool>> expression, List<Expression<Func<T, object>>> includes = null);
