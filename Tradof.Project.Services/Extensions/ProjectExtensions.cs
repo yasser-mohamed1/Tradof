@@ -68,7 +68,8 @@ namespace Tradof.Project.Services.Extensions
                 CancellationRequested = project.CancellationRequested,
                 CancellationRequestedBy = project.CancellationRequestedBy,
                 CancellationRequestDate = project.CancellationRequestDate,
-                CancellationResponse = project.CancellationResponse
+                CancellationResponse = project.CancellationResponse,
+                ProposalId = project.AcceptedProposalId != null ? project.AcceptedProposalId : null
             };
         }
 

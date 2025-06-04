@@ -33,5 +33,6 @@
         public string? CancellationAcceptedBy { get; set; }
         public DateTime? CancellationAcceptedDate { get; set; }
         public string? CancellationResponse { get; set; }
+        public long? ProposalId { get; set; }
     }
 }
