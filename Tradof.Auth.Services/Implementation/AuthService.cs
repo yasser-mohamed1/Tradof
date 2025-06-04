@@ -198,14 +198,15 @@ namespace Tradof.Auth.Services.Implementation
             // Check if user is a Company Employee and get company data
             if (user.UserType == UserType.CompanyEmployee)
             {
-                var companyEmployee = await _unitOfWork.Repository<CompanyEmployee>().GetByUserIdAsync(user.Id);
+                var companyEmployee = await _unitOfWork.Repository<CompanyEmployee>().GetByUserIdAsync(user.Id, new List<System.Linq.Expressions.Expression<Func<CompanyEmployee, object>>>
+                {
+                    ce => ce.Company
+                });
 
                 if (companyEmployee != null)
                 {
-                    loginResult.CompanyId = companyEmployee.CompanyId;
+                    loginResult.CompanyId = companyEmployee.Company.UserId;
                     loginResult.GroupName = companyEmployee.GroupName;
-                    loginResult.JobTitle = companyEmployee.JobTitle;
-                    loginResult.CompanyUserType = companyEmployee.UserType;
                 }
             }
             // Check subscription if user is CompanyAdmin

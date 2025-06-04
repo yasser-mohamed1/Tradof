@@ -161,16 +161,22 @@ namespace Tradof.Repository.Repository
 
         public async Task<T?> GetByUserIdAsync(string userId, List<Expression<Func<T, object>>>? includes = null)
         {
-            IQueryable<T> query = _context.Set<T>();
-            if (includes != null)
+            try
             {
-                foreach (var include in includes)
+                IQueryable<T> query = _context.Set<T>();
+                if (includes != null)
                 {
-                    query = query.Include(include);
+                    foreach (var include in includes)
+                    {
+                        query = query.Include(include);
+                    }
                 }
+                return await query.FirstOrDefaultAsync(e => EF.Property<string>(e, "UserId") == userId);
             }
-
-            return await query.FirstOrDefaultAsync(e => EF.Property<string>(e, "UserId") == userId);
+            catch (InvalidOperationException ex) when (ex.Message.Contains("UserId"))
+            {
+                throw new ArgumentException($"Entity {typeof(T).Name} does not have a UserId property.", ex);
+            }
         }
         #region private methods
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)

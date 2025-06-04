@@ -73,7 +73,10 @@ namespace Tradof.CompanyModule.Services.Extensions
                     Email = dto.Email,
                     PhoneNumber = dto.PhoneNumber,
                     FirstName = dto.FirstName,
-                    LastName = dto.LastName
+                    LastName = dto.LastName,
+                    IsEmailConfirmed = false,
+                    EmailConfirmationToken = Guid.NewGuid().ToString(),
+                    UserType = UserType.CompanyEmployee
                 };
         public static Language ToLanguage(this LanguageDto dto) =>
                new()
@@ -92,6 +95,7 @@ namespace Tradof.CompanyModule.Services.Extensions
                 UserId = userId,
                 GroupName = (GroupName)Enum.Parse(typeof(GroupName), dto.GroupName),
                 Company = Company,
+                UserType = CompanyUserType.CompanyEmployee,
                 CreationDate = DateTime.UtcNow,
                 ModificationDate = DateTime.UtcNow,
                 CreatedBy = userId,

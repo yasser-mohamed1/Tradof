@@ -117,12 +117,6 @@ namespace Tradof.CompanyModule.Services.Implementation
                     throw new ValidationException(string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
 
-                var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-
-                newUser.EmailConfirmationToken = emailConfirmationToken;
-                _context.Users.Update(newUser);
-                await _context.SaveChangesAsync();
-
                 await AssignRoleAsync(newUser, roleName);
 
                 await additionalEntityAction(newUser);
