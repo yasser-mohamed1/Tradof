@@ -11,11 +11,7 @@ namespace Tradof.Auth.Services
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IFreelancerRepository, FreelancerRepository>();
-            services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IOtpRepository, OtpRepository>();
-            services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<IFreelancerLanguagesPairRepository, FreelancerLanguagesPairRepository>();
             services.AddMemoryCache();
             return services;
         }

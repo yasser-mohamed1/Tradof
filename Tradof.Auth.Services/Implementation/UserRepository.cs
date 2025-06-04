@@ -7,12 +7,6 @@ namespace Tradof.Auth.Services.Implementation
 {
     public class UserRepository(TradofDbContext _context) : IUserRepository
     {
-
-        public async Task<ApplicationUser> GetByEmailAsync(string email)
-        {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        }
-
         public async Task AddAsync(ApplicationUser user)
         {
             await _context.Users.AddAsync(user);
