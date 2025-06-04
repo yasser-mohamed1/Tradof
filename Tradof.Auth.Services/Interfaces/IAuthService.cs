@@ -8,7 +8,7 @@ namespace Tradof.Auth.Services.Interfaces
         Task RegisterCompanyAsync(RegisterCompanyDto dto);
         Task RegisterFreelancerAsync(RegisterFreelancerDto dto);
         Task<bool> ConfirmEmailAsync(string email, string token);
-        Task<(string Token, string RefreshToken, string UserId, string Role)> LoginAsync(LoginDto dto);
+        Task<LoginResult> LoginAsync(LoginDto dto);
         Task ForgetPasswordAsync(ForgetPasswordDto dto);
         Task VerifyOtpAsync(OtpVerificationDto dto);
         Task ChangePasswordWithTokenAsync(ChangePasswordDto dto);

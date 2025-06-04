@@ -16,6 +16,7 @@ using Tradof.Auth.Services.Interfaces;
 using Tradof.Auth.Services.Validation;
 using Tradof.Common.Enums;
 using Tradof.Data.Entities;
+using Tradof.Data.Interfaces;
 using Tradof.EntityFramework.DataBase_Context;
 using SystemFile = System.IO.File;
 
@@ -35,8 +36,8 @@ namespace Tradof.Auth.Services.Implementation
         TradofDbContext _context,
         IBackgroundJobClient _backgroundJob,
         IHttpContextAccessor _httpContextAccessor,
-        IHttpClientFactory _httpClientFactory
-        ) : IAuthService
+        IHttpClientFactory _httpClientFactory,
+        IUnitOfWork _unitOfWork) : IAuthService
     {
 
         private readonly string _jwtSecret = _configuration["JWT:Secret"] ?? Environment.GetEnvironmentVariable("JWT_SECRET")
@@ -154,10 +155,9 @@ namespace Tradof.Auth.Services.Implementation
             return true;
         }
 
-        public async Task<(string Token, string RefreshToken, string UserId, string Role)> LoginAsync(LoginDto dto)
+        public async Task<LoginResult> LoginAsync(LoginDto dto)
         {
             ValidationHelper.ValidateLoginDto(dto);
-
             var user = await _userRepository.GetByEmailAsync(dto.Email);
             bool isPasswordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
 
@@ -187,6 +187,27 @@ namespace Tradof.Auth.Services.Implementation
             var refreshToken = GenerateRefreshToken();
             await _userRepository.SaveRefreshTokenAsync(user.Id, refreshToken, DateTime.UtcNow.AddDays(7));
 
+            var loginResult = new LoginResult
+            {
+                Token = token,
+                RefreshToken = refreshToken,
+                UserId = user.Id,
+                Role = role
+            };
+
+            // Check if user is a Company Employee and get company data
+            if (user.UserType == UserType.CompanyEmployee)
+            {
+                var companyEmployee = await _unitOfWork.Repository<CompanyEmployee>().GetByUserIdAsync(user.Id);
+
+                if (companyEmployee != null)
+                {
+                    loginResult.CompanyId = companyEmployee.CompanyId;
+                    loginResult.GroupName = companyEmployee.GroupName;
+                    loginResult.JobTitle = companyEmployee.JobTitle;
+                    loginResult.CompanyUserType = companyEmployee.UserType;
+                }
+            }
             // Check subscription if user is CompanyAdmin
             //if (role == RoleNames.CompanyAdmin)
             //{
@@ -221,9 +242,8 @@ namespace Tradof.Auth.Services.Implementation
             //    }
             //}
 
-            return (token, refreshToken, user.Id, role);
+            return loginResult;
         }
-
 
         private string GenerateJwtToken(ApplicationUser user)
         {

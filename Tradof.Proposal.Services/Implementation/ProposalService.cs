@@ -438,8 +438,8 @@ namespace Tradof.Proposal.Services.Implementation
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("company user not found");
             var project = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == Id) ?? throw new Exception("project not found");
 
-            if (project.CompanyId != company.Id)
-                throw new Exception("not autorized to get this");
+            //if (project.CompanyId != company.Id)
+            //    throw new Exception("not autorized to get this");
 
             var proposalEdit = await _unitOfWork.Repository<ProposalEditRequest>().FindFirstAsync(f => f.ProjectId == project.Id) ?? throw new Exception("proposal Edit request not found");
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using Tradof.Common.Consts;
+using Tradof.Data.Entities;
 using Tradof.Data.Interfaces;
 using Tradof.EntityFramework.DataBase_Context;
 
@@ -158,6 +159,19 @@ namespace Tradof.Repository.Repository
             return _context.Set<T>();
         }
 
+        public async Task<T?> GetByUserIdAsync(string userId, List<Expression<Func<T, object>>>? includes = null)
+        {
+            IQueryable<T> query = _context.Set<T>();
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            return await query.FirstOrDefaultAsync(e => EF.Property<string>(e, "UserId") == userId);
+        }
         #region private methods
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {
@@ -168,8 +182,6 @@ namespace Tradof.Repository.Repository
         {
             return SpecificationEvaluator<T>.GetQuery<T, TResult>(_context.Set<T>().AsQueryable(), spec);
         }
-
-
         #endregion
     }
 }

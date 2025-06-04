@@ -110,9 +110,9 @@ namespace Tradof.Auth.Api.Controllers
 
             try
             {
-                var (token, refreshToken, userId, role) = await _authService.LoginAsync(dto);
+                var loginResult = await _authService.LoginAsync(dto);
 
-                return Ok(new { UserId = userId, Role = role, Token = token, RefreshToken = refreshToken });
+                return Ok(loginResult);
             }
             catch (UnauthorizedAccessException ex)
             {
