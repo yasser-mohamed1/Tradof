@@ -367,7 +367,7 @@ namespace Tradof.Proposal.Services.Implementation
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id, includes: [p => p.User]) ?? throw new Exception("company user not found");
             var proposalEdit = await _unitOfWork.Repository<ProposalEditRequest>().FindFirstAsync(p => p.Id == Id) ?? throw new Exception("proposalEdit requist not found");
             var project = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("project not found");
-            var freelancer = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId, includes: [p => p.Freelancer.User]) ?? throw new Exception("freelancer not found");
+            var freelancer = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == proposalEdit.FreelancerId, includes: [p => p.Freelancer.User]) ?? throw new Exception("freelancer not found");
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.Id == project.AcceptedProposalId) ?? throw new Exception("proposal not found");
 
             if (project.FreelancerId != freelancer.Id && project.CompanyId != company.Id)
@@ -408,7 +408,7 @@ namespace Tradof.Proposal.Services.Implementation
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("Current user not found");
             var proposalEdit = await _unitOfWork.Repository<ProposalEditRequest>().FindFirstAsync(p => p.Id == Id) ?? throw new Exception("Company not found");
             var project = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("project not found");
-            var freelancer = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == proposalEdit.ProjectId) ?? throw new Exception("freelancer not found");
+            var freelancer = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == proposalEdit.FreelancerId) ?? throw new Exception("freelancer not found");
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.Id == project.AcceptedProposalId) ?? throw new Exception("proposal not found");
 
             if (project.FreelancerId != freelancer.Id && project.CompanyId != company.Id)
@@ -438,8 +438,8 @@ namespace Tradof.Proposal.Services.Implementation
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(f => f.UserId == currentUser.Id) ?? throw new Exception("company user not found");
             var project = await _unitOfWork.Repository<Data.Entities.Project>().FindFirstAsync(f => f.Id == Id) ?? throw new Exception("project not found");
 
-            //if (project.CompanyId != company.Id)
-            //    throw new Exception("not autorized to get this");
+            if (project.CompanyId != company.Id)
+                throw new Exception("not autorized to get this");
 
             var proposalEdit = await _unitOfWork.Repository<ProposalEditRequest>().FindFirstAsync(f => f.ProjectId == project.Id) ?? throw new Exception("proposal Edit request not found");
 
