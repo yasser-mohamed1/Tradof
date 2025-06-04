@@ -384,8 +384,8 @@ namespace Tradof.Proposal.Services.Implementation
             }
             if (proposalEdit.NewPrice != null)
             {
-                project.Price = proposalEdit.NewDuration;
-                proposal.OfferPrice = proposalEdit.NewDuration;
+                project.Price = proposalEdit.NewPrice;
+                proposal.OfferPrice = proposalEdit.NewPrice;
             }
 
             var notification = new NotificationDto
