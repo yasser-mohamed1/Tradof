@@ -122,5 +122,28 @@ namespace Tradof.FreelancerModule.Services.Extensions
             CreatedBy = "System",
             ModifiedBy = "System"
         };
+
+        public static FreelancerLanguagePairDTO ToFreelancerLanguagePairDTO(this FreelancerLanguagesPair entity)
+        {
+            return new FreelancerLanguagePairDTO(
+                Id: entity.Id,
+                LanguageFromId: entity.LanguageFromId,
+                LanguageFromName: entity.LanguageFrom?.LanguageName ?? string.Empty,
+                LanguageFromCode: entity.LanguageFrom?.LanguageCode ?? string.Empty,
+                CountryFromCode: entity.LanguageFrom?.CountryCode ?? string.Empty,
+                CountryFromName: entity.LanguageFrom?.CountryName ?? string.Empty,
+                LanguageToId: entity.LanguageToId,
+                LanguageToName: entity.LanguageTo?.LanguageName ?? string.Empty,
+                LanguageToCode: entity.LanguageTo?.LanguageCode ?? string.Empty,
+                CountryToCode: entity.LanguageTo?.CountryCode ?? string.Empty,
+                CountryToName: entity.LanguageTo?.CountryName ?? string.Empty,
+                FreeTaken: entity.Free?.HasTakenExam ?? false,
+                FreeMark: entity.Free?.Mark,
+                Pro1Taken: entity.Pro1?.HasTakenExam ?? false,
+                Pro1Mark: entity.Pro1?.Mark,
+                Pro2Taken: entity.Pro2?.HasTakenExam ?? false,
+                Pro2Mark: entity.Pro2?.Mark
+            );
+        }
     }
 }

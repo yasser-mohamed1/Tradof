@@ -17,5 +17,6 @@ namespace Tradof.FreelancerModule.Services.Interfaces
         Task AddOrUpdateOrRemoveFreelancerSocialMediasAsync(string id, IEnumerable<AddFreelancerSocialMediaDTO> socialMedias);
         Task AddSpecializationsAsync(string Id, IEnumerable<long> specializationIds);
         Task RemoveSpecializationsAsync(string Id, IEnumerable<long> specializationIds);
+        Task<SetExamScoreResponse> SetExamScoreAsync(SetExamScoreRequest request);
     }
 }

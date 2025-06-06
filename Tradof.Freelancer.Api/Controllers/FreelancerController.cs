@@ -127,4 +127,12 @@ public class FreelancerController(IFreelancerService _freelancerService) : Contr
         await _freelancerService.RemoveSpecializationsAsync(freelancerId, specializationIds);
         return Ok("Specialization removed successfully");
     }
+
+    [HttpPost("set-score")]
+    [ProducesResponseType(typeof(SetExamScoreResponse), StatusCodes.Status200OK)]
+    public async Task<ActionResult<SetExamScoreResponse>> SetExamScoresBulk([FromBody] SetExamScoreRequest request)
+    {
+        var result = await _freelancerService.SetExamScoreAsync(request);
+        return Ok(result);
+    }
 }

@@ -121,4 +121,25 @@ namespace Tradof.FreelancerModule.Services.DTOs
         long Id,
         string Name
     );
+
+    public record SetExamScoreRequest(
+        string FreelancerId,
+        long LanguageFromId,
+        long LanguageToId,
+        ExamType ExamType,
+        int Mark
+    );
+
+    public record SetExamScoreResponse(
+        bool Success,
+        string Message,
+        FreelancerLanguagePairDTO? UpdatedLanguagePair = null
+    );
+
+    public enum ExamType
+    {
+        Free = 0,
+        Pro1 = 1,
+        Pro2 = 2
+    }
 }

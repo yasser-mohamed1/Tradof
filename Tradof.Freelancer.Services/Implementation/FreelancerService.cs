@@ -3,8 +3,10 @@ using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using Tradof.Common.Enums;
 using Tradof.Data.Entities;
+using Tradof.Data.Interfaces;
 using Tradof.EntityFramework.DataBase_Context;
 using Tradof.FreelancerModule.Services.DTOs;
 using Tradof.FreelancerModule.Services.Extensions;
@@ -13,6 +15,7 @@ using Tradof.FreelancerModule.Services.Interfaces;
 namespace Tradof.FreelancerModule.Services.Implementation
 {
     public class FreelancerService(
+        IUnitOfWork _unitOfWork,
         UserManager<ApplicationUser> userManager,
         TradofDbContext _context) : IFreelancerService
     {
@@ -255,6 +258,102 @@ namespace Tradof.FreelancerModule.Services.Implementation
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<SetExamScoreResponse> SetExamScoreAsync(SetExamScoreRequest request)
+        {
+            try
+            {
+                // Validate mark range (assuming 0-100)
+                if (request.Mark < 0 || request.Mark > 100)
+                {
+                    return new SetExamScoreResponse(false, "Mark must be between 0 and 100");
+                }
+
+                var freelancer = await _unitOfWork.Repository<Freelancer>()
+                    .GetByUserIdAsync(request.FreelancerId);
+                if (freelancer == null)
+                {
+                    return new SetExamScoreResponse(false, "Freelancer not found");
+                }
+                    // Find existing language pair
+                    var languagePair = await _unitOfWork.Repository<FreelancerLanguagesPair>().FindFirstAsync(
+                    lp => lp.FreelancerId == freelancer.Id &&
+                          lp.LanguageFromId == request.LanguageFromId &&
+                          lp.LanguageToId == request.LanguageToId,
+                    includes:
+                    [
+                        lp => lp.LanguageFrom,
+                        lp => lp.LanguageTo
+                    ]);
+
+                if (languagePair == null)
+                {
+                    // Create new language pair
+                    languagePair = new FreelancerLanguagesPair
+                    {
+                        FreelancerId = freelancer.Id,
+                        LanguageFromId = request.LanguageFromId,
+                        LanguageToId = request.LanguageToId,
+                        Free = new (),
+                        Pro1 = new (),
+                        Pro2 = new ()
+                    };
+
+                    await _unitOfWork.Repository<FreelancerLanguagesPair>().AddAsync(languagePair);
+                }
+
+                // Set the exam score based on exam type
+                switch (request.ExamType)
+                {
+                    case ExamType.Free:
+                        languagePair.Free ??= new ();
+                        languagePair.Free.HasTakenExam = true;
+                        languagePair.Free.Mark = request.Mark;
+                        break;
+                    case ExamType.Pro1:
+                        languagePair.Pro1 ??= new ();
+                        languagePair.Pro1.HasTakenExam = true;
+                        languagePair.Pro1.Mark = request.Mark;
+                        break;
+                    case ExamType.Pro2:
+                        languagePair.Pro2 ??= new ();
+                        languagePair.Pro2.HasTakenExam = true;
+                        languagePair.Pro2.Mark = request.Mark;
+                        break;
+                    default:
+                        return new SetExamScoreResponse(false, "Invalid exam type");
+                }
+
+                if (languagePair.Id == 0) // New entity
+                {
+                    await _unitOfWork.CommitAsync();
+                }
+                else // Existing entity
+                {
+                    await _unitOfWork.Repository<FreelancerLanguagesPair>().UpdateAsync(languagePair);
+                    await _unitOfWork.CommitAsync();
+                }
+
+                // Reload with navigation properties for DTO mapping
+                languagePair = await _unitOfWork.Repository<FreelancerLanguagesPair>().FindFirstAsync(
+                    lp => lp.FreelancerId == freelancer.Id &&
+                          lp.LanguageFromId == request.LanguageFromId &&
+                          lp.LanguageToId == request.LanguageToId,
+                    includes:
+                    [
+                        lp => lp.LanguageFrom,
+                        lp => lp.LanguageTo
+                    ]);
+
+                var dto = languagePair.ToFreelancerLanguagePairDTO();
+
+                return new SetExamScoreResponse(true, "Exam score set successfully", dto);
+            }
+            catch (Exception ex)
+            {
+                return new SetExamScoreResponse(false, "An error occurred while setting the exam score");
+            }
         }
     }
 }
