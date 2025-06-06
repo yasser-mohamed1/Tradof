@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tradof.EntityFramework.DataBase_Context;
 
@@ -11,9 +12,11 @@ using Tradof.EntityFramework.DataBase_Context;
 namespace Tradof.EntityFramework.Migrations
 {
     [DbContext(typeof(TradofDbContext))]
-    partial class TradofDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250606122835_RemoveFreelancerExamResults")]
+    partial class RemoveFreelancerExamResults
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1893,80 +1896,11 @@ namespace Tradof.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.OwnsOne("Tradof.Data.Entities.ExamResult", "Free", b1 =>
-                        {
-                            b1.Property<long>("FreelancerLanguagesPairId")
-                                .HasColumnType("bigint");
-
-                            b1.Property<bool>("HasTakenExam")
-                                .HasColumnType("bit")
-                                .HasColumnName("Free_HasTakenExam");
-
-                            b1.Property<int?>("Mark")
-                                .HasColumnType("int")
-                                .HasColumnName("Free_Mark");
-
-                            b1.HasKey("FreelancerLanguagesPairId");
-
-                            b1.ToTable("FreelancerLanguagesPairs");
-
-                            b1.WithOwner()
-                                .HasForeignKey("FreelancerLanguagesPairId");
-                        });
-
-                    b.OwnsOne("Tradof.Data.Entities.ExamResult", "Pro1", b1 =>
-                        {
-                            b1.Property<long>("FreelancerLanguagesPairId")
-                                .HasColumnType("bigint");
-
-                            b1.Property<bool>("HasTakenExam")
-                                .HasColumnType("bit")
-                                .HasColumnName("Pro1_HasTakenExam");
-
-                            b1.Property<int?>("Mark")
-                                .HasColumnType("int")
-                                .HasColumnName("Pro1_Mark");
-
-                            b1.HasKey("FreelancerLanguagesPairId");
-
-                            b1.ToTable("FreelancerLanguagesPairs");
-
-                            b1.WithOwner()
-                                .HasForeignKey("FreelancerLanguagesPairId");
-                        });
-
-                    b.OwnsOne("Tradof.Data.Entities.ExamResult", "Pro2", b1 =>
-                        {
-                            b1.Property<long>("FreelancerLanguagesPairId")
-                                .HasColumnType("bigint");
-
-                            b1.Property<bool>("HasTakenExam")
-                                .HasColumnType("bit")
-                                .HasColumnName("Pro2_HasTakenExam");
-
-                            b1.Property<int?>("Mark")
-                                .HasColumnType("int")
-                                .HasColumnName("Pro2_Mark");
-
-                            b1.HasKey("FreelancerLanguagesPairId");
-
-                            b1.ToTable("FreelancerLanguagesPairs");
-
-                            b1.WithOwner()
-                                .HasForeignKey("FreelancerLanguagesPairId");
-                        });
-
-                    b.Navigation("Free");
-
                     b.Navigation("Freelancer");
 
                     b.Navigation("LanguageFrom");
 
                     b.Navigation("LanguageTo");
-
-                    b.Navigation("Pro1");
-
-                    b.Navigation("Pro2");
                 });
 
             modelBuilder.Entity("Tradof.Data.Entities.FreelancerSocialMedia", b =>

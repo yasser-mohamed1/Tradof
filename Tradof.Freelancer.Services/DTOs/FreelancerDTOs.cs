@@ -18,13 +18,7 @@ namespace Tradof.FreelancerModule.Services.DTOs
         int ProfileViews,
         IEnumerable<FreelancerLanguagePairDTO> FreelancerLanguagePairs,
         IEnumerable<FreelancerSocialMediaDTO> FreelancerSocialMedias,
-        IEnumerable<SpecializationDto> FreelancerSpecializations,
-        bool FreeTaken,
-        int? FreeMark,
-        bool Pro1Taken,
-        int? Pro1Mark,
-        bool Pro2Taken,
-        int? Pro2Mark
+        IEnumerable<SpecializationDto> FreelancerSpecializations
     );
 
     public record UpdateFreelancerDTO(
@@ -98,7 +92,13 @@ namespace Tradof.FreelancerModule.Services.DTOs
         string LanguageToName,
         string LanguageToCode,
         string CountryToCode,
-        string CountryToName
+        string CountryToName,
+        bool FreeTaken,
+        int? FreeMark,
+        bool Pro1Taken,
+        int? Pro1Mark,
+        bool Pro2Taken,
+        int? Pro2Mark
     );
 
     public record AddFreelancerLanguagePairDTO(

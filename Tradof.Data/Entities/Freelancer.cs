@@ -11,10 +11,6 @@ namespace Tradof.Data.Entities
         public long CountryId { get; set; }
         public string? CVFilePath { get; set; }
 
-        public ExamResult? Free { get; set; } = new ();
-        public ExamResult? Pro1 { get; set; } = new ();
-        public ExamResult? Pro2 { get; set; } = new ();
-
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
 

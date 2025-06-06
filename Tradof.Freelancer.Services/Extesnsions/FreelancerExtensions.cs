@@ -31,7 +31,13 @@ namespace Tradof.FreelancerModule.Services.Extensions
                                 lp.LanguageTo?.LanguageName ?? "Unknown",
                                 lp.LanguageTo?.LanguageCode ?? "Unknown",
                                 lp.LanguageTo?.CountryCode ?? "Unknown",
-                                lp.LanguageTo?.CountryName ?? "Unknown"
+                                lp.LanguageTo?.CountryName ?? "Unknown",
+                                lp.Free?.HasTakenExam ?? false,
+                                lp.Free?.Mark,
+                                lp.Pro1?.HasTakenExam ?? false,
+                                lp.Pro1?.Mark,
+                                lp.Pro2?.HasTakenExam ?? false,
+                                lp.Pro2?.Mark
                             )).ToList();
 
             var socialMedias = freelancer.FreelancerSocialMedias.Select(sm => new FreelancerSocialMediaDTO(
@@ -58,13 +64,7 @@ namespace Tradof.FreelancerModule.Services.Extensions
                 freelancer.User.ProfileViews,
                 langauges,
                 socialMedias,
-                specializations,
-                freelancer.Free?.HasTakenExam ?? false,
-                freelancer.Free?.Mark,
-                freelancer.Pro1?.HasTakenExam ?? false,
-                freelancer.Pro1?.Mark,
-                freelancer.Pro2?.HasTakenExam ?? false,
-                freelancer.Pro2?.Mark
+                specializations
             );
         }
 
