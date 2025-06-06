@@ -663,11 +663,18 @@ namespace Tradof.Project.Services.Implementation
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
             var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(c => c.UserId == currentUser.Id)
                 ?? throw new Exception("freelancer not found.");
-            int active = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Active || p.Status == ProjectStatus.InProgress);
-            int pending = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Pending);
-            int completed = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p => p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Finished);
 
-            return new Tuple<int, int, int>(active, pending, completed);
+            int active = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p =>
+                    p.FreelancerId == freelancer.Id &&
+                    (p.Status == ProjectStatus.Active || p.Status == ProjectStatus.InProgress || p.Status == ProjectStatus.OnReviewing));
+
+            int completed = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p =>
+                p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Finished);
+
+            int cancelled = await _unitOfWork.Repository<ProjectEntity>().CountAsync(p =>
+                p.FreelancerId == freelancer.Id && p.Status == ProjectStatus.Cancelled);
+
+            return new Tuple<int, int, int>(active, completed, cancelled);
         }
 
         public async Task<ProjectCardDto> GetProjectCardData(long projectId)

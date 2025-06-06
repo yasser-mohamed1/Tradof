@@ -160,8 +160,8 @@ namespace Tradof.Project.Api.Controllers
             return Ok(new
             {
                 active = statistics.Item1,
-                inProgress = statistics.Item2,
-                accepted = statistics.Item3
+                completed = statistics.Item2,
+                cancelled = statistics.Item3
             });
         }
 
