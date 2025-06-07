@@ -297,7 +297,11 @@ namespace Tradof.FreelancerModule.Services.Implementation
                         LanguageToId = request.LanguageToId,
                         Free = new (),
                         Pro1 = new (),
-                        Pro2 = new ()
+                        Pro2 = new (),
+                        CreatedBy = freelancer.UserId,
+                        CreationDate = DateTime.UtcNow,
+                        ModifiedBy = freelancer.UserId,
+                        ModificationDate = DateTime.UtcNow
                     };
 
                     await _unitOfWork.Repository<FreelancerLanguagesPair>().AddAsync(languagePair);
