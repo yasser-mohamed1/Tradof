@@ -67,7 +67,7 @@ namespace Tradof.Project.Services.Implementation
             return pagination;
         }
 
-        public async Task<Pagination<StartedProjectDto>> GetStartedProjectsAsync(string companyId, int pageIndex, int pageSize)
+        public async Task<Pagination<ProjectDto>> GetStartedProjectsAsync(string companyId, int pageIndex, int pageSize)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
 
@@ -78,8 +78,8 @@ namespace Tradof.Project.Services.Implementation
             var items = await _unitOfWork.Repository<ProjectEntity>().GetListWithSpecificationAsync(spec);
             var count = await _unitOfWork.Repository<ProjectEntity>().CountAsync(new StartedProjectsByCompanySpecification(company.Id));
 
-            var dtos = items.Select(p => p.ToStartedDto()).ToList();
-            return new Pagination<StartedProjectDto>(pageIndex, pageSize, count, dtos);
+            var dtos = items.Select(p => p.ToDto()).ToList();
+            return new Pagination<ProjectDto>(pageIndex, pageSize, count, dtos);
         }
 
         public async Task<List<ProjectDto>> GetInComingProjectsAsync()
