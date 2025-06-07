@@ -86,8 +86,7 @@ namespace Tradof.Auth.Services.DTOs
         [MinLength(1, ErrorMessage = "At least one Specialization ID must be provided.")]
         List<long> SpecializationIds,
 
-        [Required(ErrorMessage = "Language pairs are required.")]
-        IEnumerable<LanguagePairDto> LanguagePairs,
+        IEnumerable<LanguagePairDto> LanguagePairs = null,
 
         string? ProfileImageUrl = null
     );

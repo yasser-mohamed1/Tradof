@@ -74,11 +74,13 @@ namespace Tradof.Auth.Services.Implementation
                     await _unitOfWork.Repository<Freelancer>().AddAsync(newFreelancer);
                     await _unitOfWork.CommitAsync();
 
-                    var freelancerLanguagePairs = dto.LanguagePairs.Select(lp => lp.ToFreelancerLanguagesPairEntity(newFreelancer));
-
-                    await _unitOfWork.Repository<FreelancerLanguagesPair>()
-                        .AddRangeAsync(freelancerLanguagePairs);
-                    await _unitOfWork.CommitAsync();
+                    if (dto.LanguagePairs != null && dto.LanguagePairs.Any())
+                    {
+                        var freelancerLanguagePairs = dto.LanguagePairs.Select(lp => lp.ToFreelancerLanguagesPairEntity(newFreelancer));
+                        await _unitOfWork.Repository<FreelancerLanguagesPair>()
+                            .AddRangeAsync(freelancerLanguagePairs);
+                        await _unitOfWork.CommitAsync();
+                    }
 
                     _backgroundJob.Enqueue(() => SendConfirmationEmailAsync(newUser));
                 });
