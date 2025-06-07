@@ -490,7 +490,7 @@ namespace Tradof.Project.Services.Implementation
             var company = await _unitOfWork.Repository<Company>().FindFirstAsync(c => c.UserId == currentUser.Id)
                 ?? throw new Exception("Company not found.");
             var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == id && p.CompanyId == company.Id,
-                 includes: [p => p.Freelancer, p => p.Freelancer.User]) ?? throw new NotFoundException("project not found");
+                 includes: [p => p.Freelancer, p => p.Freelancer.User, p => p.Company, p => p.Company.User]) ?? throw new NotFoundException("project not found");
 
             // Check payment status
             using (var httpClient = new HttpClient())
