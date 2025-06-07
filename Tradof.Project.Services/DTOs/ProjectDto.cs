@@ -34,5 +34,7 @@
         public DateTime? CancellationAcceptedDate { get; set; }
         public string? CancellationResponse { get; set; }
         public long? ProposalId { get; set; }
+        public RatingDto? RatingFromFreelancer { get; set; }
+        public RatingDto? RatingFromCompany { get; set; }
     }
 }

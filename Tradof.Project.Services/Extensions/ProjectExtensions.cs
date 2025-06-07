@@ -1,4 +1,5 @@
 ﻿
+using Tradof.Data.Entities;
 using Tradof.Project.Services.DTOs;
 
 namespace Tradof.Project.Services.Extensions
@@ -69,7 +70,32 @@ namespace Tradof.Project.Services.Extensions
                 CancellationRequestedBy = project.CancellationRequestedBy,
                 CancellationRequestDate = project.CancellationRequestDate,
                 CancellationResponse = project.CancellationResponse,
-                ProposalId = project.AcceptedProposalId != null ? project.AcceptedProposalId : null
+                ProposalId = project.AcceptedProposalId != null ? project.AcceptedProposalId : null,
+                RatingFromFreelancer = project.Ratings.FirstOrDefault(r => r.RatedById == project.Freelancer.UserId)?.ToDto(),
+                RatingFromCompany = project.Ratings.FirstOrDefault(r => r.RatedById == project.Company.UserId)?.ToDto()
+            };
+        }
+
+        public static RatingDto ToDto(this Rating rating)
+        {
+            if (rating == null)
+                return null;
+
+            return new RatingDto
+            {
+                Id = rating.Id,
+                RatingValue = rating.RatingValue,
+                Review = rating.Review,
+                ProjectId = rating.ProjectId,
+                RatedToId = rating.RatedToId,
+                RatedById = rating.RatedById,
+                RatedByName = rating.RaterBy != null
+                    ? $"{rating.RaterBy.FirstName} {rating.RaterBy.LastName}".Trim()
+                    : string.Empty,
+                RatedToName = rating.RaterTo != null
+                    ? $"{rating.RaterTo.FirstName} {rating.RaterTo.LastName}".Trim()
+                    : string.Empty,
+                CreationDate = rating.CreationDate
             };
         }
 

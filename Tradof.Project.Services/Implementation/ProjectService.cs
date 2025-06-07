@@ -181,7 +181,6 @@ namespace Tradof.Project.Services.Implementation
             var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == dto.Id && p.CompanyId == company.Id)
                 ?? throw new NotFoundException("project not found");
 
-
             await _unitOfWork.Repository<File>().DeleteWithCrateriaAsync(f => f.ProjectId == project.Id);
             project.Files.Clear();
             await _unitOfWork.CommitAsync();
@@ -924,15 +923,9 @@ namespace Tradof.Project.Services.Implementation
             await _unitOfWork.Repository<Rating>().AddAsync(rating);
             await _unitOfWork.CommitAsync();
 
-            return new RatingDto
-            {
-                Id = rating.Id,
-                RatingValue = rating.RatingValue,
-                Review = rating.Review,
-                ProjectId = rating.ProjectId,
-                RatedById = rating.RatedById,
-                RatedToId = rating.RatedToId,
-            };
+            var ratingDto = rating.ToDto();
+
+            return ratingDto;
         }
 
         public async Task<APIOperationResponse<TopRatedUsersDto>> GetTopRatedUsersAsync()
