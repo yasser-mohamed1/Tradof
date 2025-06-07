@@ -220,8 +220,6 @@ namespace Tradof.Proposal.Api.Controllers
             return Ok(result);
         }
 
-
-
         [HttpPost("send-edit-request")]
         public async Task<IActionResult> CreateProposalEditRequest(CreateProposalEditRequestDto projectDto)
         {

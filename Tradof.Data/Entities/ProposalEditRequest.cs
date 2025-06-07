@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Tradof.Common.Base;
+using Tradof.Common.Enums;
 
 namespace Tradof.Data.Entities
 {
@@ -11,6 +12,7 @@ namespace Tradof.Data.Entities
         public long? FreelancerId { get; set; }
         public long? ProjectId { get; set; }
 
+        public ProposalEditRequestStatus Status { get; set; } = ProposalEditRequestStatus.Pending;
 
         [ForeignKey("FreelancerId")]
         public Freelancer Freelancer { get; set; }

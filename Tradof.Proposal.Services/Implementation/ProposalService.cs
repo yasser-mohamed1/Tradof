@@ -20,8 +20,6 @@ using Tradof.Proposal.Services.Interfaces;
 
 namespace Tradof.Proposal.Services.Implementation
 {
-
-
     public class ProposalService(IUnitOfWork _unitOfWork, IUserHelpers _userHelpers, IEmailService _emailService, IBackgroundJobClient _backgroundJob, INotificationService _notificationService) : IProposalService
     {
         Cloudinary _cloudinary = new Cloudinary(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
@@ -387,7 +385,7 @@ namespace Tradof.Proposal.Services.Implementation
                 project.Price = proposalEdit.NewPrice;
                 proposal.OfferPrice = proposalEdit.NewPrice;
             }
-
+            proposalEdit.Status = ProposalEditRequestStatus.Approved;
             var notification = new NotificationDto
             {
                 type = "Offer",
@@ -417,8 +415,8 @@ namespace Tradof.Proposal.Services.Implementation
             if (project.FreelancerId != freelancer.Id)
                 throw new Exception("failed : freelancer id not equal project freelancer id");
 
+            proposalEdit.Status = ProposalEditRequestStatus.Rejected;
 
-            await _unitOfWork.Repository<ProposalEditRequest>().DeleteAsync(Id);
             var notification = new NotificationDto
             {
                 type = "Offer",
@@ -447,7 +445,8 @@ namespace Tradof.Proposal.Services.Implementation
             {
                 Id = proposalEdit.Id,
                 NewDuration = proposalEdit.NewDuration,
-                NewPrice = proposalEdit.NewPrice
+                NewPrice = proposalEdit.NewPrice,
+                Status = proposalEdit.Status
             };
         }
 
@@ -467,7 +466,6 @@ namespace Tradof.Proposal.Services.Implementation
                 return uploadResult.SecureUrl.AbsoluteUri;
             }
         }
-
 
         public async Task SendProposalEditEmailAsync(string toEmail, string freelancerName, string projectName)
         {
