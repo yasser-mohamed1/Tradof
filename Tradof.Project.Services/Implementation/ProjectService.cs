@@ -464,9 +464,9 @@ namespace Tradof.Project.Services.Implementation
 
         public async Task<bool> SendReviewRequest(long projectId, string freelancerId)
         {
-            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(c => c.UserId == freelancerId)
+            var freelancer = await _unitOfWork.Repository<Freelancer>().FindFirstAsync(c => c.UserId == freelancerId, [f => f.User])
                 ?? throw new Exception("freelancer not found.");
-            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == projectId && p.FreelancerId == freelancer.Id) ?? throw new NotFoundException("project not found");
+            var project = await _unitOfWork.Repository<ProjectEntity>().FindFirstAsync(p => p.Id == projectId && p.FreelancerId == freelancer.Id, [p => p.Company, p => p.Company.User]) ?? throw new NotFoundException("project not found");
             project.Status = ProjectStatus.OnReviewing;
 
             // Send notification to company
