@@ -76,7 +76,7 @@ namespace Tradof.Project.Services.Extensions
             };
         }
 
-        public static UnassignedProjecstDto ToUnassignedProjectDto(this Data.Entities.Project project, long freelancerId)
+        public static UnassignedProjecstDto ToUnassignedProjectDto(this Data.Entities.Project project, long? freelancerId)
         {
             var specialization = project.Specialization == null
             ? null
@@ -143,7 +143,7 @@ namespace Tradof.Project.Services.Extensions
                 ProposalId = project.AcceptedProposalId != null ? project.AcceptedProposalId : null,
                 RatingFromFreelancer = project.Ratings.FirstOrDefault(r => r.RatedById == project.Freelancer.UserId)?.ToDto(),
                 RatingFromCompany = project.Ratings.FirstOrDefault(r => r.RatedById == project.Company.UserId)?.ToDto(),
-                Applied = project.Proposals.Any(p => p.FreelancerId == freelancerId)
+                Applied = freelancerId != null ? project.Proposals.Any(p => p.FreelancerId == freelancerId) : false
             };
         }
 

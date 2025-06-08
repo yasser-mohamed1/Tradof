@@ -755,7 +755,7 @@ namespace Tradof.Project.Services.Implementation
 
             var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(spec);
 
-            var dtos = projects.Select(p => p.ToUnassignedProjectDto(freelancer.Id)).ToList();
+            var dtos = projects.Select(p => p.ToUnassignedProjectDto(freelancer?.Id)).ToList();
             return new Pagination<UnassignedProjecstDto>(specParams.PageIndex, specParams.PageSize, totalCount, dtos);
         }
 
