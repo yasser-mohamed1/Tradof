@@ -9,7 +9,7 @@ namespace Tradof.Project.Services.Interfaces
     public interface IProjectService
     {
         Task<Pagination<ProjectDto>> GetAllAsync(ProjectSpecParams specParams);
-        Task<Pagination<ProjectDto>> GetStartedProjectsAsync(string companyId, int pageIndex, int pageSize);
+        Task<Pagination<StartedProjectDto>> GetStartedProjectsAsync(string companyId, int pageIndex, int pageSize);
         Task<List<ProjectDto>> GetInComingProjectsAsync();
         Task<ProjectDto> GetByIdAsync(long id);
         Task<ProjectDto> CreateAsync(CreateProjectDto dto);

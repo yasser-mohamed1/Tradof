@@ -303,7 +303,6 @@ namespace Tradof.Proposal.Services.Implementation
             return pagination;
         }
 
-
         public async Task<ProposalEditRequestDto> CreateProposalEditAsync(CreateProposalEditRequestDto dto)
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("Current user not found");
