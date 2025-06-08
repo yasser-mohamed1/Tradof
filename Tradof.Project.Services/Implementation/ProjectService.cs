@@ -746,15 +746,17 @@ namespace Tradof.Project.Services.Implementation
             return new Pagination<StartedProjectDto>(pageIndex, pageSize, totalCount, dtos);
         }
 
-        public async Task<Pagination<ProjectDto>> GetUnassignedProjectsAsync(UnassignedProjectsSpecParams specParams)
+        public async Task<Pagination<UnassignedProjecstDto>> GetUnassignedProjectsAsync(UnassignedProjectsSpecParams specParams)
         {
+            var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
+            var freelancer = await _unitOfWork.Repository<Freelancer>().GetByUserIdAsync(currentUser.Id);
             var spec = new UnassignedProjectsSpecification(specParams);
             var projects = await _unitOfWork.Repository<ProjectEntity>().ListAsync(spec);
 
             var totalCount = await _unitOfWork.Repository<ProjectEntity>().CountAsync(spec);
 
-            var dtos = projects.Select(p => p.ToDto()).ToList();
-            return new Pagination<ProjectDto>(specParams.PageIndex, specParams.PageSize, totalCount, dtos);
+            var dtos = projects.Select(p => p.ToUnassignedProjectDto(freelancer.Id)).ToList();
+            return new Pagination<UnassignedProjecstDto>(specParams.PageIndex, specParams.PageSize, totalCount, dtos);
         }
 
         public async Task<Pagination<ProjectDto>> GetUnassignedProjectsByCompanyAsync(UnassignedProjectsSpecParams specParams)

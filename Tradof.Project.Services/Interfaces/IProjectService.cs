@@ -9,7 +9,7 @@ namespace Tradof.Project.Services.Interfaces
     public interface IProjectService
     {
         Task<Pagination<ProjectDto>> GetAllAsync(ProjectSpecParams specParams);
-        Task<Pagination<StartedProjectDto>> GetStartedProjectsAsync(string companyId, int pageIndex, int pageSize);
+        Task<Pagination<ProjectDto>> GetStartedProjectsAsync(string companyId, int pageIndex, int pageSize);
         Task<List<ProjectDto>> GetInComingProjectsAsync();
         Task<ProjectDto> GetByIdAsync(long id);
         Task<ProjectDto> CreateAsync(CreateProjectDto dto);
@@ -23,7 +23,7 @@ namespace Tradof.Project.Services.Interfaces
         Task<Pagination<ProjectDto>> GetCurrentProjectsByCompanyIdAsync(string companyId, int pageIndex, int pageSize);
         Task<Pagination<ProjectDto>> GetCurrentProjectsByFreelancerIdAsync(string freelancerId, int pageIndex, int pageSize);
         Task<Pagination<StartedProjectDto>> GetProjectsByFreelancerIdAsync(string freelancerId, int pageIndex, int pageSize);
-        Task<Pagination<ProjectDto>> GetUnassignedProjectsAsync(UnassignedProjectsSpecParams specParams);
+        Task<Pagination<UnassignedProjecstDto>> GetUnassignedProjectsAsync(UnassignedProjectsSpecParams specParams);
         Task<Pagination<ProjectDto>> GetUnassignedProjectsByCompanyAsync(UnassignedProjectsSpecParams specParams);
         Task<List<FileDto>> UploadFilesToProjectAsync(int projectId, List<IFormFile> files, bool isFreelancerUpload);
         Task DeleteFileAsync(long fileId);

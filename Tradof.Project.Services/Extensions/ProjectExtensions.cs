@@ -76,6 +76,77 @@ namespace Tradof.Project.Services.Extensions
             };
         }
 
+        public static UnassignedProjecstDto ToUnassignedProjectDto(this Data.Entities.Project project, long freelancerId)
+        {
+            var specialization = project.Specialization == null
+            ? null
+            : new SpecializationDto(
+                project.SpecializationId ?? 0,
+                project.Specialization.Name
+            );
+
+            var languageFrom = new LanguageDto(
+                project.LanguageFromId,
+                project.LanguageFrom.LanguageName,
+                project.LanguageFrom.LanguageCode,
+                project.LanguageFrom.CountryName,
+                project.LanguageFrom.CountryCode
+            );
+
+            var languageTo = new LanguageDto(
+
+                project.LanguageToId,
+                project.LanguageTo.LanguageName,
+                project.LanguageTo.LanguageCode,
+                project.LanguageTo.CountryName,
+                project.LanguageTo.CountryCode
+            );
+
+            var status = new ProjectStatusDto(
+                (int)project.Status,
+                project.Status.ToString()
+            );
+
+            return new UnassignedProjecstDto
+            {
+                Id = project.Id,
+                Name = project.Name,
+                Days = project.Days,
+                Description = project.Description,
+                LanguageFrom = languageFrom,
+                LanguageTo = languageTo,
+                MaxPrice = project.MaxPrice,
+                MinPrice = project.MinPrice,
+                NumberOfOffers = project.Proposals.Count,
+                Specialization = specialization,
+                Files = project.Files.Select(f => f.ToDto()).ToList(),
+                Price = project.Price,
+                StartDate = project.StartDate,
+                EndDate = project.EndDate,
+                Status = status,
+                DeliveryDate = project.DeliveryDate,
+                CompanyId = project.Company.UserId,
+                FirstName = project.Freelancer != null ? project.Freelancer.User.FirstName : string.Empty,
+                LastName = project.Freelancer != null ? project.Freelancer.User.LastName : string.Empty,
+                JobTitle = project.Company.JobTitle,
+                ProfileImageUrl = project.Company.User.ProfileImageUrl,
+                CreationDate = project.CreationDate,
+                FreelancerId = project.Freelancer != null ? project.Freelancer.UserId : string.Empty,
+                FreelancerEmail = project.Freelancer != null ? project.Freelancer.User.Email : string.Empty,
+                CancellationAccepted = project.CancellationAccepted,
+                CancellationAcceptedBy = project.CancellationAcceptedBy,
+                CancellationAcceptedDate = project.CancellationAcceptedDate,
+                CancellationRequested = project.CancellationRequested,
+                CancellationRequestedBy = project.CancellationRequestedBy,
+                CancellationRequestDate = project.CancellationRequestDate,
+                CancellationResponse = project.CancellationResponse,
+                ProposalId = project.AcceptedProposalId != null ? project.AcceptedProposalId : null,
+                RatingFromFreelancer = project.Ratings.FirstOrDefault(r => r.RatedById == project.Freelancer.UserId)?.ToDto(),
+                RatingFromCompany = project.Ratings.FirstOrDefault(r => r.RatedById == project.Company.UserId)?.ToDto(),
+                Applied = project.Proposals.Any(p => p.FreelancerId == freelancerId)
+            };
+        }
+
         public static RatingDto ToDto(this Rating rating)
         {
             if (rating == null)

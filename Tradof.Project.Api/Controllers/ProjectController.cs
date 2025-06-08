@@ -287,12 +287,12 @@ namespace Tradof.Project.Api.Controllers
             try
             {
                 var result = await _projectService.GetUnassignedProjectsAsync(specParams);
-                var response = APIOperationResponse<Pagination<ProjectDto>>.Success(result, "Unassigned projects retrieved successfully.");
+                var response = APIOperationResponse<Pagination<UnassignedProjecstDto>>.Success(result, "Unassigned projects retrieved successfully.");
                 return StatusCode(response.StatusCode, response);
             }
             catch (Exception ex)
             {
-                var errorResponse = APIOperationResponse<Pagination<ProjectDto>>.Fail(
+                var errorResponse = APIOperationResponse<Pagination<UnassignedProjecstDto>>.Fail(
                     ResponseType.InternalServerError,
                     CommonErrorCodes.FailedToRetrieveData,
                     $"Failed to retrieve unassigned projects: {ex.Message}"
