@@ -585,6 +585,13 @@ namespace Tradof.Project.Services.Implementation
                 .FindFirstAsync(p => p.Id == projectId && p.FreelancerId == freelancer.Id, includes: [p => p.Company, p => p.Company.User])
                 ?? throw new NotFoundException("project not found");
 
+            if (project.AcceptedProposalId != null)
+            {
+                var proposal = await _unitOfWork.Repository<Proposal>().GetByIdAsync((long)project.AcceptedProposalId);
+                proposal.ProposalStatus = ProposalStatus.Canceled;
+                await _unitOfWork.Repository<Proposal>().UpdateAsync(proposal);
+            }
+
             if (!project.CancellationRequested)
                 throw new Exception("No cancellation request exists for this project");
 
