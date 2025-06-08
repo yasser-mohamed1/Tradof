@@ -110,12 +110,20 @@ namespace Tradof.Proposal.Services.Implementation
             var existingProposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.FreelancerId == freelancer.Id && p.ProjectId == project.Id);
             if (existingProposal != null) throw new Exception("already sent a proposal for this project");
 
+
             var proposal = dto.ToEntity();
             proposal.Project = project;
             proposal.Freelancer = freelancer;
 
             foreach (var file in dto.ProposalAttachments)
             {
+                var fileExtension = Path.GetExtension(file.FileName)?.TrimStart('.').ToLower();
+                if (string.IsNullOrEmpty(fileExtension))
+                    throw new Exception("Invalid file type.");
+
+                if (!Enum.TryParse(typeof(FileType), fileExtension, true, out var fileType))
+                    throw new Exception($"Unsupported file type: {fileExtension}");
+
                 var uploadedUrl = await UploadToCloudinaryAsync(file);
 
                 proposal.ProposalAttachments.Add(new ProposalAttachments
@@ -302,6 +310,7 @@ namespace Tradof.Proposal.Services.Implementation
             var pagination = new Pagination<ProposalDto>(specParams.PageIndex, specParams.PageSize, count, dtos);
             return pagination;
         }
+
 
         public async Task<ProposalEditRequestDto> CreateProposalEditAsync(CreateProposalEditRequestDto dto)
         {
