@@ -33,6 +33,7 @@ namespace Tradof.Proposal.Services.Implementation
             if (company.Id != project.CompanyId)
                 throw new Exception("not authorized to accept this");
 
+
             var proposal = await _unitOfWork.Repository<Data.Entities.Proposal>().GetByIdAsync(proposalId, includes: [p => p.Freelancer.User]) ?? throw new NotFoundException("proposal not found");
             proposal.ProposalStatus = ProposalStatus.Accepted;
             project.FreelancerId = proposal.FreelancerId;
@@ -110,6 +111,8 @@ namespace Tradof.Proposal.Services.Implementation
             var existingProposal = await _unitOfWork.Repository<Data.Entities.Proposal>().FindFirstAsync(p => p.FreelancerId == freelancer.Id && p.ProjectId == project.Id);
             if (existingProposal != null) throw new Exception("already sent a proposal for this project");
 
+            if (dto.OfferPrice < project.MinPrice)
+                throw new Exception($"minimum price for this project must be {project.MinPrice}");
 
             var proposal = dto.ToEntity();
             proposal.Project = project;
