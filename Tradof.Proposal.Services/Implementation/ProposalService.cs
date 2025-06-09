@@ -55,7 +55,7 @@ namespace Tradof.Proposal.Services.Implementation
                 timestamp = DateTime.UtcNow
             };
             await _notificationService.SendNotificationAsync(notification);
-
+            
             return await _unitOfWork.CommitAsync();
         }
 
@@ -112,7 +112,7 @@ namespace Tradof.Proposal.Services.Implementation
             if (existingProposal != null) throw new Exception("already sent a proposal for this project");
 
             if (dto.OfferPrice < project.MinPrice)
-                throw new Exception($"minimum price for this project must be {project.MinPrice}");
+                throw new InvalidOperationException($"The minimum price for this project must be {project.MinPrice}");
 
             var proposal = dto.ToEntity();
             proposal.Project = project;
