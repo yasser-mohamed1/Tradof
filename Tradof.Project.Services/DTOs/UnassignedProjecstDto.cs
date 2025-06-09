@@ -36,6 +36,6 @@
         public long? ProposalId { get; set; }
         public RatingDto? RatingFromFreelancer { get; set; }
         public RatingDto? RatingFromCompany { get; set; }
-        public bool Applied { get; set; }
+        public bool? Applied { get; set; }
     }
 }

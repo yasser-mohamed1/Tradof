@@ -750,6 +750,7 @@ namespace Tradof.Project.Services.Implementation
         {
             var currentUser = await _userHelpers.GetCurrentUserAsync() ?? throw new Exception("user not found");
             var freelancer = await _unitOfWork.Repository<Freelancer>().GetByUserIdAsync(currentUser.Id);
+            specParams.FreelancerId = currentUser.Id;
             var spec = new UnassignedProjectsSpecification(specParams);
             var projects = await _unitOfWork.Repository<ProjectEntity>().ListAsync(spec);
 

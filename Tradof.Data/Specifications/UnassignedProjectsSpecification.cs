@@ -13,7 +13,13 @@ namespace Tradof.Data.Specifications
         (specParams.LanguageToId == null || p.LanguageToId == specParams.LanguageToId) &&
         (specParams.DeliveryTimeInDays == null || p.Days <= specParams.DeliveryTimeInDays) &&
         (specParams.Budget == null || p.MaxPrice <= specParams.Budget) &&
-        (specParams.CompanyId == null || p.Company.UserId == specParams.CompanyId)
+        (specParams.CompanyId == null || p.Company.UserId == specParams.CompanyId) &&
+                (
+                    specParams.Applied == null || string.IsNullOrEmpty(specParams.FreelancerId) ? true :
+                    specParams.Applied == true
+                        ? p.Proposals.Any(prop => prop.Freelancer.UserId == specParams.FreelancerId)
+                        : !p.Proposals.Any(prop => prop.Freelancer.UserId == specParams.FreelancerId)
+                )
     )
         {
             AddInclude(p => p.Files);
@@ -26,7 +32,6 @@ namespace Tradof.Data.Specifications
             AddInclude(p => p.Freelancer);
             AddInclude(p => p.Freelancer.User);
             AddInclude(p => p.Ratings);
-
             ApplyPagination((specParams.PageIndex - 1) * specParams.PageSize, specParams.PageSize);
         }
     }
